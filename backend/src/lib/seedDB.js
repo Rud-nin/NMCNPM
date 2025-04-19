@@ -232,9 +232,9 @@ async function seed() {
 
   // ================== TOPUP ==================
   const topUps = [
-    { UserID: user1, Amount: 300000, Status: 'Completed' },
-    { UserID: user2, Amount: 200000, Status: 'Completed' },
-    { UserID: user2, Amount: 100000, Status: 'Completed' },
+    { UserID: user1, Amount: 300000, Status: 'Success' },
+    { UserID: user2, Amount: 200000, Status: 'Success' },
+    { UserID: user2, Amount: 100000, Status: 'Success' },
   ]
 
   for (const t of topUps) {

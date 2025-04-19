@@ -11,6 +11,7 @@ import userRoutes from './routes/user.routes.js'
 import billRoutes from './routes/bill.routes.js'
 import roomRoutes from "./routes/room.routes.js";
 import roomRequestRoutes from "./routes/roomRequest.routes.js";
+import balanceRoutes from './routes/balance.routes.js'
 
 const app = express()
 app.use(express.json())
@@ -33,6 +34,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/bills', billRoutes)
 app.use("/api/rooms", roomRoutes);
 app.use("/api/room-requests", roomRequestRoutes);
+app.use("/api/balances", balanceRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log('server is running on port', process.env.PORT)
