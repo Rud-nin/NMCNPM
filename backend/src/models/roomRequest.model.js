@@ -103,11 +103,10 @@ export const RoomRequest = {
     return true;
   },
 
-  async reject(requestId, adminId) {
+  async reject(requestId) {
     const pool = await getConnection();
     await pool.request()
       .input("RequestID", sql.Int, requestId)
-      .input("AdminID", sql.Int, adminId)
       .query(`
         UPDATE RoomRequests
         SET Status = 'Rejected',

@@ -102,17 +102,28 @@ export const approveRequest = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid request" });
     }
 
+    const roomId = parseInt(request.RoomID);
+    const userId = parseInt(request.UserID);
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found"
+      });
+    }
+
     // Assign room (trigger + CHECK constraint handle capacity)
-    await Room.assignUser(request.UserID, request.RoomID);
+    await Room.assignUser(userId, roomId);
 
     // Update request status
-    await RoomRequest.approve(req.params.id, req.user.UserID);
+    await RoomRequest.approve(req.params.id);
 
     // Notify user
     await Notification.create({
       receiverId: request.UserID,
       title: "Room Request Approved",
-      content: "Your room request has been approved. You have been assigned to the room."
+      content: `Your room request has been approved. You have been assigned to ${room.Building}-${room.RoomNumber}.`
     });
 
     res.json({ success: true, message: "Request approved successfully" });
@@ -141,12 +152,22 @@ export const rejectRequest = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid request" });
     }
 
-    await RoomRequest.reject(req.params.id, req.user.UserID);
+    const roomId = parseInt(request.RoomID);
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found"
+      });
+    }
+
+    await RoomRequest.reject(req.params.id);
 
     await Notification.create({
       receiverId: request.UserID,
       title: "Room Request Rejected",
-      content: "Your room request has been rejected. Please choose another room."
+      content: `Your room request to room ${room.Building}-${room.RoomNumber} has been rejected. Please choose another room.`
     });
 
     res.json({ success: true, message: "Request rejected successfully" });

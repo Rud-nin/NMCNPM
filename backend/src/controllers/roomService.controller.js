@@ -1,4 +1,4 @@
-import { Service } from "../models/service_model.js";
+import { Service } from "../models/service.model.js";
 import { Room } from "../models/room.model.js";
 import { RoomService } from "../models/roomService.model.js";
 
