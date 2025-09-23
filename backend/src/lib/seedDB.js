@@ -317,6 +317,27 @@ async function seed() {
   }
   console.log('✅ TopUpTransactions inserted (random dates)')
 
+  // ================== USER SERVICE ==================
+  const userServicesData = [
+    // roomIds[0] = B5-101
+    { UserID: userIds[1], ServiceID: serviceIds.Gym },
+    { UserID: userIds[1], ServiceID: serviceIds.Parking },
+    { UserID: userIds[8], ServiceID: serviceIds.Parking }
+  ]
+
+  for (const us of userServicesData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, us.UserID)
+      .input('ServiceID', sql.Int, us.ServiceID)
+      .query(`
+        INSERT INTO UserServices (UserID, ServiceID)
+        VALUES (@UserID, @ServiceID)
+      `)
+  }
+
+  console.log('✅ UserServices inserted')
+
   // ================== ROOM SERVICE ==================
   const roomServicesData = [
     // roomIds[0] = B5-101

@@ -80,4 +80,50 @@ export const Service = {
       .query(`SELECT * FROM ServiceMonthly WHERE ServiceID = @ServiceID`)
     return result.recordset[0]
   },
+
+  // Lấy danh sách dịch vụ mà User ĐANG ĐĂNG KÝ (Cả phòng và cá nhân)
+  async getUserServices(userID) {
+    const pool = await getConnection();
+    const result = await pool.request()
+      .input("UserID", sql.Int, userID)
+      .query(`
+        -- Dịch vụ cá nhân đăng ký
+        SELECT s.*
+        FROM ServiceMonthly s
+        JOIN UserServices us ON s.ServiceID = us.ServiceID
+        WHERE us.UserID = @UserID
+
+        UNION ALL
+
+        -- Dịch vụ của phòng mà User đang ở
+        SELECT s.*
+        FROM ServiceMonthly s
+        JOIN RoomServices rs ON s.ServiceID = rs.ServiceID
+        JOIN Users u ON u.RoomID = rs.RoomID
+        WHERE u.UserID = @UserID
+      `);
+    return result.recordset;
+  },
+
+  // Admin thêm dịch vụ cho User
+  async addServiceToUser(userID, serviceID) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("UserID", sql.Int, userID)
+      .input("ServiceID", sql.Int, serviceID)
+      .query(`
+        INSERT INTO UserServices (UserID, ServiceID) VALUES (@UserID, @ServiceID)
+      `);
+    return { success: true };
+  },
+
+  // Admin xóa dịch vụ của User
+  async removeServiceFromUser(userID, serviceID) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("UserID", sql.Int, userID)
+      .input("ServiceID", sql.Int, serviceID)
+      .query("DELETE FROM UserServices WHERE UserID = @UserID AND ServiceID = @ServiceID");
+    return { success: true };
+  }
 }

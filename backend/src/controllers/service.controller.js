@@ -1,4 +1,5 @@
 import { Service } from "../models/service.model.js";
+import { User } from "../models/user.model.js";
 
 // @route POST /api/services
 export const createService = async (req, res) => {
@@ -77,4 +78,84 @@ export const deleteService = async (req, res) => {
         // Trả về lỗi 409 (Conflict) nếu dính khóa ngoại
         res.status(409).json({ message: error.message || "Server error." });
     }
+};
+
+// @route GET /api/services
+export const getMyServices = async (req, res) => {
+  try {
+    const services = await Service.getUserServices(req.user.UserID);
+    res.status(200).json({ success: true, data: services });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @route GET /api/services/users/:userId
+export const getUserServices = async (req, res) => {
+  try {
+		const userId = req.params.userId; 
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found"
+			});
+		}
+
+    const services = await Service.getUserServices(userId);
+    res.status(200).json({ success: true, data: services });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @route POST /api/services/assign
+export const assignService = async (req, res) => {
+	try {
+		const { UserID, ServiceID } = req.body;
+
+		const service = await Service.findById(ServiceID);
+		if (!service || service.Type !== "Personal") {
+			return res.status(400).json({
+				success: false,
+				message: "Không tìm thấy dịch vụ cá nhân hợp lệ"
+			});
+		}
+
+    await Service.addServiceToUser(UserID, ServiceID);
+    res.status(200).json({ success: true, message: "Service assigned successfully" });
+  } catch (error) {
+		console.log("Assign service error:", error.message);
+
+		if (error.message.includes("PK_UserServices")) {
+      return res.status(409).json({
+        success: false,
+        message: "User has already had this service"
+      });
+    }
+
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route DELETE /api/services/remove
+export const removeUserService = async (req, res) => {
+	
+	try {
+		const { UserID, ServiceID } = req.body;
+
+		const service = await Service.findById(ServiceID);
+		if (!service || service.Type !== "Personal") {
+			return res.status(400).json({
+				success: false,
+				message: "Không tìm thấy dịch vụ cá nhân hợp lệ"
+			});
+		}
+
+    await Service.removeServiceFromUser(UserID, ServiceID);
+    res.status(200).json({ success: true, message: "Service removed successfully" });
+  } catch (error) {
+		console.log("Remove user service error: ", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };

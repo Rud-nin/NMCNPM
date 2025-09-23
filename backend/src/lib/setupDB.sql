@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS dbo.UserBalance;
 DROP TABLE IF EXISTS dbo.TopUpTransactions;
 DROP TABLE IF EXISTS dbo.RoomRequests;
 DROP TABLE IF EXISTS dbo.RoomServices;
+DROP TABLE IF EXISTS dbo.UserServices;
 DROP TABLE IF EXISTS dbo.MonthlyBills;
 DROP TABLE IF EXISTS dbo.ServicePayments;
 DROP TABLE IF EXISTS dbo.Feedbacks;
@@ -104,6 +105,17 @@ CREATE TABLE dbo.MonthlyBills (
     CONSTRAINT FK_Bills_Service FOREIGN KEY (ServiceID) REFERENCES dbo.ServiceMonthly(ServiceID),
     CONSTRAINT FK_Bills_Payment FOREIGN KEY (PaymentID) REFERENCES dbo.ServicePayments(PaymentID),
     CONSTRAINT FK_Bills_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
+);
+GO
+
+CREATE TABLE dbo.UserServices (
+    UserID INT,
+    ServiceID INT,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT FK_UserServices_Users FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID),
+    CONSTRAINT FK_UserServices_ServiceMonthly FOREIGN KEY (ServiceID) REFERENCES dbo.ServiceMonthly(ServiceID),
+    CONSTRAINT PK_UserServices PRIMARY KEY (UserID, ServiceID)
 );
 GO
 
@@ -253,6 +265,7 @@ SELECT * FROM TopUpTransactions;
 SELECT * FROM Users;
 SELECT * FROM Rooms;
 SELECT * FROM RoomRequests;
+SELECT * FROM UserServices;
 SELECT * FROM RoomServices;
 SELECT * FROM MonthlyBills;
 SELECT * FROM ServicePayments;
