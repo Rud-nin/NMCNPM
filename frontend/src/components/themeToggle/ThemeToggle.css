@@ -8,7 +8,6 @@
   background-color: var(--themeToggle);
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .theme-slider {
@@ -19,7 +18,6 @@
   height: 20px;
   background-color: white;
   border-radius: 50%;
-  transition: left 0.3s ease, background-color 0.3s ease;
 }
 
 .theme-icon {
@@ -33,7 +31,6 @@
 /* Icon bên trong */
 .theme-icon .icon {
   fill: var(--themeToggle);
-  transition: fill 0.3s ease;
 }
 
 /* Khi theme là dark, di chuyển slider sang phải */
@@ -42,5 +39,6 @@ html[data-theme='dark'] .theme-slider {
 }
 
 .theme-transitions * {
-  transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease,
+    left 0.3s ease;
 }

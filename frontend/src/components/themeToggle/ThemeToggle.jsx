@@ -36,8 +36,7 @@ export default function ThemeToggle() {
   }
 
   useEffect(() => {
-    document.documentElement.classList.add('theme-transition')
-
+    document.documentElement.classList.add('theme-transitions')
     const savedTheme = localStorage.getItem('theme')
     const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const currentTheme = savedTheme || (preferDark ? 'dark' : 'light')

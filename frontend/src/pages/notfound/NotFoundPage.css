@@ -1,7 +1,6 @@
 .notfound-container {
   height: 100vh;
-  background-color: darkblue;
-  color: #bde0fe;
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,7 +12,6 @@
 .title {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: #bde0fe;
   position: relative;
   padding-bottom: 0.6rem;
 }
@@ -34,7 +32,6 @@
 .error-code {
   font-size: 10rem;
   font-weight: bold;
-  color: white;
   margin: 0;
 }
 

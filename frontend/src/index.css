@@ -31,6 +31,16 @@ body {
     hsl(240, 100%, 37%)
   );
 
+  /* SIGNIN */
+  --form-bg: lightgray;
+  --form-dialog-bg: rgb(227, 227, 227);
+
+  --form-header: rgb(35, 35, 35);
+  --submit-btn: rgb(1, 112, 198);
+  --submit-hover: #5643a0;
+  --submit-text: white;
+  --link-color: rgb(97, 97, 97);
+
   --themeToggle: rgb(59, 130, 216);
 }
 
@@ -54,6 +64,16 @@ body {
     darkblue 0 65%,
     hsl(240, 100%, 37%)
   );
+
+  /* SIGNIN */
+  --form-bg: #132440;
+  --form-dialog-bg: #16476a;
+
+  --form-header: white;
+  --submit-btn: #bf092f;
+  --submit-hover: #cf4c68ff;
+  --submit-text: white;
+  --link-color: #9ca3af;
 
   --themeToggle: #132440;
 }
