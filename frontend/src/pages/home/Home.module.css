@@ -1,103 +1,106 @@
-.featureCard, .contactCard {
-    display: flex;
-    padding: 1rem;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 10px;
-    text-align: center;
-    transition: all 0.25s;
+.featureCard,
+.contactCard {
+  display: flex;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.25s;
 }
 
-.featureCard:hover, .contactCard:hover {
-    transform: scale(1.1);
+.featureCard:hover,
+.contactCard:hover {
+  transform: scale(1.1);
 }
 
 .featureCard {
-    flex-direction: column;
-    width: 200px;
-    height: 300px;
-    background: linear-gradient(to bottom, darkblue 0 65%, hsl(240, 100%, 37%));
-    color: white;
+  flex-direction: column;
+  width: 200px;
+  height: 300px;
+  background: var(--featureCard-bg);
+  color: white;
 }
 
 .contactCard {
-    width: 300px;
-    height: 150px;
-    background-color: white;
-    color: red;
-    border: 2px solid red;
+  width: 300px;
+  height: 150px;
+  background-color: var(--body-bg);
+  color: var(--loginBtn-bg);
+  border: 2px solid var(--loginBtn-bg);
 }
 
-.featureCard div:first-child, .contactCard div:first-child {
-    font-size: 5rem;
-    height: 5rem;
-    aspect-ratio: 1 / 1;
-    margin-bottom: 1rem;
+.featureCard div:first-child,
+.contactCard div:first-child {
+  font-size: 5rem;
+  height: 5rem;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 1rem;
 }
 
 .cardContainer {
-    display: flex;
-    gap: 2ch;
+  display: flex;
+  gap: 2ch;
 }
 
 .width1020px {
-    width: 90%;
-    max-width: 1020px;
+  width: 90%;
+  max-width: 1020px;
 }
 
 .header {
-    width: 100vw;
-    background: linear-gradient(to bottom, red 0 70%, transparent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 0;
-    color: white;
+  width: 100vw;
+  background: linear-gradient(to bottom, var(--header-bg) 0 70%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  color: var(--header-text);
 }
 
 .header > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header > div > div {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.2rem;
 }
 
 .header ul {
-    padding: 0;
-    display: flex;
-    gap: 2rem;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
 }
 
 .header li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .header a {
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
 }
 
 .header img {
-    height: 5rem;
+  height: 5rem;
 }
 
 .fontSize09 {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
 }
 
 .main {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 /* .main section {
@@ -105,62 +108,62 @@
 } */
 
 .overview {
-    padding: 2rem 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .overview img {
-    height: 6rem;
+  height: 6rem;
 }
 
 .overview p {
-    width: 60%;
+  width: 60%;
 }
 
 .overview button {
-    width: auto;
-    padding: 1rem 3rem;
-    background-color: white;
-    transition: all 0.15s;
-    border-radius: 25px;
-    color: red;
-    position: relative;
-    border: 2px solid red;
-    cursor: pointer;
+  width: auto;
+  padding: 1rem 3rem;
+  background-color: var(--body-bg);
+  transition: all 0.15s;
+  border-radius: 25px;
+  color: var(--loginBtn-bg);
+  position: relative;
+  border: 2px solid var(--loginBtn-bg);
+  cursor: pointer;
 }
 
 .overview button:hover {
-    color: white;
-    background-color: red;
-    box-shadow: 0 4px 15px red;
+  color: var(--body-bg);
+  background-color: var(--loginBtn-bg);
+  box-shadow: 0 4px 15px var(--loginBtn-bg);
 }
 
 .features {
-    background-color: rgba(59, 130, 216, 0.2);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    padding: 2rem 0;
+  background-color: rgba(59, 130, 216, 0.2);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  padding: 2rem 0;
 }
 
 .features h2 {
-    color: #1C3967;
+  color: var(--features-header);
 }
 
 .cardContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .footer {
-    text-align: center;
-    font-size: 0.85rem;
-    color: grey;
-    margin-top: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2rem;
 }

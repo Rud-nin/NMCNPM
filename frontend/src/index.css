@@ -1,7 +1,59 @@
-html, body {
-    width: 100vw;
-    padding: 0;
-    margin: 0;
-    font-family: "Roboto", sans-serif;
-    overflow-x: hidden;
+html,
+body {
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  background-color: var(--body-bg);
+  color: var(--text-primary);
+}
+
+:root {
+  --body-bg: white;
+
+  --primary-color: red;
+  --secondary-color: darkblue;
+
+  --text-primary: black;
+  --text-muted: grey;
+
+  /* HOME */
+  --header-bg: red;
+  --header-text: white;
+
+  --loginBtn-bg: red;
+  --features-header: #1c3967;
+
+  --featureCard-bg: linear-gradient(
+    to bottom,
+    darkblue 0 65%,
+    hsl(240, 100%, 37%)
+  );
+
+  --themeToggle: rgb(59, 130, 216);
+}
+
+[data-theme='dark'] {
+  --body-bg: #132440;
+  --primary-color: #bf092f;
+  --secondary-color: darkblue;
+
+  --text-primary: white;
+  --text-muted: #9ca3af;
+
+  /* HOME */
+  --header-bg: #bf092f;
+  --header-text: white;
+
+  --loginBtn-bg: skyblue;
+  --features-header: white;
+
+  --featureCard-bg: linear-gradient(
+    to bottom,
+    darkblue 0 65%,
+    hsl(240, 100%, 37%)
+  );
+
+  --themeToggle: #132440;
 }

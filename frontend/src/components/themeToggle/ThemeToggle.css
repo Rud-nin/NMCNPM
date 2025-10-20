@@ -5,7 +5,7 @@
   zindex: 50;
   width: 50px;
   height: 24px;
-  background-color: var(--toggleTheme-bg, #ccc);
+  background-color: var(--themeToggle);
   border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -17,7 +17,7 @@
   left: 2px;
   width: 20px;
   height: 20px;
-  background-color: #fff;
+  background-color: white;
   border-radius: 50%;
   transition: left 0.3s ease, background-color 0.3s ease;
 }
@@ -32,22 +32,13 @@
 
 /* Icon bên trong */
 .theme-icon .icon {
-  fill: var(--toggle-icon, #333);
+  fill: var(--themeToggle);
   transition: fill 0.3s ease;
 }
 
 /* Khi theme là dark, di chuyển slider sang phải */
 html[data-theme='dark'] .theme-slider {
   left: calc(100% - 22px);
-  background-color: #222;
-}
-
-html[data-theme='dark'] .theme-toggle {
-  background-color: #666;
-}
-
-html[data-theme='dark'] .theme-icon .icon {
-  fill: #ffd166;
 }
 
 .theme-transitions * {
