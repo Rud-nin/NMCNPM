@@ -35,16 +35,16 @@ async function seed() {
     DELETE FROM Rooms;
     DELETE FROM ServiceMonthly;
 
-    --Reset identity counter to 1
-    DBCC CHECKIDENT ('Feedbacks', RESEED, 0);
-    DBCC CHECKIDENT ('Notifications', RESEED, 0);
-    DBCC CHECKIDENT ('TopUpTransactions', RESEED, 0);
-    DBCC CHECKIDENT ('RoomRequests', RESEED, 0);
-    DBCC CHECKIDENT ('MonthlyBills', RESEED, 0);
-    DBCC CHECKIDENT ('ServicePayments', RESEED, 0);
-    DBCC CHECKIDENT ('Users', RESEED, 0);
-    DBCC CHECKIDENT ('Rooms', RESEED, 0);
-    DBCC CHECKIDENT ('ServiceMonthly', RESEED, 0);
+    --Reset identity counter to 1 or 2
+    DBCC CHECKIDENT ('Feedbacks', RESEED, 1);
+    DBCC CHECKIDENT ('Notifications', RESEED, 1);
+    DBCC CHECKIDENT ('TopUpTransactions', RESEED, 1);
+    DBCC CHECKIDENT ('RoomRequests', RESEED, 1);
+    DBCC CHECKIDENT ('MonthlyBills', RESEED, 1);
+    DBCC CHECKIDENT ('ServicePayments', RESEED, 1);
+    DBCC CHECKIDENT ('Users', RESEED, 1);
+    DBCC CHECKIDENT ('Rooms', RESEED, 1);
+    DBCC CHECKIDENT ('ServiceMonthly', RESEED, 1);
   `)
 
   console.log('🌱 Seeding database...')
