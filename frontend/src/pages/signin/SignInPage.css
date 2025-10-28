@@ -65,7 +65,7 @@
   font-size: 15px;
 }
 
-button {
+.sign-in-right button {
   width: 100%;
   padding: 14px;
   border: none;
@@ -77,7 +77,7 @@ button {
   transition: background 0.3s ease;
 }
 
-button:hover {
+.sign-in-right button:hover {
   background: #5643a0;
 }
 
