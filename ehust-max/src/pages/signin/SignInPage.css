@@ -12,6 +12,7 @@
   background: rgb(227, 227, 227);
   border-radius: 10px;
   overflow: hidden;
+  height: 85vh;
   width: 1000px;
   max-width: 95%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
