@@ -28,7 +28,7 @@ export default function Home() {
                         <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Bach-Khoa-Ha-Noi-HUST-768x1155.png" alt="Hust logo" />
                         <div>
                             Đại học Bách Khoa Hà Nội<br/>
-                            Hệ thống quản lý chung cư - KTX Ehust-max
+                            <span className={styles.fontSize09}>Hệ thống quản lý chung cư - KTX Ehust-max</span>
                         </div>
                     </div>
 
@@ -44,18 +44,18 @@ export default function Home() {
             </header>
 
             <main className={styles.main}>
-                <div className={styles.width1020px}>
-                    <section className={styles.overview}>
-                        {/* Overview section */}
-                        <div>
-                            <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" />
-                        </div>
-                        <h1>Hệ thống quản lý chung cư - KTX Ehust-max</h1>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure, sint reiciendis cupiditate alias optio est quos aut, illo harum ducimus modi laudantium velit laboriosam ratione illum earum tempora similique quo!</p>
-                        <button>Đăng nhập</button>
-                    </section>
+                <section className={`${styles.overview} ${styles.width1020px}`}>
+                    {/* Overview section */}
+                    <div>
+                        <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" />
+                    </div>
+                    <h1>Hệ thống quản lý chung cư - KTX Ehust-max</h1>
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure, sint reiciendis cupiditate alias optio est quos aut, illo harum ducimus modi laudantium velit laboriosam ratione illum earum tempora similique quo!</p>
+                    <button>Đăng nhập</button>
+                </section>
 
-                    <section>
+                <section className={styles.features}>
+                    <div className={styles.width1020px}>
                         {/* Features section */}
                         <div>
                             {/* Admin features */}
@@ -93,31 +93,31 @@ export default function Home() {
                                 />
                             </div>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <section >
-                        {/* Contact section */}
-                        <h2>Về chúng tôi</h2>
-                        <div className={styles.cardContainer}>
-                            <ContactCard 
-                                image={<i className="fa-solid fa-user"></i>}
-                                text="Bùi Duy Ninh"
-                            />
-                            <ContactCard 
-                                image={<i className="fa-solid fa-user"></i>}
-                                text="Trịnh Hoàng Giang"
-                            />
-                            <ContactCard 
-                                image={<i className="fa-solid fa-user"></i>}
-                                text="Vũ Công Tấn"
-                            />
-                            <ContactCard 
-                                image={<i className="fa-solid fa-user"></i>}
-                                text="Chu Văn Sơn"
-                            />
-                        </div>
-                    </section>
-                </div>
+                <section className={styles.width1020px}>
+                    {/* Contact section */}
+                    <h2>Về chúng tôi</h2>
+                    <div className={styles.cardContainer}>
+                        <ContactCard 
+                            image={<i className="fa-solid fa-user"></i>}
+                            text="Bùi Duy Ninh"
+                        />
+                        <ContactCard 
+                            image={<i className="fa-solid fa-user"></i>}
+                            text="Trịnh Hoàng Giang"
+                        />
+                        <ContactCard 
+                            image={<i className="fa-solid fa-user"></i>}
+                            text="Vũ Công Tấn"
+                        />
+                        <ContactCard 
+                            image={<i className="fa-solid fa-user"></i>}
+                            text="Chu Văn Sơn"
+                        />
+                    </div>
+                </section>
                 
             </main>
 
