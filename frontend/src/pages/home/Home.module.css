@@ -119,30 +119,16 @@
     padding: 1rem 3rem;
     background-color: white;
     transition: all 0.15s;
+    border-radius: 25px;
     color: red;
     position: relative;
-}
-
-.overview button::after {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    bottom: -2px;
-    right: -2px;
-    background-color: red;
-    border-radius: 29px;
-    z-index: -1;
+    border: 2px solid red;
+    cursor: pointer;
 }
 
 .overview button:hover {
-    background-color: red;
-    border: none;
     color: white;
-    transition: all 0.15s;
-}
-
-.overview button:hover::after {
+    background-color: red;
     box-shadow: 0 4px 15px red;
 }
 
