@@ -1,11 +1,13 @@
 import express from "express";
 import { getConnection } from "./lib/db.js";
-
+import authRoutes from "./routes/auth.routes.js";
+import dotenv from "dotenv";
 const app = express();
 
 app.get('/', (req, res) => {
   return res.json("BACKEND");
 });
+
 
 app.get("/users", async (req, res) => {
   try {
@@ -21,3 +23,5 @@ app.get("/users", async (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log("server is running on port", process.env.PORT);
 });
+
+app.use("/api/auth", authRoutes);
