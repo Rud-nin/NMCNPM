@@ -1,4 +1,4 @@
-.sign-in-page {
+.signUpPage {
   height: 100vh;
   display: flex;
   align-items: center;
@@ -7,18 +7,18 @@
   font-family: Roboto, Arial;
 }
 
-.sign-in-container {
+.signUpContainer {
   display: flex;
   background: rgb(227, 227, 227);
   border-radius: 10px;
   overflow: hidden;
-  height: 85vh;
   width: 1000px;
+  height: 85vh;
   max-width: 95%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.sign-in-left {
+.signUpLeft {
   flex: 1;
   display: flex;
   align-items: center;
@@ -27,12 +27,12 @@
   padding-left: 20px;
 }
 
-.sign-in-left img {
+.signUpLeft img {
   width: 100%;
   max-width: 450px;
 }
 
-.sign-in-right {
+.signUpRight {
   flex: 1;
   padding: 60px 50px;
   display: flex;
@@ -40,12 +40,12 @@
   justify-content: center;
 }
 
-.sign-in-right div {
+.signUpRight div {
   display: flex;
   justify-content: center;
 }
 
-.sign-in-right h2 {
+.signUpRight h2 {
   text-align: left;
   font-size: 30px;
   font-weight: 600;
@@ -53,11 +53,11 @@
   color: rgb(35, 35, 35);
 }
 
-.input-group {
+.inputGroup {
   margin-bottom: 20px;
 }
 
-.input-group input {
+.inputGroup input {
   width: 100%;
   padding: 14px 18px;
   border: none;
@@ -65,7 +65,7 @@
   font-size: 15px;
 }
 
-.sign-in-right button {
+.signUpRight button {
   width: 100%;
   padding: 14px;
   border: none;
@@ -77,28 +77,19 @@
   transition: background 0.3s ease;
 }
 
-.sign-in-right button:hover {
+.signUpRight button:hover {
   background: #5643a0;
 }
 
-.forgot {
-  margin-top: 10px;
-  font-size: 14px;
-  color: rgb(97, 97, 97);
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-}
-
-.sign-up-link {
-  margin-top: 40px;
+.signInLink {
+  margin-top: 20px;
   color: rgb(97, 97, 97);
   cursor: pointer;
   font-size: 14px;
   text-decoration: none;
 }
 
-.forgot:hover,
-.sign-up-link:hover {
+.signInLink:hover {
   text-decoration: underline;
 }
+
