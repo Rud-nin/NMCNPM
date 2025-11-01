@@ -1,9 +1,13 @@
 import express from "express";
 import { getConnection } from "./lib/db.js";
-import authRoutes from "./routes/auth.routes.js";
-import dotenv from "dotenv";
-const app = express();
+import authRoutes from "../src/routes/auth.routes.js";
+import cookieParser from "cookie-parser";
 
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
+
+app.use("/api/auth", authRoutes);
 app.get('/', (req, res) => {
   return res.json("BACKEND");
 });
@@ -24,4 +28,3 @@ app.listen(process.env.PORT, () => {
   console.log("server is running on port", process.env.PORT);
 });
 
-app.use("/api/auth", authRoutes);
