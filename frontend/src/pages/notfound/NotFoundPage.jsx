@@ -1,0 +1,26 @@
+import { Link } from 'react-router'
+import './NotFoundPage.css'
+
+export default function NotFound() {
+  return (
+    <div className="notfound-container">
+      <h2 className="title">Không có kết quả</h2>
+      <h1 className="error-code">404</h1>
+      <p>Không thấy nội dung tìm kiếm.{'\n'}Hãy thử tìm kiếm khác.</p>
+
+      <Link to="/" className="btn home">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 640 640"
+          width="32"
+          height="32"
+          fill="currentColor"
+          className="arrow-icon"
+        >
+          <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z" />
+        </svg>
+        Về trang chủ
+      </Link>
+    </div>
+  )
+}
