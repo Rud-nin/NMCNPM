@@ -1,0 +1,55 @@
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  zindex: 50;
+  width: 50px;
+  height: 24px;
+  background-color: var(--toggleTheme-bg, #ccc);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: left 0.3s ease, background-color 0.3s ease;
+}
+
+.theme-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Icon bên trong */
+.theme-icon .icon {
+  fill: var(--toggle-icon, #333);
+  transition: fill 0.3s ease;
+}
+
+/* Khi theme là dark, di chuyển slider sang phải */
+html[data-theme='dark'] .theme-slider {
+  left: calc(100% - 22px);
+  background-color: #222;
+}
+
+html[data-theme='dark'] .theme-toggle {
+  background-color: #666;
+}
+
+html[data-theme='dark'] .theme-icon .icon {
+  fill: #ffd166;
+}
+
+.theme-transitions * {
+  transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease;
+}
