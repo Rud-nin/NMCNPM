@@ -2,12 +2,17 @@ import { User } from "../models/user_auth_model.js";
 import { generateToken } from "../lib/utils.js";
 import bcrypt from "bcryptjs";
 
+//@desc Sign Up a user
+//@route POST /api/auth/signup
+//@access public
+//require: { FullName, Email, Password, BirthDate, StudentID, ID }
+
 export const signup = async (req, res) => {
-  const { FullName, Email, Password } = req.body;
+  const { FullName, Email, Password, BirthDate, StudentID, ID } = req.body;
 
   try {
     // Kiểm tra dữ liệu đầu vào
-    if (!FullName || !Email || !Password) {
+    if (!FullName || !Email || !Password || !BirthDate || !StudentID || !ID) {
       return res.status(400).json({ message: "All fields are required." });
     }
     if (Password.length < 6) {
@@ -29,6 +34,9 @@ export const signup = async (req, res) => {
       FullName,
       Email,
       Password: hashedPassword,
+      BirthDate,
+      StudentID,
+      ID
     });
 
 
@@ -39,6 +47,9 @@ export const signup = async (req, res) => {
         UserID: newUser.UserID,
         FullName: newUser.FullName,
         Email: newUser.Email,
+        BirthDate: newUser.BirthDate,
+        StudentID: newUser.StudentID,
+        ID: newUser.ID,
         ProfilePic: newUser.ProfilePic,
       });
     } else {
@@ -49,6 +60,11 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
+//@desc Login a user
+//@route POST /api/auth/login
+//@access public
+//require: { Email, Password }
 
 export const login = async (req, res) => {
   const { Email, Password } = req.body;
@@ -66,8 +82,10 @@ export const login = async (req, res) => {
       UserID: user.UserID,
       FullName: user.FullName,
       Email: user.Email,
+      BirthDate: user.BirthDate,
+      StudentID: user.StudentID,
+      ID: user.ID,
       ProfilePic: user.ProfilePic,
-
     });
 
   } catch (error){
@@ -75,6 +93,11 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error."});
   }
 };
+
+//@desc Logout a user
+//@route POST /api/auth/logout
+//@access public
+//require: nothing
 
 export const logout = (req, res) => {
   try{
@@ -85,6 +108,12 @@ export const logout = (req, res) => {
     res.status(500).json({ message: "Internal Server Error."});
   }
 };
+
+//@desc Check Authorization of a user
+//@route GET /api/auth/check
+//@access private
+//require: cookies (Được xác thực trong middleware protectRoute)
+//return: user information => { UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic }
 
 export const checkAuth = (req, res) => {
   try {
