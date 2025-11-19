@@ -5,18 +5,52 @@ body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
   overflow-x: hidden;
-  background-color: var(--body-bg);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 
 :root {
+  /* GLOBAL */
+  --bg-primary: hsl(0, 0%, 95%);
+  --bg-secondary: hsl(0, 0%, 90%);
+  --bg-third: hsl(0, 0%, 85%);
+
+  --additional-primary: darkred;
+  --additional-secondary: darkblue;
+
+  --bg-inverse-primary: hsl(240, 100%, 15%);
+  --bg-inverse-secondary: hsl(240, 100%, 20%);
+  --bg-inverse-third: hsl(240, 100%, 25%);
+
+  --text-primary: hsl(0, 0%, 5%);
+  --text-muted: hsl(0, 0%, 20%);
+  --text-inverse-primary: hsl(0, 0%, 95%);
+
+  --error: hsl(1, 77%, 45%);
+  --error-muted: hsl(1, 77%, 65%);
+
+  --success: hsl(122, 72%, 40%);
+  --success-muted: hsl(122, 72%, 60%);
+
+  --info: hsl(226, 77%, 45%);
+  --info-muted: hsl(226, 77%, 55%);
+
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.25);
+
+  --shadow: rgba(0, 0, 0, 0.1);
+
+  --transition-duration-fast: 0.15s;
+  --transition-duration: 0.25s;
+  --transition-duration-long: 0.35s;
+
   --body-bg: white;
 
   --primary-color: red;
   --secondary-color: darkblue;
 
-  --text-primary: black;
-  --text-muted: grey;
+  /* --text-primary: black; */
+  /* --text-muted: grey; */
 
   /* HOME */
   --header-bg: red;
@@ -42,15 +76,32 @@ body {
   --link-color: rgb(97, 97, 97);
 
   --themeToggle: rgb(59, 130, 216);
+
+  /* ADMIN */
+  --side-bar-bg: #111827;
+  --side-bar-text: hsl(0, 0%, 90%);
 }
 
 [data-theme='dark'] {
+  /* GLOBAL */
+  --bg-primary: hsl(240, 100%, 15%);
+  --bg-secondary: hsl(240, 100%, 20%);
+  --bg-third: hsl(240, 100%, 25%);
+
+  --bg-inverse-primary: hsl(0, 0%, 95%);
+  --bg-inverse-secondary: hsl(0, 0%, 90%);
+  --bg-inverse-third: hsl(0, 0%, 85%);
+
+  --text-primary: hsl(0, 0%, 95%);
+  --text-muted: hsl(0, 0%, 60%);
+  --text-inverse-primary: hsl(0, 0%, 15%);
+  
   --body-bg: #132440;
   --primary-color: #bf092f;
   --secondary-color: darkblue;
 
-  --text-primary: white;
-  --text-muted: #9ca3af;
+  /* --text-primary: white; */
+  /* --text-muted: #9ca3af; */
 
   /* HOME */
   --header-bg: #bf092f;

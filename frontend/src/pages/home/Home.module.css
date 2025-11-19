@@ -51,7 +51,7 @@
 
 .header {
   width: 100vw;
-  background: linear-gradient(to bottom, var(--header-bg) 0 70%, transparent);
+  background-color: var(--header-bg);
   display: flex;
   align-items: center;
   justify-content: center;
