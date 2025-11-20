@@ -1,4 +1,4 @@
-.notfound-container {
+.notfoundContainer {
   height: 100vh;
   color: var(--text-primary);
   display: flex;
@@ -29,18 +29,18 @@
   border-radius: 3px;
 }
 
-.error-code {
+.errorCode {
   font-size: 10rem;
   font-weight: bold;
   margin: 0;
 }
 
-.notfound-container p {
+.notfoundContainer p {
   font-size: 1.4rem;
   margin-bottom: 2rem;
 }
 
-.btn.home {
+.homeBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -54,21 +54,21 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.btn.home:hover {
+.homeBtn:hover {
   background-color: #a4161a;
 }
 
 /* SVG mũi tên animation */
-.arrow-icon {
+.arrowIcon {
   transition: transform 0.3s ease;
 }
 
-.btn.home:hover .arrow-icon {
+.homeBtn:hover .arrowIcon {
   transform: translateX(-10px);
 }
 
 @media (max-width: 480px) {
-  .notfound-container p {
+  .notfoundContainer p {
     display: block;
     text-align: center;
     white-space: pre-line; /* giữ xuống dòng nếu có \n */

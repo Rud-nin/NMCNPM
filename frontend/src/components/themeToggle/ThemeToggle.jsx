@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
-import './ThemeToggle.css'
+import { useRef, useEffect, useState } from 'react'
+import styles from './ThemeToggle.module.css'
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState('light')
+  const isInitial = useRef(true)
+  const timeoutRef = useRef(null)
 
   const svgMoon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 640 640"
-      className="icon"
+      className={styles.icon}
       width="20"
       height="20"
     >
@@ -20,7 +22,7 @@ export default function ThemeToggle() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
-      className="icon"
+      className={styles.icon}
       width="15"
       height="15"
     >
@@ -31,12 +33,10 @@ export default function ThemeToggle() {
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark'
     setTheme(newTheme)
-    document.documentElement.setAttribute('data-theme', newTheme)
-    localStorage.setItem('theme', newTheme)
   }
 
+  // init
   useEffect(() => {
-    document.documentElement.classList.add('theme-transitions')
     const savedTheme = localStorage.getItem('theme')
     const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const currentTheme = savedTheme || (preferDark ? 'dark' : 'light')
@@ -45,10 +45,40 @@ export default function ThemeToggle() {
     document.documentElement.setAttribute('data-theme', currentTheme)
   }, [])
 
+  // add temporary transition effect when theme changes
+  useEffect(() => {
+    if (isInitial.current) {
+      isInitial.current = false
+      return
+    }
+
+    const el = document.documentElement
+    el.classList.add(styles.themeTransitions)
+
+    el.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+
+    // remove the transition class after the transition duration
+    timeoutRef.current = setTimeout(() => {
+      el.classList.remove(styles.themeTransitions)
+      timeoutRef.current = null
+    }, 300)
+
+    // cleanup
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+
+      el.classList.remove(styles.themeTransitions)
+    }
+  }, [theme])
+
   return (
-    <div className="theme-toggle" onClick={toggleTheme}>
-      <div className="theme-slider">
-        <span className="theme-icon">
+    <div className={styles.themeToggle} onClick={toggleTheme}>
+      <div className={styles.themeSlider}>
+        <span className={styles.themeIcon}>
           {theme === 'light' ? svgSun : svgMoon}
         </span>
       </div>

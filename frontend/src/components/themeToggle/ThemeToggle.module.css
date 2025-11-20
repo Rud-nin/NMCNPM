@@ -1,4 +1,4 @@
-.theme-toggle {
+.themeToggle {
   position: fixed;
   top: 1rem;
   right: 1rem;
@@ -10,7 +10,7 @@
   cursor: pointer;
 }
 
-.theme-slider {
+.themeSlider {
   position: absolute;
   top: 2px;
   left: 2px;
@@ -20,7 +20,7 @@
   border-radius: 50%;
 }
 
-.theme-icon {
+.themeIcon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,16 +29,16 @@
 }
 
 /* Icon bên trong */
-.theme-icon .icon {
+.themeIcon .icon {
   fill: var(--themeToggle);
 }
 
 /* Khi theme là dark, di chuyển slider sang phải */
-html[data-theme='dark'] .theme-slider {
+html[data-theme='dark'] .themeSlider {
   left: calc(100% - 22px);
 }
 
-.theme-transitions * {
+.themeTransitions * {
   transition: background-color 0.3s ease, color 0.3s ease, fill 0.3s ease,
     left 0.3s ease;
 }
