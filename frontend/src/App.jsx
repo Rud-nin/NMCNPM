@@ -3,6 +3,7 @@ import { SignUpPage } from './pages/signup/SignUpPage';
 import { SignInPage } from './pages/signin/SignInPage';
 import LoadingPage from './pages/loading/LoadingPage';
 import NotFoundPage from './pages/notfound/NotFoundPage';
+import { TestPage } from './pages/TestPage';
 import Home from './pages/home/Home';
 import AdminDashboard from './pages/admin_dashboard/AdminDashboard';
 
@@ -30,10 +31,11 @@ function App() {
       <ThemeToggle />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signin" element={!authUser ? <SignInPage /> : <Navigate to="/" />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={!authUser ? <SignInPage /> : <Navigate to="/test" />} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : < Navigate to="/test" />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
+        <Route path="/test" element={!authUser ? < SignInPage /> : < TestPage />} />
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>
       <Toaster />
