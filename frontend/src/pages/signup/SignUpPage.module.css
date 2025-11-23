@@ -13,8 +13,8 @@
   border-radius: 10px;
   overflow: hidden;
   width: 1000px;
-  height: 85vh;
-  max-width: 95%;
+  height: 93vh;
+  max-width:90%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,20 +53,43 @@
 }
 
 .inputGroup {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column; 
+}
+
+.inputGroup label {
+  font-weight: 500;      
+  font-size: 14px;       
+  color: #555;          
+  margin-bottom: 6px; 
+  cursor: text;       
 }
 
 .inputGroup input {
   width: 100%;
-  padding: 14px 18px;
-  border: none;
+  padding: 10px 14px;
+  border: 1px solid #ccc; 
   border-radius: 25px;
   font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.signUpRight button {
-  width: 100%;
-  padding: 14px;
+.inputGroup input:focus {
+  border-color: #4a90e2; 
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.signUpButtonContainer {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row; 
+}
+
+.signUpButtonContainer button {
+  width: 50%;
+  padding: 12px;
   border: none;
   border-radius: 25px;
   background: var(--submit-btn);

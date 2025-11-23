@@ -8,6 +8,7 @@ import AdminDashboard from './pages/admin_dashboard/AdminDashboard'
 import ThemeToggle from './components/themeToggle/ThemeToggle'
 
 import './App.css'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <Toaster />
     </div>
   )
 }
