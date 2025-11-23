@@ -25,7 +25,7 @@ export function SignInPage() {
     if (!formData.Email.trim()) return toast.error("Bạn chưa điền Email!");
     if (!formData.Password) return toast.error("Bạn chưa điền Mật khẩu!");
 
-    return false;
+    return true;
   }
 
   const submit = async (event) => {
@@ -52,7 +52,7 @@ export function SignInPage() {
             <form onSubmit={submit}>
               <div className={styles.inputGroup}>
                 <label>Email</label>
-                <div class={styles.inputWrapper}>
+                <div className={styles.inputWrapper}>
                   <input 
                     type="email" 
                     placeholder="example@gmail.com" 
