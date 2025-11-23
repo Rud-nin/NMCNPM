@@ -9,7 +9,15 @@ export const useAuthStore = create((set) => ({
   isCheckingAuth: true, 
 
   checkAuth: async () => {
-    
+    try {
+      const res = await axiosInstance.get("/auth/check");
+      set({ authUser: res.data });
+    } catch (error) {
+      console.log("Error in checkAuth:", error);
+      set({ authUser: null });
+    } finally {
+      set({ isCheckingAuth: false });
+    }
   },
 
   signup: async (data) => {
@@ -26,10 +34,25 @@ export const useAuthStore = create((set) => ({
   },
 
   signin: async (data) => {
-    
+    set({isSigningIn: true});
+    try {
+      const res = await axiosInstance.post("/api/login", data);
+      set({ authUser: res.data });
+      toast.success("Đăng nhập thành công!");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isSigningIn: false});
+    }
   },
 
   logout: async () => {
-
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   },
 }));

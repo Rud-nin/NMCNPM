@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
 
 import toast from "react-hot-toast";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export function SignUpPage() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     FullName: "",
     Email: "",
@@ -39,7 +42,7 @@ export function SignUpPage() {
   const submit = (event) => {
     event.preventDefault();
 
-    if (validateForm() == true) {
+    if (validateForm()) {
       signup(formData);
     }
   }
@@ -60,65 +63,92 @@ export function SignUpPage() {
             <form onSubmit={submit}>
               <div className={styles.inputGroup}>
                 <label>Họ và tên</label>
-                <input 
-                  type="text" 
-                  placeholder="Chu Văn Sơn" 
-                  value={formData.FullName}
-                  onChange={(event) => setFormData({...formData, FullName: event.target.value})}
-                />
+                <div class={styles.inputWrapper}>
+                  <input 
+                    type="text" 
+                    placeholder="Chu Văn Sơn" 
+                    value={formData.FullName}
+                    onChange={(event) => setFormData({...formData, FullName: event.target.value})}
+                  />
+                </div>
               </div>
               <div className={styles.inputGroup}>
                 <label>Ngày Sinh</label>
-                <input 
-                  type="text" 
-                  placeholder="31/12/2005"
-                  value={formData.BirthDate}
-                  onChange={(event) => setFormData({...formData, BirthDate: event.target.value})}
-                />
+                <div class={styles.inputWrapper}>
+                  <input 
+                    type="text" 
+                    placeholder="31/12/2005"
+                    value={formData.BirthDate}
+                    onChange={(event) => setFormData({...formData, BirthDate: event.target.value})}
+                  />
+                </div>
               </div>
               <div className={styles.inputGroup}>
                 <label>Mã số sinh viên</label>
-                <input 
-                  type="text" 
-                  placeholder="20230000" 
-                  value={formData.StudentID}
-                  onChange={(event) => setFormData({...formData, StudentID: event.target.value})}
-                />
+                <div class={styles.inputWrapper}>
+                  <input 
+                    type="text" 
+                    placeholder="20230000" 
+                    value={formData.StudentID}
+                    onChange={(event) => setFormData({...formData, StudentID: event.target.value})}
+                  />
+                </div>
               </div>
               <div className={styles.inputGroup}>
                 <label>Số CCCD</label>
-                <input 
-                  type="text" 
-                  placeholder="001200000000" 
-                  value={formData.ID}
-                  onChange={(event) => setFormData({...formData, ID: event.target.value})}
-                />
+                <div class={styles.inputWrapper}>
+                  <input 
+                    type="text" 
+                    placeholder="001200000000" 
+                    value={formData.ID}
+                    onChange={(event) => setFormData({...formData, ID: event.target.value})}
+                  />
+                </div>
               </div>
               <div className={styles.inputGroup}>
                 <label>Email</label>
-                <input 
-                  type="text" 
-                  placeholder="son@gmail.com" 
-                  value={formData.Email}
-                  onChange={(event) => setFormData({...formData, Email: event.target.value})}
-                />
+                <div class={styles.inputWrapper}>
+                  <input 
+                    type="text" 
+                    placeholder="son@gmail.com" 
+                    value={formData.Email}
+                    onChange={(event) => setFormData({...formData, Email: event.target.value})}
+                  />
+                </div>
               </div>
-              <div className={styles.inputGroup}>
+              <div className={styles.passwordGroup}>
                 <label>Mật khẩu</label>
-                <input 
-                  type="password" 
-                  placeholder="Mật khẩu" 
-                  value={formData.Password}
-                  onChange={(event) => setFormData({...formData, Password: event.target.value})}
-                />
+                <div className={styles.passwordWrapper}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="••••••••"  
+                    value={formData.Password}
+                    onChange={(event) => setFormData({...formData, Password: event.target.value})}
+                  />
+                  <button
+                    type="button"
+                    className={styles.togglePassword}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff />
+                    ) : (
+                      <Eye />
+                    )}
+                  </button>           
+                </div>     
               </div>
-              <div className={styles.signUpButtonContainer}>
-                <button 
-                  type="submit"
-                  disabled={isSigningUp}
-                >{isSigningUp ? ("Loading...") : ("Đăng kí")}
-                </button>
-              </div>
+              <button 
+                type="submit"
+                disabled={isSigningUp}
+                className={styles.signUpButton}
+              >{isSigningUp ? (
+                <>
+                  < Loader2 className={styles.loader} />
+                  Loading...
+                </>
+              ) : ("Đăng kí")}
+              </button>
             </form>
 
             <div>
