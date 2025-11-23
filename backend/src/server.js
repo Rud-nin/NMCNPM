@@ -2,12 +2,14 @@ import express from "express";
 import { getConnection } from "./lib/db.js";
 import authRoutes from "../src/routes/auth.routes.js";
 import cookieParser from "cookie-parser";
+import notificationRoutes from "../src/routes/notification.routes.js"
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.get('/', (req, res) => {
   return res.json("BACKEND");
 });

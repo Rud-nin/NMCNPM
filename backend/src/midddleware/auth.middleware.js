@@ -19,7 +19,7 @@ export const protectRoute = async (req, res, next) => {
         const result = await pool
             .request()  
             .input("UserID",decoded.userId)
-            .query("SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic FROM Users WHERE UserID = @UserID");
+            .query("SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic,Role FROM Users WHERE UserID = @UserID");
         const user = result.recordset[0];
         if(!user){
             return res.status(401).json({ message: "User Not Found" });
