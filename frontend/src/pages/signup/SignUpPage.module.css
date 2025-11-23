@@ -1,0 +1,205 @@
+.signUpPage {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--form-bg);
+  font-family: Roboto, Arial;
+}
+
+.signUpContainer {
+  display: flex;
+  background: var(--form-dialog-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  width: 1000px;
+  height: 93vh;
+  max-width:90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.signUpLeft {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 20px;
+}
+
+.signUpLeft img {
+  width: 100%;
+  max-width: 450px;
+}
+
+.signUpRight {
+  flex: 1;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signUpRight div {
+  display: flex;
+  justify-content: center;
+}
+
+.signUpRight h2 {
+  text-align: left;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: var(--form-header);
+}
+
+.inputGroup {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column; 
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.inputGroup label {
+  font-weight: 500;      
+  font-size: 14px;       
+  color: #555;          
+  margin-bottom: 6px; 
+  cursor: text;       
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc; 
+  border-radius: 25px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputWrapper input:focus {
+  border-color: #4a90e2; 
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.signUpButtonContainer {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row; 
+}
+
+.signUpButton {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background: var(--submit-btn);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.signUpRight button:hover {
+  background: var(--submit-hover);
+}
+
+.signInLink {
+  margin-top: 20px;
+  color: var(--link-color);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.signInLink:hover {
+  text-decoration: underline;
+}
+
+.loader {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: #fff; /* màu trắng cho vòng xoay */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px; /* cách chữ "Loading..." */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 
+password
+*/
+
+.passwordGroup {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.passwordGroup label {
+  font-weight: 500;      
+  font-size: 14px;       
+  color: #555;          
+  margin-bottom: 6px; 
+  cursor: text;         
+}
+
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  width: 100%;
+  padding: 10px 40px 10px 14px; /* padding-right đủ để nhường chỗ cho nút toggle */
+  border: 1px solid #ccc; 
+  border-radius: 25px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.passwordWrapper input:focus {
+  border-color: #4a90e2; 
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.togglePassword svg {
+  width: 20px;
+  height: 20px;
+  color: #777;
+}
+
+.togglePassword:hover svg {
+  color: #333;
+}
