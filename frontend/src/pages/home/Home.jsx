@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styles from "./Home.module.css";
 
 function FeatureCard({image, text}) {
@@ -19,6 +20,8 @@ function ContactCard({image, text}) {
 }
 
 export default function Home() {
+    const navigate = useNavigate();
+
     return (
         <>
             <header className={styles.header}>
@@ -51,7 +54,7 @@ export default function Home() {
                     </div>
                     <h1>Hệ thống quản lý chung cư - KTX Ehust-max</h1>
                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure, sint reiciendis cupiditate alias optio est quos aut, illo harum ducimus modi laudantium velit laboriosam ratione illum earum tempora similique quo!</p>
-                    <button>Đăng nhập</button>
+                    <button onClick={() => navigate('/signin')}>Đăng nhập</button>
                 </section>
 
                 <section className={styles.features}>

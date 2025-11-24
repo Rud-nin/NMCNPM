@@ -1,9 +1,10 @@
 import { Link } from 'react-router';
-import styles from "./SignInPage.module.css";
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { Loader2, EyeOff, Eye } from "lucide-react";
 import toast from 'react-hot-toast';
+import styles from "./SignInPage.module.css";
 
 /* 
 Chưa làm link phần Quên mật khẩu
@@ -19,7 +20,9 @@ export function SignInPage() {
   // Ghi nhớ mật khẩu => chưa xử lý
   const [rememberMe, setRememberMe] = useState(false);
 
-  const { signin, isSigningIn } = useAuthStore();
+  const { authUser, signin, isSigningIn } = useAuthStore();
+
+  const navigate = useNavigate();
 
   const validateForm = () => {
     if (!formData.Email.trim()) return toast.error("Bạn chưa điền Email!");
@@ -31,7 +34,8 @@ export function SignInPage() {
   const submit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
-      signin(formData);
+      await signin(formData);
+      if(authUser) navigate('/user');
     }
   }
 

@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, Navigate, useNavigate } from 'react-router';
 import styles from './SignUpPage.module.css';
 import { useState } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -18,7 +18,9 @@ export function SignUpPage() {
     ID: "",
   });
 
-  const { signup, isSigningUp } = useAuthStore();
+  const { authUser, signup, isSigningUp } = useAuthStore();
+
+  const navigate = useNavigate();
 
   const isValidDate = (date) => {
     const regex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
@@ -39,11 +41,11 @@ export function SignUpPage() {
     return true;
   };
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
-
     if (validateForm()) {
-      signup(formData);
+      await signup(formData);
+      if(authUser) navigate('/user');
     }
   }
 
