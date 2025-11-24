@@ -51,6 +51,7 @@ export const signup = async (req, res) => {
         StudentID: newUser.StudentID,
         ID: newUser.ID,
         ProfilePic: newUser.ProfilePic,
+        Role: newUser.Role,
       });
     } else {
       return res.status(400).json({ message: "Invalid user data." });
@@ -86,6 +87,7 @@ export const login = async (req, res) => {
       StudentID: user.StudentID,
       ID: user.ID,
       ProfilePic: user.ProfilePic,
+      Role: user.Role,
     });
 
   } catch (error){
