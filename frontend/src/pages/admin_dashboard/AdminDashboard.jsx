@@ -1,7 +1,8 @@
+import Notification from "../../components/Notification/Notification";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
 
-function Sidebar({ state, onChange }) {
+function Sidebar({ onChange }) {
     
     return (
         <div className={styles.sidebar}>
@@ -34,7 +35,13 @@ function Sidebar({ state, onChange }) {
     );
 }
 
-function Dashboard() {}
+function Dashboard() {
+    return (
+        <div>
+            <Notification />
+        </div>
+    );
+}
 function User() {}
 function Report() {}
 function Setting() {}
@@ -45,8 +52,7 @@ export default function AdminDashboard() {
 
     return (
         <div className={styles.wrapper}>
-            <Sidebar 
-                state={state}
+            <Sidebar
                 onChange={(nextState) => changeState(nextState)}
             />
             <section className={styles.section}>

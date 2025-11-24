@@ -1,0 +1,14 @@
+.button {
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: var(--bg-inverse-primary);
+    color: var(--text-inverse-primary);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition-duration);
+}
+
+.button:hover {
+    background-color: var(--bg-inverse-secondary);
+}
