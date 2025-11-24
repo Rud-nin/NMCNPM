@@ -45,7 +45,8 @@ export function SignUpPage() {
     event.preventDefault();
     if (validateForm()) {
       await signup(formData);
-      if(authUser) navigate('/user');
+      if(authUser?.Role === 'Admin') navigate('/admin');
+      else if(authUser?.Role === 'User') navigate('/user');
     }
   }
 

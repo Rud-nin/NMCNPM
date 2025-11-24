@@ -23,8 +23,8 @@ function App() {
   useEffect(() => {
     (async () => {
       await checkAuth();
-      if(authUser?.role === 'Admin') navigate('/admin');
-      else if(authUser?.role === 'User') navigate('/user');
+      if(authUser?.Role === 'Admin') navigate('/admin');
+      else if(authUser?.Role === 'User') navigate('/user');
     })();
   }, []);
 
