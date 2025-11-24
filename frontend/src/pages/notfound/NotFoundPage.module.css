@@ -1,0 +1,76 @@
+.notfoundContainer {
+  height: 100vh;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: Roboto, Arial;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 0.6rem;
+}
+
+/* Gạch chân ngắn, căn giữa, mềm mại */
+.title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 10px);
+  width: 80px;
+  height: 4px;
+  background-color: #d62828;
+  border-radius: 3px;
+}
+
+.errorCode {
+  font-size: 10rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.notfoundContainer p {
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.homeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #d62828;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.homeBtn:hover {
+  background-color: #a4161a;
+}
+
+/* SVG mũi tên animation */
+.arrowIcon {
+  transition: transform 0.3s ease;
+}
+
+.homeBtn:hover .arrowIcon {
+  transform: translateX(-10px);
+}
+
+@media (max-width: 480px) {
+  .notfoundContainer p {
+    display: block;
+    text-align: center;
+    white-space: pre-line; /* giữ xuống dòng nếu có \n */
+  }
+}

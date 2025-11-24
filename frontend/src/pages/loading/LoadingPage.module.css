@@ -1,0 +1,23 @@
+.loaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* full screen */
+  width: 100vw;
+}
+
+.loaderIcon {
+  width: 40px;   /* chiều rộng icon */
+  height: 40px;  /* chiều cao icon */
+  color: #4a90e2; /* màu icon */
+  animation: spin 1s linear infinite; /* xoay liên tục */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
