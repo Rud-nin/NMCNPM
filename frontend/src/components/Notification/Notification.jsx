@@ -83,7 +83,7 @@ function Notification() {
                             <Button onClick={async () => {
                                 await createNotification(newNotification.title, newNotification.content);
                                 setNewNotification(null);
-                                await getNotifications();
+                                await fetchNoti();
                             }}>Thêm</Button>
                             <Button onClick={() => setNewNotification(null)}>Hủy</Button>
                         </div>

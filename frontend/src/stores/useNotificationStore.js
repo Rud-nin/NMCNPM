@@ -22,7 +22,7 @@ export const useNotificationStore = create((set) => ({
   getNotifications: async () => {
     set({ isLoading: true });
     try {
-      return await axiosInstance.get('/notifications');
+      return (await axiosInstance.get('/notifications')).data;
       // return await fetch('/notification.example.json').then(res => res.json());
     } catch (err) {
       toast.error('Có lỗi trong khi lấy thông báo!');
