@@ -1,4 +1,5 @@
 import Notification from "../../components/Notification/Notification";
+import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
 
@@ -39,6 +40,7 @@ function Dashboard() {
     return (
         <div>
             <Notification />
+            <PaymentHistory />
         </div>
     );
 }

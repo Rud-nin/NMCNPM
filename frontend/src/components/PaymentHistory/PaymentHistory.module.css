@@ -1,0 +1,37 @@
+.paymentHistory {
+    padding: 1rem;
+}
+
+.paymentHistory table {
+    width: 100%;
+    border-radius: 5px;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+.paymentHistory thead {
+    background-color: var(--bg-inverse-primary);
+    color: var(--text-inverse-primary);
+}
+
+.paymentHistory header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.paymentHistory td {
+    border: 1px solid var(--bg-secondary);
+}
+
+.paymentHistory td {
+    text-align: center;
+}
+
+.paymentHistory tbody tr:nth-child(even) {
+    background-color: var(--bg-secondary);
+}
+
+.paymentHistory th, .paymentHistory td {
+    padding: 0.5rem 1ch;
+}
