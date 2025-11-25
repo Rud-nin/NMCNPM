@@ -65,14 +65,15 @@ UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test
 INSERT INTO dbo.Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)
 VALUES ('test@example.com', 'Test1', 'secret123', "2005-04-11", '20235412', '12345', '');
 
-DROP TABLE Notifications;
-DROP TABLE UserBalance;
-DROP TABLE TopUpTransactions;
-DROP TABLE ServicePayments;
-DROP TABLE Users;
 
 SELECT * FROM Users;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;
 SELECT * FROM TopUpTransactions;
 SELECT * FROM ServicePayments;
+
+DROP TABLE Notifications;
+DROP TABLE UserBalance;
+DROP TABLE TopUpTransactions;
+DROP TABLE ServicePayments;
+DROP TABLE Users;
