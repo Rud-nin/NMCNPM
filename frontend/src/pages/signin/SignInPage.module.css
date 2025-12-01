@@ -39,6 +39,11 @@
   justify-content: center;
 }
 
+.signInRight div {
+  display: flex;
+  justify-content: center;
+}
+
 .inputGroup {
   margin-bottom: 15px;
   display: flex;
