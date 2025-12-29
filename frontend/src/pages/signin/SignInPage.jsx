@@ -6,19 +6,20 @@ import { Loader2, EyeOff, Eye } from "lucide-react";
 import toast from 'react-hot-toast';
 import styles from "./SignInPage.module.css";
 
-/* 
-Chưa làm link phần Quên mật khẩu
-*/
+
 export function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
 
+  // Lấy tài khoản, mật khẩu trong localStorage
+  const rememberFormData = JSON.parse(localStorage.getItem("remember")) || { Email: "", Password: ""};
+
   const [formData, setFormData] = useState({
-    Email: "",
-    Password: "",
+    Email: rememberFormData.Email,
+    Password: rememberFormData.Password,
   });
 
-  // Ghi nhớ mật khẩu => chưa xử lý
-  const [rememberMe, setRememberMe] = useState(false);
+  // Ghi nhớ mật khẩu 
+  const [rememberMe, setRememberMe] = useState(true);
 
   const { authUser, signin, isSigningIn } = useAuthStore();
 
@@ -34,6 +35,13 @@ export function SignInPage() {
   const submit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
+      // Nếu ấn ghi nhớ đăng nhập => lưu tài khoản, mật khẩu vào localStorage
+      if (rememberMe) {
+        localStorage.setItem("remember", JSON.stringify(formData));
+      } else {
+        localStorage.clear();
+      }
+
       await signin(formData);
       if(authUser?.Role === 'Admin') navigate('/admin');
       else if(authUser?.Role === 'User') navigate('/user');
@@ -51,8 +59,8 @@ export function SignInPage() {
           </div>
 
           <div className={styles.signInRight}>
-            <div>
-              <h2>Đăng nhập</h2>
+            <div className={styles.signInRightHeaderContainer}>
+              <h2 className={styles.signInRightHeader}>Đăng nhập</h2>
             </div>
             <form onSubmit={submit}>
               <div className={styles.inputGroup}>
@@ -100,7 +108,12 @@ export function SignInPage() {
               </button>
               <div className={styles.loginOptions}>
                 <div className={styles.rememberSection}>
-                  <input type="checkbox" value="remember-me"/>
+                  <input type="checkbox" value="remember-me" 
+                    onChange={(event) => {
+                      setRememberMe(!rememberMe);
+                    }}
+                    checked = {rememberMe}
+                  />
                   <label>Ghi nhớ đăng nhập</label>
                 </div>
                 <div>
