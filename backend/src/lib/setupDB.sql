@@ -15,7 +15,7 @@ CREATE TABLE dbo.Users (
 CREATE TABLE dbo.Notifications (
     NotificationID INT IDENTITY(1,1) PRIMARY KEY,   -- ID thông báo tăng tự động
 
-    UserID INT NOT NULL,
+    UserID INT NULL,
 
     Title NVARCHAR(100) NOT NULL,                   -- Tiêu đề thông báo
     Content NVARCHAR(MAX) NOT NULL,                 -- Nội dung thông báo
@@ -61,19 +61,54 @@ CREATE TABLE dbo.ServicePayments ( -- Trả tiền dịch vụ
     CONSTRAINT FK_Payment_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
 );
 
+CREATE TABLE dbo.Feedbacks (
+    FeedbackID INT IDENTITY(1,1) PRIMARY KEY,
+    
+    UserID INT NOT NULL,                -- Người gửi phản hồi
+    Title NVARCHAR(200) NOT NULL,       -- Tiêu đề
+    Content NVARCHAR(MAX) NOT NULL,     -- Nội dung
+    
+    Status NVARCHAR(20) DEFAULT 'Pending', -- Trạng thái: Pending (Chờ), Resolved (Đã xử lý)
+    CreatedAt DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Feedbacks_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
+);
+
+CREATE TABLE dbo.ServiceMonthly (
+    ServiceID INT IDENTITY(1,1) PRIMARY KEY,
+    
+    ServiceName NVARCHAR(100) NOT NULL UNIQUE,  -- Tên dịch vụ
+    Price DECIMAL(15, 3) NOT NULL CHECK (Price >= 0), -- Đơn giá
+    Descriptions NVARCHAR(200) NULL,             -- Mô tả chi tiết
+    
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
 UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test
 INSERT INTO dbo.Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)
-VALUES ('test@example.com', 'Test1', 'secret123', "2005-04-11", '20235412', '12345', '');
+VALUES ('test@example.com', 'Test1', 'secret123', '2005-04-11', '20235412', '12345', '');
 
+INSERT INTO dbo.ServiceMonthly (ServiceName, Price, Descriptions) 
+VALUES 
+(N'Phí gửi xe máy', 80000, N'Tính theo tháng'),
+(N'Tiền điện', 360000, N'Tính theo tháng'),
+(N'Tiền nước', 100000, N'Tính theo tháng'),
+(N'Phí dịch vụ', 50000, N'Tính theo tháng'),
+(N'Phí wifi',100000, N'Tính theo tháng'),
+(N'Vệ sinh chung', 30000, N'Tính theo tháng');
 
 SELECT * FROM Users;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;
 SELECT * FROM TopUpTransactions;
 SELECT * FROM ServicePayments;
+SELECT * FROM Feedbacks;
+SELECT * FROM ServiceMonthly;
 
 DROP TABLE Notifications;
 DROP TABLE UserBalance;
 DROP TABLE TopUpTransactions;
 DROP TABLE ServicePayments;
 DROP TABLE Users;
+DROP TABLE Feedbacks;
+DROP TABLE ServiceMonthly;

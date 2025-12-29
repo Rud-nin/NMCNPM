@@ -4,7 +4,7 @@ import { Notification } from "../models/notification_model.js";
 //route POST  /api/notifications
 
 export const sendNotification = async (req, res) => {
-    const {title, content} = req.body;
+    const {title, content, receiverId} = req.body;
 
     if(!title || !content){
         return res.status(400).json({message: "Title and content are required"});
@@ -14,7 +14,7 @@ export const sendNotification = async (req, res) => {
         const newNotification = await Notification.create({
             title,
             content,
-            adminId: req.user.UserID
+            receiverId: receiverId || null
         });
         res.status(201).json(newNotification);
 
@@ -29,7 +29,8 @@ export const sendNotification = async (req, res) => {
 
 export const getNotifications = async (req,res) => {
     try {
-        const list = await Notification.getAll();
+        const currentUserId = req.user.UserID;
+        const list = await Notification.getForUser(currentUserId);
         res.status(200).json(list);
     } catch(error) {
         console.error("Error fetching notification:", error);
