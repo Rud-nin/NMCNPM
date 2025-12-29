@@ -11,9 +11,12 @@ body {
 
 :root {
   /* GLOBAL */
-  --bg-primary: hsl(0, 0%, 95%);
-  --bg-secondary: hsl(0, 0%, 90%);
-  --bg-third: hsl(0, 0%, 85%);
+  --max-content-width: 1080px;
+  --ideal-width: min(90vw, var(--max-content-width));
+
+  --bg-primary: hsl(0, 0%, 100%);
+  --bg-secondary: hsl(0, 0%, 95%);
+  --bg-third: hsl(0, 0%, 90%);
 
   --additional-primary: darkred;
   --additional-secondary: darkblue;
