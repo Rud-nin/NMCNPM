@@ -100,3 +100,236 @@ File user_auth_model.js: Dùng để kết nối với CSDL(User)
 - User.create: ghi thông tin người dùng vào bảng với các tham số Email, Fullnam, Password, ProfilePic(cái này chưa kịp làm =)))), Trả về 1 đối tượng
 - User.getAll: Lấy tất cả thông tin từ Users, trả về các đối tượng
 - User.findByEmail: Tìm người dùng duy nhất bằng cột Email 
+
+
+
+1. Nhóm API Thông báo (Notification)
+a. Lấy danh sách thông báo
+Method & Endpoint: GET /api/notifications 
+Quyền hạn: User đã đăng nhập (protectRoute).
+Đầu vào (Input):
+Headers: Authorization: Bearer <token> (Token xác thực người dùng).
+Đầu ra (Output):
+Thành công (200): Mảng JSON chứa danh sách thông báo. Mỗi phần tử bao gồm: NotificationID, Title, Content, CreatedAt và UserID (ID người nhận, nếu để là null thì gửi cho toàn bộ).
+Lỗi (500): { message: "Server error" }.
+Tác dụng: Cho phép cư dân/người dùng xem các thông báo mới nhất từ ban quản lý (sắp xếp mới nhất lên đầu).
+
+b. Gửi thông báo mới
+Method & Endpoint: POST /api/notifications
+Quyền hạn: Chỉ Admin (requireAdmin).
+Đầu vào (Input):
+Headers: Authorization: Bearer <token> (Token của Admin).
+Body (JSON):
+JSON
+{
+  "title": "Thông báo cắt nước",
+  "content": "Sẽ cắt nước từ 8h đến 17h ngày..."
+}
+Đầu ra (Output):
+Thành công (201): Object thông báo vừa tạo (dữ liệu lấy từ DB sau khi insert).
+Lỗi (400): Thiếu title hoặc content.
+Lỗi (500): Server error.
+Tác dụng: Giúp Ban quản lý (Admin) gửi thông báo chung đến toàn bộ hệ thống.
+
+
+2. Nhóm API Nạp tiền (TopUp)
+File liên quan: topup.routes.js, topup_model.js, setupDB.sql
+a. Tạo giao dịch nạp tiền
+Method & Endpoint: POST / 
+Đầu vào (Input):
+Body (JSON):
+JSON
+{
+  "UserID": 123,
+  "Amount": 500000,
+  "Status": "Pending",  // Tùy chọn, mặc định là Pending hoặc Completed tùy logic
+  "CreatedAt": "2025-11-20..." // Tùy chọn
+}
+Đầu ra (Output):
+Thành công: { success: true, data: { TopUpID: ... } }
+Tác dụng: Người dùng tạo yêu cầu nạp tiền vào ví điện tử trong hệ thống (để sau này trừ tiền dịch vụ).
+
+b. Lấy tất cả lịch sử nạp tiền
+Method & Endpoint: GET /
+Đầu vào (Input): Không có (hoặc query params nếu mở rộng sau này).
+Đầu ra (Output):
+Mảng JSON danh sách tất cả giao dịch nạp tiền, kèm theo FullName của người nạp (Join với bảng Users).
+Tác dụng: Admin xem toàn bộ lịch sử nạp tiền của hệ thống để đối soát doanh thu.
+
+c. Lấy lịch sử nạp tiền theo User
+Method & Endpoint: GET /user/:id 
+Đầu vào (Input):
+id: ID của User cần xem .
+Đầu ra (Output):
+Mảng JSON danh sách các giao dịch nạp tiền của riêng user đó.
+Tác dụng: Hiển thị lịch sử nạp tiền tại màn hình cá nhân của cư dân.
+
+d. Cập nhật trạng thái nạp tiền
+Method & Endpoint: PATCH /:id/status
+Đầu vào (Input):
+id: TopUpID (trên URL).
+Body: { "Status": "Completed" } (hoặc "Failed").
+Đầu ra (Output): { success: true }
+Tác dụng: Admin duyệt yêu cầu nạp tiền. Ví dụ: Khách chuyển khoản ngân hàng -> Admin kiểm tra -> Gọi API này để chuyển trạng thái từ 'Pending' sang 'Completed'.
+
+3. Nhóm API Thanh toán Dịch vụ (Payment/ServicePayment)
+a. Tạo hóa đơn/thanh toán mới
+Method & Endpoint: POST / 
+Đầu vào (Input):
+Body (JSON):
+JSON
+{
+  "UserID": 123,
+  "ServiceName": "Tiền điện tháng 11",
+  "Description": "120kWh",
+  "Amount": 245000,
+  "Status": "Paid"
+}
+Đầu ra (Output):
+Thành công: { success: true, data: { PaymentID: ... } }
+Tác dụng: Hệ thống (hoặc Admin) tạo ra một bản ghi thanh toán. Ví dụ: Cuối tháng chốt số điện và trừ tiền trong ví của User, sau đó gọi API này để lưu lại lịch sử "Đã thanh toán tiền điện".
+
+b. Lấy tất cả lịch sử thanh toán
+Method & Endpoint: GET /
+Đầu vào (Input): Không.
+Đầu ra (Output):
+Mảng JSON chứa tất cả hóa đơn dịch vụ, kèm FullName của người dùng.
+Tác dụng: Admin quản lý, thống kê xem tháng này đã thu được những khoản phí nào.
+
+c. Lấy lịch sử thanh toán theo User
+Method & Endpoint: GET /user/:id
+Đầu vào (Input): id (UserID).
+Đầu ra (Output):
+Mảng JSON danh sách hóa đơn của user đó.
+Tác dụng: Cư dân xem lại lịch sử chi tiêu (tiền điện, nước, phí gửi xe...) của chính mình.
+
+4. API feedback
+a. API gửi phản hồi từ người dùng
+Method & Endpoint: POST /api/feedbacks
+Đầu vào (Input):
+Body(JSON): 
+{
+	"title": "Khiếu nại tiền điện",
+    "content": "test"
+}
+Đầu ra:
+- Trường hợp thành công
+{
+  "success": true,
+  "message": "Feedback submitted successfully",
+  "feedback": {
+    "FeedbackID": 8
+  }
+}
+- Trường hợp lỗi (HTTP 400 - Thiếu dữ liệu)
+{
+  "message": "Title and content are required"
+}
+
+b.API lấy danh sách phản hồi(Dành cho Admin xem toàn bộ phản hồi từ người dùng kèm theo thông tin chi tiết)
+Method: GET (http://localhost:3000/api/feedbacks)
+Đầu vào (Input):
+Body(JSON): Không
+Đầu ra:
+- Trường hợp thành công HTTP 200
+Mảng JSON chứa danh sách các thông báo của User
+{
+    "success": true,
+    "count": 8,
+    "data": [
+        {
+            "FeedbackID": 8,
+            "UserID": 1,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-31T00:53:39.170Z",
+            "FullName": "Test4",
+            "Email": "test3@example.com",
+            "studentID": "20235421"
+        },
+        {
+            "FeedbackID": 7,
+            "UserID": 1,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-31T00:53:22.130Z",
+            "FullName": "Test4",
+            "Email": "test3@example.com",
+            "studentID": "20235421"
+        },
+        {
+            "FeedbackID": 6,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:12:31.500Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 5,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:10:22.440Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 4,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:07:39.197Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 3,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:07:17.010Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 2,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:06:33.890Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 1,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:06:30.750Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        }
+    ]
+}
+- Trường hợp lỗi: HTTP 403 - Không phải quyền admin
+Output: 
+{
+    "message": "Forbidden - Admin access required"
+}
+
