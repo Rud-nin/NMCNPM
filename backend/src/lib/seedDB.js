@@ -1,6 +1,7 @@
 import sql from 'mssql'
-import { getConnection } from './db.js'
 import bcrypt from 'bcryptjs'
+import { getConnection } from './db.js'
+import { getCurrentPeriod } from './utils.js'
 
 // Generate random date
 function randomNovember2025() {
@@ -20,15 +21,27 @@ async function seed() {
     DELETE FROM UserBalance;
     DELETE FROM TopUpTransactions;
     DELETE FROM Users;
+    DELETE FROM Rooms;
+    DELETE FROM RoomRequests;
+    DELETE FROM RoomServices;
+    DELETE FROM MonthlyBills;
+    DELETE FROM ServicePayments;
+    DELETE FROM ServiceMonthly;
 
     --Reset identity counter to 1
-    DBCC CHECKIDENT ('Users', RESEED, 0);
     DBCC CHECKIDENT ('Notifications', RESEED, 0);
     DBCC CHECKIDENT ('TopUpTransactions', RESEED, 0);
+    DBCC CHECKIDENT ('Users', RESEED, 0);
+    DBCC CHECKIDENT ('Rooms', RESEED, 0);
+    DBCC CHECKIDENT ('RoomRequests', RESEED, 0);
+    DBCC CHECKIDENT ('MonthlyBills', RESEED, 0);
+    DBCC CHECKIDENT ('ServicePayments', RESEED, 0);
+    DBCC CHECKIDENT ('ServiceMonthly', RESEED, 0);
   `)
 
   console.log('🌱 Seeding database...')
 
+  // ================== ROOM ==================
   const roomsData = [
     { RoomNumber: 101, Building: 'B5', Capacity: 4 },
     { RoomNumber: 102, Building: 'B5', Capacity: 4 },
@@ -57,7 +70,7 @@ async function seed() {
 
   console.log('✅ Rooms inserted:', roomIds)
 
-  // insert users
+  // ================== USER ==================
   const usersData = [
     {
       Email: 'admin@example.com',
@@ -69,7 +82,7 @@ async function seed() {
       Role: 'Admin',
     },
 
-    // ===== ROOM B5-101 (4 slots - FULL) =====
+    // ROOM B5-101 (4 slots - FULL)
     {
       Email: 'user1@example.com',
       FullName: 'Nguyen Van A',
@@ -111,7 +124,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== ROOM B5-102 (1/4) =====
+    // ROOM B5-102 (1/4)
     {
       Email: 'user5@example.com',
       FullName: 'Hoang Van E',
@@ -123,7 +136,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== ROOM B6-103 (2/8) =====
+    // ROOM B6-103 (2/8)
     {
       Email: 'user6@example.com',
       FullName: 'Dang Thi F',
@@ -145,7 +158,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== NO ROOM =====
+    // NO ROOM
     {
       Email: 'user8@example.com',
       FullName: 'Tran Van H',
@@ -157,7 +170,6 @@ async function seed() {
       Role: 'User',
     },
   ]
-
   const userIds = []
 
   for (const u of usersData) {
@@ -187,7 +199,7 @@ async function seed() {
   const user1 = userIds[1]
   const user2 = userIds[2]
 
-  // insert notifications
+  // ================== NOTIFICATION ==================
   await pool
     .request()
     .input('UserID', sql.Int, adminId)
@@ -200,6 +212,7 @@ async function seed() {
 
   console.log('✅ Notifications inserted')
 
+  // ================== BALANCE ==================
   const balances = [
     { UserID: adminId, Balance: 0 },
     { UserID: user1, Balance: 500000 },
@@ -217,6 +230,7 @@ async function seed() {
   }
   console.log('✅ UserBalance inserted')
 
+  // ================== TOPUP ==================
   const topUps = [
     { UserID: user1, Amount: 300000, Status: 'Completed' },
     { UserID: user2, Amount: 200000, Status: 'Completed' },
@@ -237,6 +251,111 @@ async function seed() {
       `)
   }
   console.log('✅ TopUpTransactions inserted (random dates)')
+
+  // ================== SERVICE ==================
+  const servicesData = [
+    // Room services
+    {
+      ServiceName: 'Electricity',
+      Price: 3500,
+      Descriptions: 'Electricity usage per month',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Water',
+      Price: 15000,
+      Descriptions: 'Water usage per month',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Internet',
+      Price: 120000,
+      Descriptions: 'Internet service per month',
+      Type: 'Room',
+    },
+
+    // Personal services
+    {
+      ServiceName: 'Parking',
+      Price: 80000,
+      Descriptions: 'Motorbike parking',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Gym',
+      Price: 100000,
+      Descriptions: 'Gym membership',
+      Type: 'Personal',
+    },
+  ]
+
+  const serviceIds = {}
+
+  for (const s of servicesData) {
+    const result = await pool
+      .request()
+      .input('ServiceName', sql.NVarChar(100), s.ServiceName)
+      .input('Price', sql.Decimal(15, 3), s.Price)
+      .input('Descriptions', sql.NVarChar(200), s.Descriptions)
+      .input('Type', sql.NVarChar(20), s.Type)
+      .query(`
+        INSERT INTO ServiceMonthly (ServiceName, Price, Descriptions, [Type])
+        VALUES (@ServiceName, @Price, @Descriptions, @Type);
+        SELECT SCOPE_IDENTITY() AS ServiceID;
+      `)
+
+    serviceIds[s.ServiceName] = result.recordset[0].ServiceID
+  }
+
+  console.log('✅ Services inserted:', serviceIds)
+
+  // ================== ROOM SERVICE ==================
+  const roomServicesData = [
+    // roomIds[0] = B5-101
+    { RoomID: roomIds[0], ServiceID: serviceIds.Electricity },
+    { RoomID: roomIds[0], ServiceID: serviceIds.Water },
+    { RoomID: roomIds[0], ServiceID: serviceIds.Internet },
+
+    // roomIds[1] = B5-102
+    { RoomID: roomIds[1], ServiceID: serviceIds.Electricity },
+    { RoomID: roomIds[1], ServiceID: serviceIds.Water },
+    { RoomID: roomIds[1], ServiceID: serviceIds.Internet },
+
+    // roomIds[2] = B6-103
+    { RoomID: roomIds[2], ServiceID: serviceIds.Electricity },
+    { RoomID: roomIds[2], ServiceID: serviceIds.Water },
+  ]
+
+  for (const rs of roomServicesData) {
+    await pool
+      .request()
+      .input('RoomID', sql.Int, rs.RoomID)
+      .input('ServiceID', sql.Int, rs.ServiceID)
+      .query(`
+        INSERT INTO RoomServices (RoomID, ServiceID)
+        VALUES (@RoomID, @ServiceID)
+      `)
+  }
+
+  console.log('✅ RoomServices inserted')
+
+  // ================== MONTHLY BILLS (ROOM) ==================
+  const period = getCurrentPeriod()
+
+  for (const rs of roomServicesData) {
+    await pool
+      .request()
+      .input('RoomID', sql.Int, rs.RoomID)
+      .input('ServiceID', sql.Int, rs.ServiceID)
+      .input('Period', sql.NVarChar(20), period)
+      .query(`
+        INSERT INTO MonthlyBills (RoomID, ServiceID, Period)
+        VALUES (@RoomID, @ServiceID, @Period)
+      `)
+  }
+
+  console.log(`✅ MonthlyBills (Room) generated for ${period}`)
+  
   process.exit(0)
 }
 

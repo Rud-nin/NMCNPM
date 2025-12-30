@@ -115,6 +115,16 @@ CREATE TABLE dbo.ServiceMonthly (
     CreatedAt DATETIME DEFAULT GETDATE()
 );
 
+CREATE TABLE dbo.RoomServices (
+    RoomID INT,
+    ServiceID INT,
+
+    CONSTRAINT FK_RoomServices_Rooms FOREIGN KEY (RoomID) REFERENCES dbo.Rooms(RoomID),
+    CONSTRAINT FK_RoomServices_ServiceMonthly FOREIGN KEY (ServiceID) REFERENCES dbo.ServiceMonthly(ServiceID),
+    
+    CONSTRAINT PK_RoomServices PRIMARY KEY (RoomID, ServiceID)
+)
+
 -- Bảng lưu trữ hóa đơn hàng tháng
 CREATE TABLE dbo.MonthlyBills (
     BillID INT IDENTITY(1,1) PRIMARY KEY,
@@ -208,18 +218,24 @@ UPDATE Users SET RoomID = 2 WHERE UserID = 2;
 UPDATE Users SET RoomID = 1 WHERE UserID = 2;
 -------------------------------------------
 
-SELECT * FROM Rooms;
-SELECT * FROM RoomRequests;
-SELECT * FROM Users;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;
 SELECT * FROM TopUpTransactions;
-SELECT * FROM Feedbacks;
+SELECT * FROM Users;
+SELECT * FROM Rooms;
+SELECT * FROM RoomRequests;
+SELECT * FROM RoomServices;
+SELECT * FROM MonthlyBills;
+SELECT * FROM ServicePayments;
 SELECT * FROM ServiceMonthly;
 
 DROP TABLE Notifications;
 DROP TABLE UserBalance;
 DROP TABLE TopUpTransactions;
 DROP TABLE Users;
-DROP TABLE Feedbacks;
+DROP TABLE Rooms;
+DROP TABLE RoomRequests;
+DROP TABLE RoomServices;
+DROP TABLE MonthlyBills;
+DROP TABLE ServicePayments;
 DROP TABLE ServiceMonthly;
