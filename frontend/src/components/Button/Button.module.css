@@ -11,4 +11,5 @@
 
 .button:hover {
     background-color: var(--bg-inverse-secondary);
+    color: var(--text-inverse-primary);
 }

@@ -1,4 +1,6 @@
-import Button from "../../components/Button/Button";
+import Button from "../Button/Button";
+import Table from "../Table/Table";
+import Overlay from "../Overlay/Overlay";
 import { useState, useEffect } from "react";
 import { useNotificationStore } from "../../stores/useNotificationStore";
 import styles from './Notification.module.css';
@@ -33,7 +35,7 @@ function Notification() {
             </header>
 
             <h3>Lịch sử thông báo đã tạo</h3>
-            <table>
+            <Table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -57,11 +59,11 @@ function Notification() {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </Table>
 
             {newNotification && (
-                <div className={styles.overlay}>
-                    <div>
+                <Overlay>
+                    <div className={styles.modal}>
                         <h2>Nhập thông báo mới</h2>
                         <div className={styles.input}>
                             <span>Tiêu đề</span>
@@ -88,7 +90,7 @@ function Notification() {
                             <Button onClick={() => setNewNotification(null)}>Hủy</Button>
                         </div>
                     </div>
-                </div>
+                </Overlay>
             )}
         </section>
     );

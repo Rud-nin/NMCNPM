@@ -1,5 +1,6 @@
 import Notification from "../../components/Notification/Notification";
 import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
+import UserManagement from "../../components/UserManagement/UserManagement";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
 
@@ -44,7 +45,6 @@ function Dashboard() {
         </div>
     );
 }
-function User() {}
 function Report() {}
 function Setting() {}
 function Dev() {}
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
                     <button>Làm mới</button>
                 </div>
                 { state === "Dashboard" && <Dashboard /> }
-                { state === "User" && <User /> }
+                { state === "User" && <UserManagement /> }
                 { state === "Report" && <Report /> }
                 { state === "Setting" && <Setting /> }
                 { state === "Dev" && <Dev /> }

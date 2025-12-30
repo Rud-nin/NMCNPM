@@ -1,0 +1,27 @@
+.table {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background-color: var(--bg-inverse-primary);
+    color: var(--text-inverse-primary);
+}
+
+.table tbody {
+    text-align: center;
+}
+
+.table th, .table td {
+    padding: 0.5rem 0;
+}
+
+.table tr {
+    border: #edf2f7 1px solid;
+}
+
+.table tbody tr:nth-child(even) {
+    background: linear-gradient(to right, var(--bg-secondary), var(--bg-primary));
+}

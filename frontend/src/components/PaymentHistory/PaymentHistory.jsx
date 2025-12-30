@@ -1,4 +1,5 @@
 import Button from '../Button/Button';
+import Table from '../Table/Table';
 import { usePaymentStore } from '../../stores/usePaymentStore';
 import { useEffect, useState } from 'react';
 import styles from './PaymentHistory.module.css';
@@ -26,7 +27,7 @@ export default function PaymentHistory() {
                 >Làm mới</Button>
             </header>
 
-            <table>
+            <Table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -39,8 +40,8 @@ export default function PaymentHistory() {
                 </thead>
 
                 <tbody>
-                    {payments && payments.map((payment) => (
-                        <tr>
+                    {payments && payments.map((payment, index) => (
+                        <tr key={index}>
                             <td>{payment.PaymentID}</td>
                             <td>{payment.User}</td>
                             <td>{payment.Amount}</td>
@@ -50,7 +51,7 @@ export default function PaymentHistory() {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </Table>
         </section>
     );
 }

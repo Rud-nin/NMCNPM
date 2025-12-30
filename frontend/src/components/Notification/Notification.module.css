@@ -2,43 +2,17 @@
     padding: 1rem;
 }
 
-.notification table {
-    width: 100%;
-    border-radius: 5px;
-    border-collapse: collapse;
-    overflow: hidden;
-}
-
-.notification thead {
-    background-color: var(--bg-inverse-primary);
-    color: var(--text-inverse-primary);
-}
-
 .notification header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-}
-
-.notification td {
-    border: 1px solid var(--bg-secondary);
+    align-items: center;
 }
 
 .notification td:not(td:nth-child(3)) {
     text-align: center;
 }
 
-.notification tbody tr:nth-child(even) {
-    background-color: var(--bg-secondary);
-}
-
-.notification th, .notification td {
-    padding: 0.5rem 1ch;
-}
-
-.notification th:first-child,
 .notification th:last-child,
-.notification td:first-child,
 .notification td:last-child {
     white-space: nowrap;
     width: 1%;
@@ -50,16 +24,7 @@
     align-items: center;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.overlay > *:first-child {
+.modal {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -70,7 +35,7 @@
     width: clamp(250px, 50%, 500px);
 }
 
-.overlay h2 {
+.modal h2 {
     text-align: center;
 }
 
@@ -99,6 +64,6 @@
     white-space: nowrap;
 }
 
-.overlay .btnContainer {
+.modal .btnContainer {
     justify-self: center;
 }
