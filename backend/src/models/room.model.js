@@ -3,24 +3,51 @@ import { getConnection } from "../lib/db.js";
 
 export const Room = {
 
-  async getAll() {
+  async getAll({ page, limit }) {
+    const offset = (page - 1) * limit;
     const pool = await getConnection();
-    const result = await pool.request().query(`
-      SELECT *
-      FROM Rooms
-      ORDER BY Building, RoomNumber
-    `);
-    return result.recordset;
+
+    const result = await pool.request()
+      .input("Limit", sql.Int, limit)
+      .input("Offset", sql.Int, offset)
+      .query(`
+        SELECT *
+        FROM Rooms
+        ORDER BY Building, RoomNumber
+        OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY;
+
+        SELECT COUNT(*) AS Total FROM Rooms;
+      `);
+
+    return {
+      data: result.recordsets[0],
+      totalRows: result.recordsets[1][0].Total
+    };
   },
 
-  async getAvailableRooms() {
+  async getAvailable({ page, limit }) {
+    const offset = (page - 1) * limit;
     const pool = await getConnection();
-    const result = await pool.request().query(`
-      SELECT *
-      FROM Rooms
-      WHERE Occupancy < Capacity
-    `);
-    return result.recordset;
+
+    const result = await pool.request()
+      .input("Limit", sql.Int, limit)
+      .input("Offset", sql.Int, offset)
+      .query(`
+        SELECT *
+        FROM Rooms
+        WHERE Occupancy < Capacity
+        ORDER BY Building, RoomNumber
+        OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY;
+
+        SELECT COUNT(*) AS Total
+        FROM Rooms
+        WHERE Occupancy < Capacity;
+      `);
+
+    return {
+      data: result.recordsets[0],
+      totalRows: result.recordsets[1][0].Total
+    };
   },
 
   async findById(roomId) {

@@ -15,22 +15,6 @@ export const RoomRequest = {
     return true;
   },
 
-	async getAll() {
-		const pool = await getConnection();
-		const result = await pool.request().query(`
-			SELECT 
-				rr.*,
-				u.FullName,
-				r.RoomNumber,
-				r.Building
-			FROM RoomRequests rr
-			JOIN Users u ON rr.UserID = u.UserID
-			JOIN Rooms r ON rr.RoomID = r.RoomID
-			ORDER BY rr.CreatedAt DESC
-		`);
-		return result.recordset;
-	},
-
   async getByUser(userId) {
     const pool = await getConnection();
     const result = await pool.request()
@@ -45,16 +29,41 @@ export const RoomRequest = {
     return result.recordset;
   },
 
-  async getPending() {
+  async getByCondition({ status = null, page, limit }) {
+    const offset = (page - 1) * limit;
     const pool = await getConnection();
-    const result = await pool.request().query(`
+
+    let whereClause = "";
+    if (status) {
+      whereClause = "WHERE Status = @Status";
+    }
+
+    const request = pool.request()
+      .input("Limit", sql.Int, limit)
+      .input("Offset", sql.Int, offset);
+
+    if (status) {
+      request.input("Status", sql.NVarChar(20), status);
+    }
+
+    const result = await request.query(`
       SELECT rr.*, u.FullName, r.RoomNumber, r.Building
       FROM RoomRequests rr
       JOIN Users u ON rr.UserID = u.UserID
       JOIN Rooms r ON rr.RoomID = r.RoomID
-      WHERE rr.Status = 'Pending'
+      ${whereClause}
+      ORDER BY CreatedAt DESC
+      OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY;
+
+      SELECT COUNT(*) AS Total
+      FROM RoomRequests
+      ${whereClause};
     `);
-    return result.recordset;
+
+    return {
+      data: result.recordsets[0],
+      totalRows: result.recordsets[1][0].Total
+    };
   },
 
   async findById(requestId) {

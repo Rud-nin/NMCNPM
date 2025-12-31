@@ -4,11 +4,10 @@ import { requireAdmin } from "../midddleware/admin.middleware.js";
 import {
   createRoomRequest,
   getMyRoomRequests,
-  getAllRoomRequests,
   cancelRoomRequest,
-  getPendingRequests,
   approveRequest,
-  rejectRequest
+  rejectRequest,
+  getRoomRequests
 } from "../controllers/roomRequest.controller.js";
 
 const router = express.Router();
@@ -16,11 +15,10 @@ const router = express.Router();
 router.use(protectRoute);
 
 router.post("/", createRoomRequest);
-router.get("/", getMyRoomRequests);
+router.get("/me", getMyRoomRequests);
 router.delete("/:id", cancelRoomRequest);
 
-router.get("/pending", requireAdmin, getPendingRequests);
-router.get("/all", requireAdmin, getAllRoomRequests);
+router.get("/", requireAdmin, getRoomRequests);
 router.put("/:id/approve", requireAdmin, approveRequest);
 router.put("/:id/reject", requireAdmin, rejectRequest);
 

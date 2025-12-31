@@ -2,18 +2,40 @@ import { Room } from "../models/room.model.js";
 
 // @route GET /api/rooms
 export const getRooms = async (req, res) => {
-  const rooms = await Room.getAll();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const { data, totalRows } = await Room.getAll({ page, limit });
+
   res.status(200).json({
-    success: true, data: rooms
-	});
+    success: true,
+    pagination: {
+      page,
+      limit,
+      totalRows,
+      totalPages: Math.ceil(totalRows / limit)
+    },
+    data
+  });
 };
 
 // @route GET /api/rooms/available
 export const getAvailableRooms = async (req, res) => {
-  const rooms = await Room.getAvailableRooms();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const { data, totalRows } = await Room.getAvailable({ page, limit });
+
   res.status(200).json({
-    success: true, data: rooms
-	});
+    success: true,
+    pagination: {
+      page,
+      limit,
+      totalRows,
+      totalPages: Math.ceil(totalRows / limit)
+    },
+    data
+  });
 };
 
 // @route POST /api/rooms (admin)

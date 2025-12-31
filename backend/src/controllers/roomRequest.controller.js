@@ -39,15 +39,6 @@ export const createRoomRequest = async (req, res) => {
   }
 };
 
-// @route GET /api/room-requests/all (admin)
-export const getAllRoomRequests = async (req, res) => {
-  const data = await RoomRequest.getAll();
-  res.status(200).json({
-    success: true,
-    data
-  });
-};
-
 // @route GET /api/room-requests/
 export const getMyRoomRequests = async (req, res) => {
   const data = await RoomRequest.getByUser(req.user.UserID);
@@ -60,10 +51,33 @@ export const cancelRoomRequest = async (req, res) => {
   res.json({ success: true, message: "Request cancelled" });
 };
 
-// @route GET /api/room-requests (admin)
-export const getPendingRequests = async (req, res) => {
-  const data = await RoomRequest.getPending();
-  res.json({ success: true, data });
+// @route GET /api/room-requests?status&page&limit (admin)
+export const getRoomRequests = async (req, res) => {
+  try {
+    const status = req.query.status || null; // Pending | Approved | Rejected | null
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const { data, totalRows } = await RoomRequest.getByCondition({
+      status,
+      page,
+      limit
+    });
+
+    res.status(200).json({
+      success: true,
+      pagination: {
+        page,
+        limit,
+        totalRows,
+        totalPages: Math.ceil(totalRows / limit)
+      },
+      data
+    });
+  } catch (error) {
+    console.error("Get room requests error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 // @route PUT /api/room-requests/:id/approve
@@ -83,7 +97,7 @@ export const approveRequest = async (req, res) => {
 
     // Notify user
     await Notification.create({
-      userId: request.UserID,
+      receiverId: request.UserID,
       title: "Room Request Approved",
       content: "Your room request has been approved. You have been assigned to the room."
     });
@@ -117,7 +131,7 @@ export const rejectRequest = async (req, res) => {
     await RoomRequest.reject(req.params.id, req.user.UserID);
 
     await Notification.create({
-      userId: request.UserID,
+      receiverId: request.UserID,
       title: "Room Request Rejected",
       content: "Your room request has been rejected. Please choose another room."
     });
