@@ -29,7 +29,7 @@
 .titleBar {
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
@@ -53,7 +53,7 @@
   border-radius: 6px;
   background-color: #ffffff;
   cursor: pointer;
-  
+
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
@@ -72,3 +72,48 @@
 }
 
 
+/* Tạo feedback */
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  padding: 0 1rem 1rem;
+  border-radius: 10px;
+  width: clamp(250px, 50%, 500px);
+}
+
+.modal h2 {
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input input,
+.input textarea {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1ch;
+  width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
+}
+
+.input span {
+  white-space: nowrap;
+}
+
+.modal .btnContainer {
+  justify-self: center;
+}
