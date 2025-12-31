@@ -1,4 +1,4 @@
-import Notification from "../../components/Notification/Notification";
+import AdminNotification from "../../components/AdminNotification/AdminNotification";
 import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
 import UserManagement from "../../components/UserManagement/UserManagement";
 import { useState } from "react";
@@ -40,7 +40,7 @@ function Sidebar({ onChange }) {
 function Dashboard() {
     return (
         <div>
-            <Notification />
+            <AdminNotification />
             <PaymentHistory />
         </div>
     );

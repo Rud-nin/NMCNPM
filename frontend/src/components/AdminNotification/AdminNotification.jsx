@@ -3,16 +3,16 @@ import Table from "../Table/Table";
 import Overlay from "../Overlay/Overlay";
 import { useState, useEffect } from "react";
 import { useNotificationStore } from "../../stores/useNotificationStore";
-import styles from './Notification.module.css';
+import styles from './AdminNotification.module.css';
 
-function Notification() {
+function AdminNotification() {
     const [ newNotification, setNewNotification ] = useState(null);
     const [ notifications, setNotifications ] = useState([]);
     const createNotification = useNotificationStore((s) => s.createNotification);
-    const getNotifications = useNotificationStore((s) => s.getNotifications);
+    const getAdminNotifications = useNotificationStore((s) => s.getAdminNotifications);
 
     async function fetchNoti() {
-        const data = await getNotifications();
+        const data = await getAdminNotifications();
         if(data) setNotifications(data);
     }
 
@@ -96,4 +96,4 @@ function Notification() {
     );
 }
 
-export default Notification;
+export default AdminNotification;

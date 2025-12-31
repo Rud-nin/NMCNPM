@@ -19,11 +19,28 @@ export const useNotificationStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  getNotifications: async () => {
+  
+  getAdminNotifications: async () => {
     set({ isLoading: true });
     try {
       return (await axiosInstance.get('/notifications')).data;
       // return await fetch('/notification.example.json').then(res => res.json());
+    } catch (err) {
+      toast.error('Có lỗi trong khi lấy thông báo!');
+      console.error(err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getUserNotifications: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.get('/notifications');
+      return res.data;
+      // const res = await fetch('/notifications.example.json');
+      // toast.success("Lấy dữ liệu thành công");
+      // return res.json();
     } catch (err) {
       toast.error('Có lỗi trong khi lấy thông báo!');
       console.error(err);
