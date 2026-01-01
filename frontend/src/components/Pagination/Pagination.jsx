@@ -17,7 +17,7 @@ export default function Pagination({
                     &lt;
                 </button>
                 <span>
-                    {page} / {total}
+                    {` ${page} / ${total} `}
                 </span>
                 <button
                     onClick={() => setPage(page < total ? page + 1 : page)}
@@ -27,7 +27,7 @@ export default function Pagination({
                 </button>
             </div>
             <div>
-                Hiển thị:
+                Hiển thị:{' '}
                 <select value={limit} onChange={(e) => setLimit(e.target.value)}>
                     <option value="10">10</option>
                     <option value="20">20</option>

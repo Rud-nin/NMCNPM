@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useUsersStore } from "../../stores/useUsersStore";
 import Button from "../Button/Button";
 import Overlay from "../Overlay/Overlay";
 import Table from "../Table/Table";
@@ -6,14 +7,15 @@ import Pagination from "../Pagination/Pagination";
 import styles from "./UserManagement.module.css";
 
 export default function UserManagement() {
-    const [searchName, setSearchName] = useState("");
+    // const { users, getUsers, getUserById, updateUser, deleteUser } = useUsersStore();
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState(null);
     const [selectingUser, setSelectingUser] = useState(null);
     const [deletingUser, setDeletingUser] = useState(null);
     const [rooms, setRooms] = useState([]);
     const [services, setServices] = useState([]);
-
+    
+    const [searchName, setSearchName] = useState("");
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total, setTotal] = useState(1);
@@ -119,16 +121,16 @@ export default function UserManagement() {
                 <tbody>
                     {users.map((user, index) => (
                         <tr key={index}>
-                            <td>{index}</td>
+                            <td>{user.UserID || (index + 1)*page}</td>
                             <td>
                                 <div>
-                                    {user.Username}
+                                    {user.FullName}
                                     <br/>
                                     {user.Email}
                                 </div>
                             </td>
                             <td>
-                                {user.Room}
+                                {user.Room ?? "Chưa được xếp"}
                             </td>
                             <td>
                                 <div className={styles.buttonContainer}>
@@ -246,17 +248,17 @@ export default function UserManagement() {
                         </div>
 
                         <div className={styles.buttonContainer}>
-                            <button
+                            <Button
                                 onClick={handleModelConfirm}
                             >
                                 {newUser ? "Thêm" : "Lưu"}
-                            </button>
+                            </Button>
                             {selectingUser && (
-                                <button onClick={(e) => setDeletingUser(selectingUser)}>
+                                <Button onClick={(e) => setDeletingUser(selectingUser)}>
                                     Xóa
-                                </button>
+                                </Button>
                             )}
-                            <button
+                            <Button
                                 onClick={() => {
                                     setNewUser(null);
                                     setSelectingUser(null);
@@ -264,7 +266,7 @@ export default function UserManagement() {
                                 }}
                             >
                                 Hủy
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </Overlay>
@@ -274,12 +276,12 @@ export default function UserManagement() {
                 <Overlay>
                     <div className={styles.deleteModal}>
                         <h2>Xóa người dùng {deletingUser.Username}?</h2>
-                        <button onClick={handleDeleteUser}>
+                        <Button onClick={handleDeleteUser}>
                             Xóa
-                        </button>
-                        <button onClick={() => setDeletingUser(null)}>
+                        </Button>
+                        <Button onClick={() => setDeletingUser(null)}>
                             Hủy
-                        </button>
+                        </Button>
                     </div>
                 </Overlay>
             )}

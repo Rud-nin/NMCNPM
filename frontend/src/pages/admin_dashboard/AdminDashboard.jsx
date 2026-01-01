@@ -1,6 +1,7 @@
 import Notification from "../../components/Notification/Notification";
 import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
 import UserManagement from "../../components/UserManagement/UserManagement";
+import RoomManagement from "../../components/RoomManagement/RoomManagement";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
 
@@ -20,8 +21,8 @@ function Sidebar({ onChange }) {
                         Người dùng
                     </li>
                     <li key={3}
-                        onClick={() => onChange("Report")}>
-                        Báo cáo
+                        onClick={() => onChange("Room")}>
+                        Phòng
                     </li>
                     <li key={4}
                         onClick={() => onChange("Setting")}>
@@ -45,7 +46,6 @@ function Dashboard() {
         </div>
     );
 }
-function Report() {}
 function Setting() {}
 function Dev() {}
 
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
                 </div>
                 { state === "Dashboard" && <Dashboard /> }
                 { state === "User" && <UserManagement /> }
-                { state === "Report" && <Report /> }
+                { state === "Room" && <RoomManagement /> }
                 { state === "Setting" && <Setting /> }
                 { state === "Dev" && <Dev /> }
             </section>

@@ -33,11 +33,11 @@ body {
   --text-muted: hsl(0, 0%, 20%);
   --text-inverse-primary: hsl(0, 0%, 95%);
 
-  --error: hsl(1, 77%, 45%);
-  --error-muted: hsl(1, 77%, 65%);
+  --error: #b71c1c;
+  --error-muted: #fdecea;
 
-  --success: hsl(122, 72%, 40%);
-  --success-muted: hsl(122, 72%, 60%);
+  --success: #1b5e20;
+  --success-muted: #e8f5e9;
 
   --info: hsl(226, 77%, 45%);
   --info-muted: hsl(226, 77%, 55%);
