@@ -1,5 +1,6 @@
 import UserSidebar from '../../components/UserSidebar/UserSideBar.jsx';
 import UserNotification from '../../components/UserNotification/UserNotification.jsx';
+import UserTopUp from '../../components/UserTopUp/UserTopUp.jsx';
 import styles from './UserDashboard.module.css';
 import { useState } from 'react';
 
@@ -15,16 +16,16 @@ export default function UserDashboard() {
         <div className={styles.header}>
         {state === "PersonalInformation" && <div>Thông tin cá nhân</div>}
         {state === "Notification" && <div>Thông báo</div>}
-        {state === "RoomInformation" && <div>Thông tin phòng</div>}
-        {state === "PaymentHistory" && <div>Lịch sử thanh toán</div>}
+        {state === "Room" && <div>Thông tin phòng</div>}
         {state === "Payment" && <div>Thanh toán</div>}
+        {state === "TopUp" && <div>Nạp tiền</div>}
           <button>Làm mới</button>
         </div>
         {state === "PersonalInformation" && <PersonalInformation />}
         {state === "Notification" && <UserNotification />}
-        {state === "RoomInformation" && <RoomInformation />}
-        {state === "PaymentHistory" && <PaymentHistory />}
+        {state === "Room" && <Room />}
         {state === "Payment" && <Payment />}
+        {state === "TopUp" && <UserTopUp />}
       </section>
     </div>
   );
@@ -33,8 +34,7 @@ export default function UserDashboard() {
 function PersonalInformation() {
 
 }
-function RoomInformation() { }
-function PaymentHistory() { }
+function Room() { }
 function Payment() {
 
 }

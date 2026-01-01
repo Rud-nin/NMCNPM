@@ -5,6 +5,7 @@ import Table from '../Table/Table.jsx';
 import styles from './UserNotification.module.css';
 import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
+import { formatDateTime } from '../../lib/formatDateTime.js';
 
 function UserNotification() {
   const [notifications, setNotifications] = useState([]);
@@ -16,12 +17,12 @@ function UserNotification() {
   async function fetchNoti() {
     const data = await getUserNotifications();
     if (data) setNotifications(data);
-  }
+  };
 
   async function handleSendFeedback() {
     await sendFeedback(feedback.title, feedback.content);
     setFeedback(null);
-  }
+  };
 
   useEffect(() => {
     fetchNoti();
@@ -117,20 +118,6 @@ function UserNotification() {
       )}
     </section>
   );
-}
-
-function formatDateTime(dateTimeString) {
-  const dateTime = new Date(dateTimeString);
-
-  const hh = String(dateTime.getHours()).padStart(2, "0");
-  const mm = String(dateTime.getMinutes()).padStart(2, "0");
-  const ss = String(dateTime.getSeconds()).padStart(2, "0");
-
-  const day = String(dateTime.getDate()).padStart(2, "0");
-  const month = String((dateTime.getMonth() + 1)).padStart(2, "0");
-  const year = String(dateTime.getFullYear());
-
-  return `${hh}:${mm}:${ss} ${day}:${month}:${year}`;
-}
+};
 
 export default UserNotification;

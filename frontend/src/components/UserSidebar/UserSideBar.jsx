@@ -11,20 +11,20 @@ function Sidebar({ onChange }) {
             Thông tin cá nhân
           </li>
           <li key={2}
+            onClick={() => onChange("Room")}>
+            Thông tin phòng
+          </li>
+          <li key={3}
             onClick={() => onChange("Notification")}>
             Thông báo
           </li>
-          <li key={3}
-            onClick={() => onChange("RoomInformation")}>
-            Thông tin phòng
-          </li>
           <li key={4}
-            onClick={() => onChange("PaymentHistory")}>
-            Lịch sử thanh toán
-          </li>
-          <li key={5}
             onClick={() => onChange("Payment")}>
             Thanh toán
+          </li>
+          <li key={5}
+            onClick={() => onChange("TopUp")}>
+            Nạp tiền
           </li>
         </ul>
       </nav>

@@ -37,6 +37,7 @@ export const useNotificationStore = create((set) => ({
     set({ isLoading: true });
     try {
       const res = await axiosInstance.get('/notifications');
+      toast.success("Lấy dữ liệu thành công");
       return res.data;
       // const res = await fetch('/notifications.example.json');
       // toast.success("Lấy dữ liệu thành công");
