@@ -20,14 +20,26 @@ export const Feedback = {
   },
 
   // Lấy danh sách phản hồi (Dành cho Admin sau này xem)
-  async getAll() {
+  async getAll({page = 1, limit = 10}) {
     const pool = await getConnection();
-    const result = await pool.request().query(`
-      SELECT F.*, U.FullName, U.Email, U.studentID
-      FROM Feedbacks F
-      JOIN Users U ON F.UserID = U.UserID
-      ORDER BY F.CreatedAt DESC
-    `);
-    return result.recordset;
+    const offset = (page-1) * limit;
+    const result = await pool
+      .request()
+      .input("Limit", sql.Int, limit)
+      .input("Offset", sql.Int, offset)
+      .query(`
+        SELECT F.*, U.FullName, U.Email, U.studentID
+        FROM Feedbacks F
+        JOIN Users U ON F.UserID = U.UserID
+        ORDER BY F.CreatedAt DESC
+        OFFSET @Offset ROWS
+        FETCH NEXT @Limit ROWS ONLY;
+
+        SELECT COUNT(*) AS Total FROM Feedbacks;
+      `);
+    return {
+        feedbacks: result.recordsets[0],
+        totalCount: result.recordsets[1][0].Total
+    };
   }
 };

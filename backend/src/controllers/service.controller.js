@@ -21,8 +21,23 @@ export const createService = async (req, res) => {
 // @route GET /api/services
 export const getServices = async (req, res) => {
     try {
-        const services = await Service.getAll();
-        res.status(200).json(services);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        if (page < 1 || limit < 1) {
+            return res.status(400).json({ message: "Page and limit must be positive integers" });
+        }
+        const {services, totalCount} = await Service.getAll({ page, limit });
+        const totalPages = Math.ceil(totalCount / limit);
+        res.status(200).json({
+            success: true,
+            pagination: {
+                page: page,
+                limit: limit,
+                total: totalCount,
+                totalPages: totalPages
+            },
+            data: services
+        });
     } catch (error) {
         console.error("Get service error:", error);
         res.status(500).json({ message: "Server error" });

@@ -30,8 +30,23 @@ export const sendNotification = async (req, res) => {
 export const getNotifications = async (req,res) => {
     try {
         const currentUserId = req.user.UserID;
-        const list = await Notification.getForUser(currentUserId);
-        res.status(200).json(list);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        if(page<1 || limit < 1) {
+            return res.status(400).json({message: "Invalid page or limit"});
+        }
+        const {notifications, totalCount} = await Notification.getForUser(currentUserId, page, limit);
+        const totalPages = Math.ceil(totalCount / limit);
+        res.status(200).json({
+            success: true,
+            pagination: {
+                page: page,
+                limit: limit,
+                totalRows: totalCount,
+                totalPages: totalPages
+            },
+            data: notifications
+        });
     } catch(error) {
         console.error("Error fetching notification:", error);
         res.status(500).json({message: "Server error"});

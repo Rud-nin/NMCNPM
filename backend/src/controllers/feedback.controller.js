@@ -26,10 +26,18 @@ export const sendFeedback = async (req, res) => {
 
 export const getAllFeedbacks = async (req, res) => {
     try {
-        const feedbacks = await Feedback.getAll();
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const { feedbacks, totalCount } = await Feedback.getAll({ page, limit });
+        const totalPages = Math.ceil(totalCount / limit);
         res.status(200).json({
             success: true,
-            count: feedbacks.length,
+            pagination: {
+                page: page,
+                limit: limit,
+                totalRows: totalCount,
+                totalPages: totalPages
+            },
             data: feedbacks
         });
 

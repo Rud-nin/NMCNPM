@@ -104,80 +104,80 @@ File user_auth_model.js: Dùng để kết nối với CSDL(User)
 
 
 1. Nhóm API Thông báo (Notification)
-a. Lấy danh sách thông báo
-Method & Endpoint: GET /api/notifications 
-Quyền hạn: User đã đăng nhập (protectRoute).
-Đầu vào (Input):
-Headers: Authorization: Bearer <token> (Token xác thực người dùng).
-Đầu ra (Output):
-Thành công (200): Mảng JSON chứa danh sách thông báo. Mỗi phần tử bao gồm: NotificationID, Title, Content, CreatedAt và UserID (ID người nhận, nếu để là null thì gửi cho toàn bộ).
-Lỗi (500): { message: "Server error" }.
-Tác dụng: Cho phép cư dân/người dùng xem các thông báo mới nhất từ ban quản lý (sắp xếp mới nhất lên đầu).
+- a. Lấy danh sách thông báo
+- Method & Endpoint: GET /api/notifications ?page=x&limit=y(với x và y là muốn ở trang mấy và lấy bnh trong trang đó)
+- Quyền hạn: User đã đăng nhập (protectRoute).
+- Đầu vào (Input):
+- Headers: Authorization: Bearer <token> (Token xác thực người dùng).
+- Đầu ra (Output):
+T- hành công (200): Mảng JSON chứa danh sách thông báo. Mỗi phần tử bao gồm: NotificationID, Title, Content, CreatedAt và UserID (ID người nhận, nếu để là null thì gửi cho toàn bộ).
+- Lỗi (500): { message: "Server error" }.
+- Tác dụng: Cho phép cư dân/người dùng xem các thông báo mới nhất từ ban quản lý (sắp xếp mới nhất lên đầu).
 
-b. Gửi thông báo mới
-Method & Endpoint: POST /api/notifications
-Quyền hạn: Chỉ Admin (requireAdmin).
-Đầu vào (Input):
-Headers: Authorization: Bearer <token> (Token của Admin).
-Body (JSON):
-JSON
+- b. Gửi thông báo mới
+- Method & Endpoint: POST /api/notifications
+- Quyền hạn: Chỉ Admin (requireAdmin).
+- Đầu vào (Input):
+- Headers: Authorization: Bearer <token> (Token của Admin).
+- Body (JSON):
+- JSON
 {
   "title": "Thông báo cắt nước",
   "content": "Sẽ cắt nước từ 8h đến 17h ngày..."
 }
-Đầu ra (Output):
-Thành công (201): Object thông báo vừa tạo (dữ liệu lấy từ DB sau khi insert).
-Lỗi (400): Thiếu title hoặc content.
-Lỗi (500): Server error.
-Tác dụng: Giúp Ban quản lý (Admin) gửi thông báo chung đến toàn bộ hệ thống.
+- Đầu ra (Output):
+- Thành công (201): Object thông báo vừa tạo (dữ liệu lấy từ DB sau khi insert).
+- Lỗi (400): Thiếu title hoặc content.
+- Lỗi (500): Server error.
+- Tác dụng: Giúp Ban quản lý (Admin) gửi thông báo chung đến toàn bộ hệ thống.
 
 
 2. Nhóm API Nạp tiền (TopUp)
-File liên quan: topup.routes.js, topup_model.js, setupDB.sql
-a. Tạo giao dịch nạp tiền
-Method & Endpoint: POST / 
-Đầu vào (Input):
-Body (JSON):
-JSON
+- File liên quan: topup.routes.js, topup_model.js, setupDB.sql
+- a. Tạo giao dịch nạp tiền
+- Method & Endpoint: POST / 
+- Đầu vào (Input):
+- Body (JSON):
+- JSON
 {
   "UserID": 123,
   "Amount": 500000,
   "Status": "Pending",  // Tùy chọn, mặc định là Pending hoặc Completed tùy logic
   "CreatedAt": "2025-11-20..." // Tùy chọn
 }
-Đầu ra (Output):
-Thành công: { success: true, data: { TopUpID: ... } }
-Tác dụng: Người dùng tạo yêu cầu nạp tiền vào ví điện tử trong hệ thống (để sau này trừ tiền dịch vụ).
+- Đầu ra (Output):
+- Thành công: { success: true, data: { TopUpID: ... } }
+- Tác dụng: Người dùng tạo yêu cầu nạp tiền vào ví điện tử trong hệ thống (để sau này trừ tiền dịch vụ).
 
-b. Lấy tất cả lịch sử nạp tiền
-Method & Endpoint: GET /
-Đầu vào (Input): Không có (hoặc query params nếu mở rộng sau này).
-Đầu ra (Output):
-Mảng JSON danh sách tất cả giao dịch nạp tiền, kèm theo FullName của người nạp (Join với bảng Users).
-Tác dụng: Admin xem toàn bộ lịch sử nạp tiền của hệ thống để đối soát doanh thu.
+- b. Lấy tất cả lịch sử nạp tiền
+- Method & Endpoint: GET /
+- Đầu vào (Input): Không có (hoặc query params nếu mở rộng sau này).
+- Đầu ra (Output):
+- Mảng JSON danh sách tất cả giao dịch nạp tiền, kèm theo FullName của người nạp (Join với bảng Users).
+- Tác dụng: Admin xem toàn bộ lịch sử nạp tiền của hệ thống để đối soát doanh thu.
 
-c. Lấy lịch sử nạp tiền theo User
-Method & Endpoint: GET /user/:id 
-Đầu vào (Input):
-id: ID của User cần xem .
-Đầu ra (Output):
-Mảng JSON danh sách các giao dịch nạp tiền của riêng user đó.
-Tác dụng: Hiển thị lịch sử nạp tiền tại màn hình cá nhân của cư dân.
+- c. Lấy lịch sử nạp tiền theo User
+- Method & Endpoint: GET /user/:id 
+- Đầu vào (Input):
+- id: ID của User cần xem .
+- Đầu ra (Output):
+- Mảng JSON danh sách các giao dịch nạp tiền của riêng user đó.
+- Tác dụng: Hiển thị lịch sử nạp tiền tại màn hình cá nhân của cư dân.
 
-d. Cập nhật trạng thái nạp tiền
-Method & Endpoint: PATCH /:id/status
-Đầu vào (Input):
-id: TopUpID (trên URL).
-Body: { "Status": "Completed" } (hoặc "Failed").
-Đầu ra (Output): { success: true }
-Tác dụng: Admin duyệt yêu cầu nạp tiền. Ví dụ: Khách chuyển khoản ngân hàng -> Admin kiểm tra -> Gọi API này để chuyển trạng thái từ 'Pending' sang 'Completed'.
+- d. Cập nhật trạng thái nạp tiền
+- Method & Endpoint: PATCH /:id/status
+- Đầu vào (Input):
+- id: TopUpID (trên URL).
+- Body: { "Status": "Completed" } (hoặc "Failed").
+- Đầu ra (Output): { success: true }
+- Tác dụng: Admin duyệt yêu cầu nạp tiền. Ví dụ: Khách chuyển khoản ngân hàng -> Admin kiểm tra -> Gọi API này để chuyển trạng thái từ 'Pending' sang 'Completed'.
 
 3. Nhóm API Thanh toán Dịch vụ (Payment/ServicePayment)
-a. Tạo hóa đơn/thanh toán mới
-Method & Endpoint: POST / 
-Đầu vào (Input):
-Body (JSON):
-JSON
+- a. Tạo hóa đơn/thanh toán mới
+- Method & Endpoint: POST / 
+- Đầu vào (Input):
+- Body (JSON):
+- JSON
 {
   "UserID": 123,
   "ServiceName": "Tiền điện tháng 11",
@@ -185,34 +185,34 @@ JSON
   "Amount": 245000,
   "Status": "Paid"
 }
-Đầu ra (Output):
-Thành công: { success: true, data: { PaymentID: ... } }
-Tác dụng: Hệ thống (hoặc Admin) tạo ra một bản ghi thanh toán. Ví dụ: Cuối tháng chốt số điện và trừ tiền trong ví của User, sau đó gọi API này để lưu lại lịch sử "Đã thanh toán tiền điện".
+- Đầu ra (Output):
+- Thành công: { success: true, data: { PaymentID: ... } }
+- Tác dụng: Hệ thống (hoặc Admin) tạo ra một bản ghi thanh toán. Ví dụ: Cuối tháng chốt số điện và trừ tiền trong ví của User, sau đó gọi API này để lưu lại lịch sử "Đã thanh toán tiền điện".
 
-b. Lấy tất cả lịch sử thanh toán
-Method & Endpoint: GET /
-Đầu vào (Input): Không.
-Đầu ra (Output):
-Mảng JSON chứa tất cả hóa đơn dịch vụ, kèm FullName của người dùng.
-Tác dụng: Admin quản lý, thống kê xem tháng này đã thu được những khoản phí nào.
+- b. Lấy tất cả lịch sử thanh toán
+- Method & Endpoint: GET /
+- Đầu vào (Input): Không.
+- Đầu ra (Output):
+- Mảng JSON chứa tất cả hóa đơn dịch vụ, kèm FullName của người dùng.
+- Tác dụng: Admin quản lý, thống kê xem tháng này đã thu được những khoản phí nào.
 
-c. Lấy lịch sử thanh toán theo User
-Method & Endpoint: GET /user/:id
-Đầu vào (Input): id (UserID).
-Đầu ra (Output):
-Mảng JSON danh sách hóa đơn của user đó.
-Tác dụng: Cư dân xem lại lịch sử chi tiêu (tiền điện, nước, phí gửi xe...) của chính mình.
+- c. Lấy lịch sử thanh toán theo User
+- Method & Endpoint: GET /user/:id
+- Đầu vào (Input): id (UserID).
+- Đầu ra (Output):
+- Mảng JSON danh sách hóa đơn của user đó.
+- Tác dụng: Cư dân xem lại lịch sử chi tiêu (tiền điện, nước, phí gửi xe...) của chính mình.
 
 4. API feedback
-a. API gửi phản hồi từ người dùng
-Method & Endpoint: POST /api/feedbacks
-Đầu vào (Input):
-Body(JSON): 
+- a. API gửi phản hồi từ người dùng
+- Method & Endpoint: POST /api/feedbacks
+- Đầu vào (Input):
+- Body(JSON): 
 {
 	"title": "Khiếu nại tiền điện",
     "content": "test"
 }
-Đầu ra:
+- Đầu ra:
 - Trường hợp thành công
 {
   "success": true,
@@ -226,11 +226,11 @@ Body(JSON):
   "message": "Title and content are required"
 }
 
-b.API lấy danh sách phản hồi(Dành cho Admin xem toàn bộ phản hồi từ người dùng kèm theo thông tin chi tiết)
-Method: GET (http://localhost:3000/api/feedbacks)
-Đầu vào (Input):
-Body(JSON): Không
-Đầu ra:
+- b.API lấy danh sách phản hồi(Dành cho Admin xem toàn bộ phản hồi từ người dùng kèm theo thông tin chi tiết)
+- Method: GET (http://localhost:3000/api/feedbacks?page=x&limit=y)(phân trang)
+- Đầu vào (Input):
+- Body(JSON): Không
+- Đầu ra:
 - Trường hợp thành công HTTP 200
 Mảng JSON chứa danh sách các thông báo của User
 {
@@ -333,3 +333,151 @@ Output:
     "message": "Forbidden - Admin access required"
 }
 
+5. Quản lý Người dùng (Users) - Chỉ dành cho Admin
+- Yêu cầu chung: Header phải có Token của Admin (Cookie hoặc Bearer Token). Middleware: protectRoute, requireAdmin.
+
+- a. Lấy danh sách người dùng (Có phân trang & Tìm kiếm)
+- Route: GET /api/users
+Input (Query Params):
+- page: (Number, Optional) Trang hiện tại. Mặc định là 1.
+- limit: (Number, Optional) Số lượng user mỗi trang. Mặc định là 10.
+- search: (String, Optional) Từ khóa tìm kiếm (Tên hoặc Email).
+- Output (JSON):
+- Thành công (200):
+- JSON(với /api/users?page=x&limit=y)
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 50,
+        "totalPages": 5
+    },
+    "data": [
+        {
+            "UserID": 3,
+            "Email": "test@example.com",
+            "FullName": "Test",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235429",
+            "ID": "12324",
+            "ProfilePic": "",
+            "Role": "User"
+        },
+    ]
+}
+- JSON với /api/users?search=x
+{
+    "success": true,
+    "message": "Found 2 results for \"test\"",
+    "pagination": null,
+    "data": [
+        {
+            "UserID": 3,
+            "Email": "test@example.com",
+            "FullName": "Test",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235429",
+            "ID": "12324",
+            "ProfilePic": "",
+            "Role": "User"
+        },
+        {
+            "UserID": 1,
+            "Email": "test3@example.com",
+            "FullName": "Test4",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235421",
+            "ID": "12344",
+            "ProfilePic": "",
+            "Role": "Admin"
+        }
+    ]
+}
+- b. Xem chi tiết người dùng
+- Route: GET /api/users/:id
+- Input (Params):
+- id: ID của user cần xem.
+- Output (JSON):
+- Thành công (200): Object thông tin User.
+- Thất bại (404): { "message": "User not found" }.
+- c. Tạo người dùng mới (Cấp tài khoản)
+- Route: POST /api/users
+- Input (Body JSON):
+- FullName (Required): Họ tên.
+- Email (Required): Email đăng nhập.
+- Password (Required): Mật khẩu.
+- BirthDate (Required): Ngày sinh (YYYY-MM-DD).
+- StudentID (Required): Mã sinh viên.
+- ID (Required): Số CCCD.
+- Role: "Admin" hoặc "User" (Mặc định "User").
+- Output (JSON):
+- Thành công (201): { "message": "User created successfully", "data": {"UserID": } }.
+- Thất bại (400): Lỗi thiếu trường hoặc Email đã tồn tại.
+
+- d. Cập nhật thông tin người dùng
+- Route: PUT /api/users/:id
+- Input:
+- Params: id (ID user cần sửa).
+- Body JSON: FullName, BirthDate, StudentID, ID, Role (Các trường cần sửa).
+- Output (JSON):
+- Thành công (200): { "message": "User updated successfully" }.
+- e. Xóa người dùng
+- Route: DELETE /api/users/:id
+- Input (Params): id (ID user cần xóa).
+- Output (JSON):
+- Thành công (200): { "message": "User deleted successfully" }.
+- Thất bại (400): Không thể tự xóa chính mình.
+- Thất bại (409): Lỗi ràng buộc khóa ngoại (User đã có giao dịch nạp tiền/thanh toán).
+
+6. Quản lý Dịch vụ (Services)
+- Quyền hạn:
+- Xem (GET): User và Admin đều xem được.
+- Thêm/Sửa/Xóa (POST, PUT, DELETE): Chỉ Admin.
+- a. Lấy danh sách dịch vụ (Có phân trang)
+- Route: GET /api/services?page=x&limit=y
+- Input (Query Params):
+- page: (Number) Mặc định 1.
+- limit: (Number) Mặc định 10.
+- Output (JSON):
+- Thành công (200):
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 5,
+        "total": 7,
+        "totalPages": 2
+    },
+    "data": [
+        {
+            "ServiceID": 7,
+            "ServiceName": "Kiểm tra định kỳ 2",
+            "Price": 80000,
+            "Descriptions": "kiểm tra kiến trúc chung cư",
+            "CreatedAt": "2025-12-29T21:40:51.700Z"
+        },
+    ]
+}
+- b. Tạo dịch vụ mới
+- Route: POST /api/services
+- Input (Body JSON):
+- ServiceName (Required): Tên dịch vụ (Unique).
+- Price (Required): Giá tiền.
+- Descriptions: Mô tả chi tiết.
+- Output (JSON):
+- Thành công (201): { "success": true, "data": { "ServiceID": 8 } }.
+- Thất bại (400): Thiếu tên hoặc giá.
+- c. Cập nhật dịch vụ
+- Route: PUT /api/services/:id
+- Input:
+- Params: id.
+- Body JSON: ServiceName, Price, Descriptions.
+- Output (JSON):
+- Thành công (200): { "success": true, "message": "Update completed" }.
+- d. Xóa dịch vụ
+- Route: DELETE /api/services/:id
+- Input (Params): id.
+- Output (JSON):
+- Thành công (200): { "success": true, "message": "Delete completed" }.
+- Thất bại (409): Lỗi nếu dịch vụ này đã có trong lịch sử thanh toán (Ràng buộc khóa ngoại).

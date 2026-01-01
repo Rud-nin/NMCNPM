@@ -13,19 +13,59 @@ export const User = {
       .input("StudentID", sql.NVarChar(20), StudentID)
       .input("ID", sql.NVarChar(20), ID)
       .input("ProfilePic", sql.NVarChar(100), ProfilePic)
+      .input("Role", sql.NVarChar(20), Role)
       .query(`
-        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)
-        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @ProfilePic);
+        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic, Role)
+        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @ProfilePic, @Role);
         SELECT SCOPE_IDENTITY() AS UserID;
       `);
     return result.recordset[0];
   },
 
-  async getAll() {
+  async getAll({page = 1, limit = 10, keyword = null} ) {
     const pool = await getConnection();
-    const result = await pool.request().query("SELECT * FROM Users");
-    return result.recordset;
+    if(keyword) {
+      const searchPattern = `%${keyword}%`;
+      const result = await pool
+        .request()
+        .input("Keyword", sql.NVarChar(100), searchPattern)
+        .query(`
+          SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role 
+          FROM Users
+          WHERE FullName LIKE @Keyword OR Email LIKE @Keyword
+          ORDER BY UserID DESC
+        `);
+      
+      return {
+        mode: 'search', 
+        users: result.recordset,
+        totalCount: result.recordset.length
+      };
+    }
+    const offset = (page - 1) * limit;
+    const result = await pool
+      .request()
+      .input("Limit", sql.Int, limit)
+      .input("Offset", sql.Int, offset)
+      .query(`
+        -- Query 1: Lấy danh sách user phân trang
+        SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role 
+        FROM Users
+        ORDER BY UserID DESC -- Sắp xếp người mới nhất lên đầu
+        OFFSET @Offset ROWS
+        FETCH NEXT @Limit ROWS ONLY;
+
+        -- Query 2: Đếm tổng số user (để tính tổng số trang)
+        SELECT COUNT(*) AS Total FROM Users
+      `);
+
+    return {
+      mode: "pagination",
+      users: result.recordsets[0],          // Kết quả query 1
+      totalCount: result.recordsets[1][0].Total // Kết quả query 2
+    };
   },
+  
 
   async findByEmail(email) {
     const pool = await getConnection();
@@ -41,7 +81,33 @@ export const User = {
     const result = await pool
       .request()
       .input("UserID", sql.Int, userId)
-      .query("SELECT * FROM Users WHERE UserID = @UserID");
+      .query("SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role FROM Users WHERE UserID = @UserID");
     return result.recordset[0];
+  },
+
+  async updateUserProfile(userId, { FullName, BirthDate, StudentID, ID, Role }) {
+    const pool = await getConnection();
+    const result = await pool
+      .request()
+      .input("UserID", sql.Int, userId)
+      .input("FullName", sql.NVarChar(30), FullName)
+      .input("BirthDate", sql.Date, BirthDate)
+      .input("StudentID", sql.NVarChar(20), StudentID)
+      .input("ID", sql.NVarChar(20), ID)
+      .input("Role", sql.NVarChar(20), Role)
+      .query(`
+        UPDATE Users
+        SET FullName = @FullName, BirthDate = @BirthDate, StudentID = @StudentID, ID = @ID, Role = @Role
+        WHERE UserID = @UserID;
+    `);
+    return true;
+  },
+
+  async deleteUser(userId) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("UserID", sql.Int, userId)
+      .query("DELETE FROM Users WHERE UserID = @UserID");
+    return true;
   },
 };
