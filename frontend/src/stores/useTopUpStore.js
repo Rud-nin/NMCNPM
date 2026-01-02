@@ -6,6 +6,7 @@ import { useAuthStore } from './useAuthStore.js';
 export const useTopUpStore = create((set, get) => ({
   isLoading: false,
   isCreating: false,
+  userTopUps: [],
 
   createTopUp: async (amount) => {
     const authUser = useAuthStore.getState().authUser;
@@ -25,14 +26,15 @@ export const useTopUpStore = create((set, get) => ({
     }
   },
 
-  getUserTopUpsHistory: async () => {
+  getUserTopUps: async () => {
     const authUser = useAuthStore.getState().authUser;
     set({ isLoading: true });
 
     try {
       const res = await axiosInstance.get(`/topups/user/${authUser?.UserID}`);
+      set({ userTopUps: res.data })
       toast.success("Lấy lịch sử nạp tiền thành công");
-      return res.data;
+      return res;
       // const res = await fetch('/topups.example.json');
       // toast.success("Lấy lịch sử nạp tiền thành công");
       // return res.json();
