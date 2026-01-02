@@ -9,7 +9,8 @@ CREATE TABLE dbo.Users (
     StudentID NVARCHAR(20) NOT NULL UNIQUE,     -- Required student ID (MSSV)
     ID NVARCHAR(20) NOT NULL UNIQUE,            -- Required ID Number (Số CCCD)
     ProfilePic NVARCHAR(100) NULL DEFAULT (''), -- Optional, defaults to empty string
-    Role NVARCHAR(10) NOT NULL DEFAULT 'User'
+    Role NVARCHAR(10) NOT NULL DEFAULT 'User',
+    RoomID INT NULL                             -- Foreign Key to Rooms table (if applicable)
 );
 
 CREATE TABLE dbo.Notifications (
@@ -46,19 +47,13 @@ CREATE TABLE dbo.TopUpTransactions ( -- Nạp tiền
 
 CREATE TABLE dbo.ServicePayments ( -- Trả tiền dịch vụ
     PaymentID INT IDENTITY(1,1) PRIMARY KEY,
-
     UserID INT NOT NULL,
-    ServiceName NVARCHAR(100) NOT NULL, -- Tiền điện, Tiền nước, Phí xe, Phí quản lý
-    Description NVARCHAR(150) NULL,
-
-    Amount DECIMAL(15, 3) NOT NULL CHECK (Amount > 0),
-
+    TotalAmount DECIMAL(15, 3) NOT NULL CHECK (TotalAmount >= 0), -- Tổng số tiền phải trả
     Status NVARCHAR(20) NOT NULL DEFAULT 'Paid',
     -- Paid | Failed | Refunded
-
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
 
-    CONSTRAINT FK_Payment_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
+    CONSTRAINT FK_Payment_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID),
 );
 
 CREATE TABLE dbo.Feedbacks (
@@ -76,12 +71,32 @@ CREATE TABLE dbo.Feedbacks (
 
 CREATE TABLE dbo.ServiceMonthly (
     ServiceID INT IDENTITY(1,1) PRIMARY KEY,
-    
     ServiceName NVARCHAR(100) NOT NULL UNIQUE,  -- Tên dịch vụ
     Price DECIMAL(15, 3) NOT NULL CHECK (Price >= 0), -- Đơn giá
     Descriptions NVARCHAR(200) NULL,             -- Mô tả chi tiết
     
     CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- Bảng lưu trữ hóa đơn hàng tháng
+CREATE TABLE dbo.MonthlyBills (
+    BillID INT IDENTITY(1,1) PRIMARY KEY,
+    
+    -- Phân loại hóa đơn
+    RoomID INT NULL,           -- Có RoomID -> Hóa đơn chung (Điện, Nước)
+    UserID INT NULL,           -- Có UserID -> Hóa đơn riêng (Gửi xe, Gym)
+    ServiceID INT NOT NULL,    
+    
+    Amount DECIMAL(15, 3) NOT NULL,
+    Period NVARCHAR(20) NOT NULL, 
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Unpaid', -- Mặc định là Chưa trả
+    
+    PaymentID INT NULL, -- Khi trả xong, update ID biên lai vào đây
+    CreatedAt DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Bills_Service FOREIGN KEY (ServiceID) REFERENCES dbo.ServiceMonthly(ServiceID),
+    CONSTRAINT FK_Bills_Payment FOREIGN KEY (PaymentID) REFERENCES dbo.ServicePayments(PaymentID),
+    CONSTRAINT FK_Bills_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
 );
 
 UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test

@@ -481,3 +481,145 @@ Input (Query Params):
 - Output (JSON):
 - Thành công (200): { "success": true, "message": "Delete completed" }.
 - Thất bại (409): Lỗi nếu dịch vụ này đã có trong lịch sử thanh toán (Ràng buộc khóa ngoại).
+
+7. Nhóm API thanh toán
+- a. Xem danh sách hóa đơn chưa thanh toán
+- Route: GET /api/payments/unpaid
+- Input: Token chứa UserID của người đăng nhập
+- Output:
+{
+    "success": true,
+    "count": 2,
+    "data": [
+        {
+            "BillID": 6,
+            "ServiceName": "Phí gửi xe máy",
+            "Period": "11/2025",
+            "Amount": 80000,
+            "RoomID": null,
+            "UserID": 3,
+            "Price": 80000
+        },
+        {
+            "BillID": 5,
+            "ServiceName": "Tiền điện",
+            "Period": "11/2025",
+            "Amount": 360000,
+            "RoomID": 101,
+            "UserID": null,
+            "Price": 360000
+        }
+    ]
+}
+- b.Thực hiện thanh toán(Giao dịch chính) - Khi 1 user trong phòng thanh toán dịch vụ chung thành công thì tất cả thành viên trong phòng đều sẽ được chuyển trạng thái
+- Route: POST /api/payments/pay-bills
+- Input: Header: Token (Xác định ai là người trả tiền). Body: Danh sách ID muốn trả. VD: {"billIds": [1, 2]}
+- Output: 
+{
+    "success": true,
+    "message": "Bills paid successfully",
+    "data": {
+        "success": true,
+        "paymentId": 4,
+        "totalPaid": 440000,
+        "paidBillsCount": 2
+    }
+}
+- c.Xem lịch sử thanh toán(Người dùng)
+- Route:  GET /api/payments/history
+- Input: Header: Token. Query Param: page=1, limit=10
+- Output
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 4,
+        "totalPages": 1
+    },
+    "data": [
+        {
+            "PaymentID": 4,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:50:42.790Z",
+            "ServicesNames": "Tiền điện, Phí gửi xe máy",
+            "BillsCount": 2
+        },
+        {
+            "PaymentID": 3,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:03:40.773Z",
+            "ServicesNames": "Tiền điện, Phí gửi xe máy",
+            "BillsCount": 2
+        },
+        {
+            "PaymentID": 2,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T21:44:26.360Z",
+            "ServicesNames": null,
+            "BillsCount": 0
+        },
+        {
+            "PaymentID": 1,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T18:55:36.410Z",
+            "ServicesNames": null,
+            "BillsCount": 0
+        }
+    ]
+}
+- d. Xem lịch sử thanh toán(Admin)
+- Route: POST api/payments/admin/history?search=name(or email)
+- Input: Header: Token, Query param: page =1, limit = 10, search =
+- Output
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 4,
+        "totalPages": 1
+    },
+    "data": [
+        {
+            "PaymentID": 4,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:50:42.790Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": "Tiền điện, Phí gửi xe máy"
+        },
+        {
+            "PaymentID": 3,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:03:40.773Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": "Tiền điện, Phí gửi xe máy"
+        },
+        {
+            "PaymentID": 2,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T21:44:26.360Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": null
+        },
+        {
+            "PaymentID": 1,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T18:55:36.410Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": null
+        }
+    ]
+}

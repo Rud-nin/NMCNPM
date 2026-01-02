@@ -2,7 +2,7 @@ import sql from "mssql";
 import { getConnection } from "../lib/db.js";
 
 export const User = {
-  async create({ Email, FullName, Password, BirthDate, StudentID, ID, ProfilePic = "" }) {
+  async create({ Email, FullName, Password, BirthDate, StudentID, ID, ProfilePic = "" , Role}) {
     const pool = await getConnection();
     const result = await pool
       .request()
@@ -81,7 +81,12 @@ export const User = {
     const result = await pool
       .request()
       .input("UserID", sql.Int, userId)
-      .query("SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role FROM Users WHERE UserID = @UserID");
+      .query(`
+        SELECT U.UserID, U.Email, U.FullName, U.BirthDate, U.StudentID, U.ID, U.ProfilePic, U.Role, U.RoomID, ISNULL(UB.Balance,0) AS Balance
+        FROM Users U 
+        LEFT JOIN UserBalance UB ON U.UserID = UB.UserID
+        WHERE U.UserID = @UserID`
+        );
     return result.recordset[0];
   },
 

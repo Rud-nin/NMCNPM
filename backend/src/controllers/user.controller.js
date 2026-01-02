@@ -1,4 +1,5 @@
 import { User } from "../models/user_auth_model.js";
+import { Payment } from "../models/payment_model.js";
 import bcrypt from "bcryptjs";
 
 // @route   GET /api/users
@@ -44,7 +45,13 @@ export const getUserById = async (req,res) => {
         if(!user) {
             return  res.status(404).json({message: "User not found"});
         }
-        res.status(200).json(user);
+        const unpaidBills = await Payment.getUnpaidBills(user.UserID);
+        res.status(200).json({
+            success: true,
+            ...user,
+            UnpaidBills: unpaidBills,
+            TotalDebt: unpaidBills.reduce((sum, bill) => sum + bill.Amount, 0)
+        });
     } catch(error) {
         res.status(500).json({message: "Server error" });
     }
