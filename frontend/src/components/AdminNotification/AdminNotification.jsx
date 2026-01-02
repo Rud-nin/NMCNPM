@@ -13,7 +13,7 @@ function AdminNotification() {
 
     async function fetchNoti() {
         const data = await getAdminNotifications();
-        if(data) setNotifications(data);
+        if(data) setNotifications(data.data);
     }
 
     useEffect(() => {

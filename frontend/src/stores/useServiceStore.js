@@ -39,11 +39,11 @@ export const useServiceStore = create((set) => ({
         set({ isLoading: true });
         try {
             const res = await axiosInstance.put(`/services/${id}`, data);
-            set((state) => ({
-                services: state.services.map((service) => {
-                    service._id === id ? { ...service, ...data } : service;
-                })
-            }));
+            // set((state) => ({
+            //     services: state.services.map((service) => {
+            //         service.ServiceID === id ? { ...service, ...data } : service;
+            //     })
+            // }));
             toast.success('Cập nhật dịch vụ thành công');
             return res;
         } catch (error) {
@@ -58,7 +58,7 @@ export const useServiceStore = create((set) => ({
         try {
             await axiosInstance.delete(`/services/${id}`);
             set((state) => ({
-                services: state.services.filter((service) => service._id !== id),
+                services: state.services.filter((service) => service.ServiceID !== id),
             }));
             toast.success('Xóa dịch vụ thành công');
         } catch (error) {

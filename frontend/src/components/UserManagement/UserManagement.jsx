@@ -24,8 +24,8 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
             <input
                 type="text"
                 placeholder="Tên người dùng"
-                value={user?.Username || ""}
-                onChange={(e) => setUser({...user, Username: e.target.value})}/>
+                value={user?.FullName || ""}
+                onChange={(e) => setUser({...user, FullName: e.target.value})}/>
 
             <input
                 type="text"
@@ -74,7 +74,7 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
                         }
                         onClick={() => setUser(user?.services.includes(service.ServiceID) ?
                             user?.services.filter(s => s != service.ServiceID) :
-                            [...user?.services, service.ServiceID]
+                            [...user.services, service.ServiceID]
                         )}
                     >
                         {service.ServiceName}
@@ -83,7 +83,7 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
             </div>
 
             <div className={styles.buttonContainer}>
-                <Button onClick={confirm}>
+                <Button onClick={() => confirm(user) }>
                     Lưu
                 </Button>
                 <Button onClick={remove}>
@@ -98,7 +98,7 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
 }
 
 export default function UserManagement() {
-    const { users, getUsers, getUserById, updateUser, deleteUser } = useUsersStore();
+    const { users, getUsers, getUserById, updateUser, deleteUser, createUser } = useUsersStore();
     // const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState(null);
     const [selectingUser, setSelectingUser] = useState(null);
@@ -128,10 +128,10 @@ export default function UserManagement() {
         // setRooms(rooms);
         // setServices(services);
 
-        const { pagination: {limit,page,totalPages} } = await getUsers(limit, page);
-        setLimit(limit);
-        setPage(page);
-        setTotal(totalPages);
+        const { pagination } = await getUsers(page, limit);
+        // setLimit(pagination.limit);
+        // setPage(pagination.page);
+        setTotal(pagination.totalPages);
     }
 
     const handleCreateUser = async () => {
@@ -153,7 +153,7 @@ export default function UserManagement() {
         console.log("TODO: Handle Search Username");
     }
 
-    const handleUpdateUser = async () => {
+    const handleUpdateUser = async (selectingUser) => {
         if (selectingUser) {
             if (!selectingUser.FullName ||
                 !selectingUser.Email ||
@@ -258,7 +258,7 @@ export default function UserManagement() {
                                     <Button
                                         onClick={() => setSelectingUser({
                                             ...user,
-                                            services: [...user.services],
+                                            services: [...(user.services || [])],
                                         })}
                                     >
                                         <i className="fa-solid fa-user-pen"></i>
@@ -292,8 +292,8 @@ export default function UserManagement() {
                         <input
                             type="text"
                             placeholder="Tên người dùng"
-                            value={newUser?.Username ?? ""}
-                            onChange={(e) => setNewUser({...newUser, Username: e.target.value})} />
+                            value={newUser?.FullName ?? ""}
+                            onChange={(e) => setNewUser({...newUser, FullName: e.target.value})} />
                         <input
                             type="text"
                             placeholder="Email người dùng"

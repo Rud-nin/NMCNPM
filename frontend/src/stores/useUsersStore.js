@@ -58,11 +58,11 @@ export const useUsersStore = create((set, get) => ({
         set({ isLoading: true });
         try {
             const res = await axiosInstance.put(`/users/${id}`, data);
-            set((state) => ({
-                users: state.users.map((user) => {
-                    user._id === id ? { ...user, ...data } : user;
-                })
-            }))
+            // set((state) => ({
+            //     users: state.users.map((user) => {
+            //         user.UserID === id ? data : user;
+            //     })
+            // }))
             toast.success("Cập nhật người dùng thành công");
             return res;
         } catch (error) {
@@ -77,7 +77,7 @@ export const useUsersStore = create((set, get) => ({
         try {
             await axiosInstance.delete(`/users/${id}`);
             set((state) => ({
-                users: state.users.filter((user) => user._id !== id),
+                users: state.users.filter((user) => user.UserID !== id),
             }))
             toast.success("Xóa người dùng thành công");
         } catch (error) {
