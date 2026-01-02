@@ -9,9 +9,9 @@ export const useUsersStore = create((set, get) => ({
         set({ isLoading: true });
         try {
             const params = new URLSearchParams({ page, limit }).toString();
-            const users = await axiosInstance.get(`/users?${params}`);
-            set({ users });
-            return users;
+            const res = await axiosInstance.get(`/users?${params}`);
+            set({ users: res.data });
+            return res;
         } catch (error) {
             toast.error("Có lỗi xảy ra khi lấy danh sách người dùng");
             console.error(error);
@@ -25,6 +25,17 @@ export const useUsersStore = create((set, get) => ({
             return await axiosInstance.get(`/users/${id}`);
         } catch (error) {
             toast.error("Có lỗi xảy ra khi lấy thông tin người dùng");
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+    getUserByName: async (name) => {
+        set({ isLoading: true });
+        try {
+            return await axiosInstance.get(`/users?name=${name}`);
+        } catch (error) {
+            toast.error("Có lỗi xảy ra khi tìm kiếm người dùng");
             console.error(error);
         } finally {
             set({ isLoading: false });

@@ -1,19 +1,112 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useUsersStore } from "../../stores/useUsersStore";
+import { useServiceStore } from "../../stores/useServiceStore";
 import Button from "../Button/Button";
 import Overlay from "../Overlay/Overlay";
 import Table from "../Table/Table";
 import Pagination from "../Pagination/Pagination";
 import styles from "./UserManagement.module.css";
 
+function UserDetail({ UserID, cancel, confirm, remove, services }) {
+    // Tách ra component nữa để gọi useEffect
+    const [user, setUser] = useState(null);
+    const { getUserById } = useUsersStore();
+    useEffect(() => {
+        getUserById(UserID)
+            .then(res => setUser(res))
+    }, []);
+
+    return (
+        <div className={styles.modal}>
+            <h2>Thông tin người dùng</h2>
+
+            <input
+                type="text"
+                placeholder="Tên người dùng"
+                value={user?.Username || ""}
+                onChange={(e) => setUser({...user, Username: e.target.value})}/>
+
+            <input
+                type="text"
+                placeholder="Email người dùng"
+                value={user?.Email || ""}
+                onChange={(e) => setUser({...user, Email: e.target.value})}/>
+
+            <input
+                type="text"
+                placeholder="CCCD"
+                value={user?.ID || ""}
+                onChange={(e) => setUser({...user, ID: e.target.value})}/>
+
+            <input
+                type="text"
+                placeholder="MSSV"
+                value={user?.StudentID || ""}
+                onChange={(e) => setUser({...user, StudentID: e.target.value})} />
+
+            <input
+                className={styles.oneCell}
+                type="date"
+                placeholder="Ngày sinh"
+                value={user?.BirthDate || ""}
+                onChange={(e) => setUser({...user, BirthDate: e.target.value})}/>
+
+            <select
+                className={styles.oneCell}
+                value={user?.Role ?? "user"}
+                onChange={(e) => setUser({...user, Role: e.target.value})}
+            >
+                <option value="user">Người dùng</option>
+                <option value="admin">Quản trị viên</option>
+            </select>
+            
+            <div>
+                ID Phòng: {user?.RoomID || "Chưa được xếp"}
+            </div>
+
+            <div className={styles.services}>
+                {services.map((service, index) => (
+                    <button
+                        key={index}
+                        className={
+                            user?.services.includes(service.ServiceID) ? styles.selected : ""
+                        }
+                        onClick={() => setUser(user?.services.includes(service.ServiceID) ?
+                            user?.services.filter(s => s != service.ServiceID) :
+                            [...user?.services, service.ServiceID]
+                        )}
+                    >
+                        {service.ServiceName}
+                    </button>
+                ))}
+            </div>
+
+            <div className={styles.buttonContainer}>
+                <Button onClick={confirm}>
+                    Lưu
+                </Button>
+                <Button onClick={remove}>
+                    Xóa
+                </Button>
+                <Button onClick={cancel}>
+                    Hủy
+                </Button>
+            </div>
+        </div>
+    )
+}
+
 export default function UserManagement() {
-    // const { users, getUsers, getUserById, updateUser, deleteUser } = useUsersStore();
-    const [users, setUsers] = useState([]);
+    const { users, getUsers, getUserById, updateUser, deleteUser } = useUsersStore();
+    // const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState(null);
     const [selectingUser, setSelectingUser] = useState(null);
     const [deletingUser, setDeletingUser] = useState(null);
     const [rooms, setRooms] = useState([]);
-    const [services, setServices] = useState([]);
+    // const [services, setServices] = useState([]);
+
+    const { services } = useServiceStore(); 
     
     const [searchName, setSearchName] = useState("");
     const [page, setPage] = useState(1);
@@ -25,41 +118,61 @@ export default function UserManagement() {
          * Dữ liệu tạm thời để hiển thị trong khi đợi be
          * Thay thế đoạn dưới khi be có api
          */
-        console.log("TODO: Handle Fetch Users");
-        const [users, rooms, services] = await Promise.all([
-            fetch("users.example.json").then(res => res.json()),
-            fetch("rooms.example.json").then(res => res.json()),
-            fetch("services.example.json").then(res => res.json()),
-        ]);
-        setUsers(users);
-        setRooms(rooms.map(room => room.name));
-        setServices(services);
+        // console.log("TODO: Handle Fetch Users");
+        // const [users, rooms, services] = await Promise.all([
+        //     fetch("users.example.json").then(res => res.json()),
+        //     fetch("rooms.example.json").then(res => res.json()),
+        //     fetch("services.example.json").then(res => res.json()),
+        // ]);
+        // setUsers(users.data);
+        // setRooms(rooms);
+        // setServices(services);
+
+        const { pagination: {limit,page,totalPages} } = await getUsers(limit, page);
+        setLimit(limit);
+        setPage(page);
+        setTotal(totalPages);
     }
 
-    const handleCreateUser = () => {
-        console.log("TODO: Handle Create User");
+    const handleCreateUser = async () => {
+        if (newUser) {
+            if (!newUser.FullName ||
+                !newUser.Email ||
+                !newUser.Password ||
+                !newUser.BirthDate ||
+                !newUser.StudentID ||
+                !newUser.ID ||
+                !newUser.Role
+            ) return toast.error("Vui lòng điền đầy đủ thông tin");
+            await createUser(newUser);
+            setNewUser(null);
+        }
     }
 
     const handleSearchUsername = () => {
         console.log("TODO: Handle Search Username");
     }
 
-    const handleUpdateUser = () => {
-        console.log("TODO: Handle Update User");
-    }
-
-    const handleDeleteUser = () => {
-        console.log("TODO: Handle Delete User");
-    }
-
-    const handleModelConfirm = () => {
-        if (newUser) {
-            handleCreateUser();
-        } else if (selectingUser) {
-            handleUpdateUser();
+    const handleUpdateUser = async () => {
+        if (selectingUser) {
+            if (!selectingUser.FullName ||
+                !selectingUser.Email ||
+                !selectingUser.BirthDate ||
+                !selectingUser.StudentID ||
+                !selectingUser.ID ||
+                !selectingUser.Role
+            ) return toast.error("Vui lòng điền đầy đủ thông tin");
+            await updateUser(selectingUser.UserID, selectingUser);
+            setSelectingUser(null);
         }
-        setNewUser(null);
-        setSelectingUser(null);
+    }
+
+    const handleDeleteUser = async () => {
+        if (deletingUser) {
+            await deleteUser(deletingUser.UserID);
+            setSelectingUser(null);
+            setDeletingUser(null);
+        }
     }
 
     useEffect(() => {
@@ -72,10 +185,14 @@ export default function UserManagement() {
                 <h2>Quản lý người dùng</h2>
                 <Button
                     onClick={() => setNewUser({
-                        Username: "",
+                        FullName: "",
                         Email: "",
-                        Phone: "",
-                        Room: "",
+                        Password: "",
+                        BirthDate: "",
+                        StudentID: "",
+                        ID: "",
+                        Role: "",
+                        RoomID: "",
                         services: [],
                     })}
                 >
@@ -114,7 +231,8 @@ export default function UserManagement() {
                     <tr>
                         <th>Stt</th>
                         <th>Người dùng</th>
-                        <th>Phòng</th>
+                        <th>Vai trò</th>
+                        <th>ID Phòng</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -130,7 +248,10 @@ export default function UserManagement() {
                                 </div>
                             </td>
                             <td>
-                                {user.Room ?? "Chưa được xếp"}
+                                {user.Role === "admin" ? "Quản trị viên" : "Người dùng"}
+                            </td>
+                            <td>
+                                {user.RoomID ?? "Chưa được xếp"}
                             </td>
                             <td>
                                 <div className={styles.buttonContainer}>
@@ -163,112 +284,99 @@ export default function UserManagement() {
                     total={total}/>
             </div>
 
-            {(newUser || selectingUser) && !deletingUser && (
+            {newUser && (
                 <Overlay>
                     <div className={styles.modal}>
-                        <h2>
-                            {newUser ? "Thêm người dùng mới" : "Sửa thông tin người dùng"}
-                        </h2>
+                        <h2>Thêm người dùng mới</h2>
 
                         <input
                             type="text"
                             placeholder="Tên người dùng"
-                            value={newUser?.Username || selectingUser?.Username || ""}
-                            onChange={(e) => newUser ?
-                                setNewUser({...newUser, Username: e.target.value}) :
-                                setSelectingUser({...selectingUser, Username: e.target.value})} />
+                            value={newUser?.Username ?? ""}
+                            onChange={(e) => setNewUser({...newUser, Username: e.target.value})} />
                         <input
                             type="text"
                             placeholder="Email người dùng"
-                            value={newUser?.Email || selectingUser?.Email || ""}
-                            onChange={(e) => newUser ?
-                                setNewUser({...newUser, Email: e.target.value}) :
-                                setSelectingUser({...selectingUser, Email: e.target.value})} />
+                            value={newUser?.Email ?? ""}
+                            onChange={(e) => setNewUser({...newUser, Email: e.target.value})} />
                     
                         <input
+                            type="password"
+                            placeholder="Mật khẩu"
+                            value={newUser?.Password ?? ""}
+                            onChange={(e) => setNewUser({...newUser, Password: e.target.value})} />
+
+                        <input
                             type="text"
-                            placeholder="Sđt người dùng"
-                            value={newUser?.Phone || selectingUser?.Phone || ""}
-                            onChange={(e) => newUser ?
-                                setNewUser({...newUser, Phone: e.target.value}) :
-                                setSelectingUser({...selectingUser, Phone: e.target.value})} />
+                            placeholder="MSSV"
+                            value={newUser?.StudentID ?? ""}
+                            onChange={(e) => setNewUser({...newUser, StudentID: e.target.value})} />
+                        <input
+                            type="text"
+                            placeholder="CCCD"
+                            value={newUser?.ID ?? ""}
+                            onChange={(e) => setNewUser({...newUser, ID: e.target.value})} />
+
+                        <input
+                            className={styles.oneCell}
+                            type="date"
+                            placeholder="Ngày sinh"
+                            value={newUser?.BirthDate ?? ""}
+                            onChange={(e) => setNewUser({...newUser, BirthDate: e.target.value})} />
 
                         <select
-                            value={newUser?.Room || selectingUser?.Room || ""}
-                            onChange={(e) => newUser ?
-                                setNewUser({...newUser, Room: e.target.value}) :
-                                setSelectingUser({...selectingUser, Room: e.target.value})}
+                            className={styles.oneCell}
+                            value={newUser.Role ?? "user"}
+                            onChange={(e) => setNewUser({...newUser, Role: e.target.value})}
                         >
-                            <option value="">Phòng</option>
-                            {rooms.map((room, index) => (
-                                <option key={index} value={room}>
-                                    {room}
-                                </option>
-                            ))}
+                            <option value="user">Người dùng</option>
+                            <option value="admin">Quản trị viên</option>
                         </select>
+
+                        <div>
+                            ID Phòng: {newUser?.RoomID || "Chưa được xếp"}
+                        </div>
 
                         <div className={styles.services}>
                             {services.map((service, index) => (
                                 <button
                                     key={index}
-                                    className={newUser ? (
-                                        newUser.services.includes(service) ? styles.selected : ""
-                                    ) : (
-                                        selectingUser.services.includes(service) ? styles.selected : ""
+                                    className={newUser.services.includes(service) ? styles.selected : ""}
+                                    onClick={() => setNewUser(newUser.services.includes(service) ?
+                                        newUser.services.filter(s => s != service) :
+                                        [...newUser.services, service]
                                     )}
-                                    onClick={() => {
-                                        if (newUser) {
-                                            if (!newUser.services.includes(service))
-                                                setNewUser({
-                                                    ...newUser,
-                                                    services: [...newUser.services, service]
-                                                });
-                                            else
-                                                setNewUser({
-                                                    ...newUser,
-                                                    services: newUser.services.filter(s => s != service)
-                                                });
-                                        } else {
-                                            if (!selectingUser.services.includes(service))
-                                                setSelectingUser({
-                                                    ...selectingUser,
-                                                    services: [...selectingUser.services, service]
-                                                });
-                                            else
-                                                setSelectingUser({
-                                                    ...selectingUser,
-                                                    services: selectingUser.services.filter(s => s != service)
-                                                });
-                                        }
-                                    }}
                                 >
-                                    {service}
+                                    {service.ServiceName}
                                 </button>
                             ))}
                         </div>
 
                         <div className={styles.buttonContainer}>
                             <Button
-                                onClick={handleModelConfirm}
+                                onClick={handleCreateUser}
                             >
-                                {newUser ? "Thêm" : "Lưu"}
+                                Thêm
                             </Button>
-                            {selectingUser && (
-                                <Button onClick={(e) => setDeletingUser(selectingUser)}>
-                                    Xóa
-                                </Button>
-                            )}
                             <Button
-                                onClick={() => {
-                                    setNewUser(null);
-                                    setSelectingUser(null);
-                                    setDeletingUser(null);
-                                }}
+                                onClick={() => setNewUser(null)}
                             >
                                 Hủy
                             </Button>
                         </div>
                     </div>
+                </Overlay>
+            )}
+
+            {selectingUser && (
+                <Overlay>
+                    <UserDetail
+                        UserID={selectingUser.UserID}
+                        cancel={() => setSelectingUser(null)}
+                        confirm={handleUpdateUser}
+                        remove={() => setDeletingUser(selectingUser)}
+                        services={services}
+                    />
                 </Overlay>
             )}
 
