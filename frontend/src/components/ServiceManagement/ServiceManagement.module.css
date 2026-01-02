@@ -1,0 +1,69 @@
+.serviceManagement {
+    padding: 1rem;
+}
+
+.serviceManagement header, .search{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.serviceManagement input, .serviceManagement select {
+    padding: 0.5rem 1ch;
+    border: 1px solid #edf2f7;
+    outline: none;
+    border-radius: 5px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.serviceManagement input::placeholder {
+    color: var(--text-muted);
+}
+
+.search input {
+    width: min(50vw, 400px);
+}
+
+.search {
+    margin: 1rem 0;
+}
+
+.serviceManagement td:has(.buttonContainer) {
+    width: 1%;
+}
+
+.pagination {
+    margin-top: 0.5rem;
+    justify-items: center;
+}
+
+.modal, .deleteModal {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.modal h2, .deleteModal h2 {
+    grid-column: span 2 / span 2;
+    text-align: center;
+    margin: 0;
+}
+
+.modal > *:not(:nth-child(4), :nth-child(5)) {
+    grid-column: span 2 / span 2;
+}
+
+.modal .buttonContainer {
+    justify-self: end;
+}
