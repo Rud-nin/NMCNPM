@@ -1,5 +1,21 @@
 CREATE DATABASE CNPM;
 
+USE CNPM;
+
+CREATE TABLE dbo.Rooms (
+    RoomID INT IDENTITY(1, 1) PRIMARY KEY,
+    RoomNumber INT NOT NULL,
+    Building NVARCHAR(10) NOT NULL,
+    Capacity INT NOT NULL DEFAULT 4,  -- Sức chứa của phòng
+    Occupancy INT NOT NULL DEFAULT 0, -- Lượng user hiện tại
+
+    CONSTRAINT CK_Rooms_Occupancy
+        CHECK (Occupancy <= Capacity AND Occupancy >= 0),
+
+    CONSTRAINT UQ_Rooms_Building_RoomNumber -- Đảm bảo trong một toà nhà không có 2 phòng trùng nhau
+        UNIQUE (Building, RoomNumber)
+);
+
 CREATE TABLE dbo.Users (
     UserID INT IDENTITY(1,1) PRIMARY KEY,       -- Auto-increment unique ID
     Email NVARCHAR(50) NOT NULL UNIQUE,         -- Email must be unique and required
@@ -9,8 +25,11 @@ CREATE TABLE dbo.Users (
     StudentID NVARCHAR(20) NOT NULL UNIQUE,     -- Required student ID (MSSV)
     ID NVARCHAR(20) NOT NULL UNIQUE,            -- Required ID Number (Số CCCD)
     ProfilePic NVARCHAR(100) NULL DEFAULT (''), -- Optional, defaults to empty string
+    RoomID INT NULL,
     Role NVARCHAR(10) NOT NULL DEFAULT 'User',
-    RoomID INT NULL                             -- Foreign Key to Rooms table (if applicable)
+
+    CONSTRAINT FK_Users_Rooms
+        FOREIGN KEY (RoomID) REFERENCES dbo.Rooms(RoomID)
 );
 
 CREATE TABLE dbo.Notifications (
@@ -112,18 +131,27 @@ VALUES
 (N'Phí wifi',100000, N'Tính theo tháng'),
 (N'Vệ sinh chung', 30000, N'Tính theo tháng');
 
+--------------- Test Room -----------------
+-- Thêm userID 8 vào phòng 1 full → FAIL
+UPDATE Users SET RoomID = 1 WHERE UserID = 8;
+
+-- Chuyển phòng (user 2 chuyển từ phòng 1 sang phòng 2) 4,1 -> 3,2
+UPDATE Users SET RoomID = 2 WHERE UserID = 2;
+-- Undo:
+UPDATE Users SET RoomID = 1 WHERE UserID = 2;
+-------------------------------------------
+
+SELECT * FROM Rooms;
 SELECT * FROM Users;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;
 SELECT * FROM TopUpTransactions;
-SELECT * FROM ServicePayments;
 SELECT * FROM Feedbacks;
 SELECT * FROM ServiceMonthly;
 
 DROP TABLE Notifications;
 DROP TABLE UserBalance;
 DROP TABLE TopUpTransactions;
-DROP TABLE ServicePayments;
 DROP TABLE Users;
 DROP TABLE Feedbacks;
 DROP TABLE ServiceMonthly;
