@@ -8,7 +8,8 @@ import {
   deleteRoom,
   assignRoomToUser,
   removeUserFromRoom,
-  getUsersInRoom
+  getUsersInMyRoom,
+  getUsersInRoomByAdmin
 } from "../controllers/room.controller.js";
 
 const router = express.Router();
@@ -17,12 +18,13 @@ router.use(protectRoute);
 
 router.get("/", getRooms);
 router.get("/available", getAvailableRooms);
-router.get("/:id", getUsersInRoom);
+router.get("/me", getUsersInMyRoom);
 
 router.post("/", requireAdmin, createRoom);
 router.delete("/:id", requireAdmin, deleteRoom);
 
 router.put("/assign", requireAdmin, assignRoomToUser);
 router.put("/remove/:userId", requireAdmin, removeUserFromRoom);
+router.get("/:id", requireAdmin, getUsersInRoomByAdmin);
 
 export default router;

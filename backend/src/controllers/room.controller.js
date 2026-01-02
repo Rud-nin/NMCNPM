@@ -100,8 +100,8 @@ export const removeUserFromRoom = async (req, res) => {
 	});
 };
 
-// @route GET /api/rooms/:id/users
-export const getUsersInRoom = async (req, res) => {
+// @route GET /api/rooms/:id
+export const getUsersInRoomByAdmin = async (req, res) => {
   try {
     const roomId = parseInt(req.params.id);
 
@@ -130,7 +130,44 @@ export const getUsersInRoom = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Get users in room error:", error.message);
+    console.error("Admin get users in room error:", error.message);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route GET /api/rooms/me
+export const getUsersInMyRoom = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user.RoomID) {
+      return res.status(400).json({
+				success: false,
+        message: "You are not assigned to any room"
+      });
+    }
+
+    const room = await Room.findById(user.RoomID);
+    if (!room) {
+      return res.status(404).json({
+				success: false,
+				message: "Room not found"
+			});
+    }
+
+    const users = await Room.getUsersInRoom(user.RoomID);
+
+    res.status(200).json({
+      success: true,
+      room,
+      users
+    });
+
+  } catch (error) {
+    console.error("User get users in my room error:", error.message);
+    res.status(500).json({
+			success: false,
+			message: "Server error"
+		});
   }
 };
