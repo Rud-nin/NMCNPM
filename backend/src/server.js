@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import authRoutes from '../src/routes/auth.routes.js'
 import cookieParser from 'cookie-parser'
 import notificationRoutes from '../src/routes/notification.routes.js'
@@ -11,6 +12,13 @@ import userRoutes from './routes/user.routes.js'
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173', // Fallback nếu quên .env
+    credentials: true, // Cho phép gửi cookie
+  })
+)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/notifications', notificationRoutes)

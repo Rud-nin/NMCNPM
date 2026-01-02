@@ -2,10 +2,10 @@ import sql from 'mssql'
 import { getConnection } from './db.js'
 import bcrypt from 'bcryptjs'
 
-// Generate random date in November 2025
+// Generate random date
 function randomNovember2025() {
   const start = new Date('2025-11-01T00:00:00')
-  const end = new Date('2025-11-30T23:59:59')
+  const end = new Date('2026-01-01T23:59:59')
   return new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
   )
@@ -19,17 +19,43 @@ async function seed() {
     DELETE FROM Notifications;
     DELETE FROM UserBalance;
     DELETE FROM TopUpTransactions;
-    DELETE FROM ServicePayments;
     DELETE FROM Users;
 
     --Reset identity counter to 1
     DBCC CHECKIDENT ('Users', RESEED, 0);
     DBCC CHECKIDENT ('Notifications', RESEED, 0);
     DBCC CHECKIDENT ('TopUpTransactions', RESEED, 0);
-    DBCC CHECKIDENT ('ServicePayments', RESEED, 0);
   `)
 
   console.log('🌱 Seeding database...')
+
+  const roomsData = [
+    { RoomNumber: 101, Building: 'B5', Capacity: 4 },
+    { RoomNumber: 102, Building: 'B5', Capacity: 4 },
+    { RoomNumber: 103, Building: 'B6', Capacity: 8 },
+
+    { RoomNumber: 201, Building: 'B13', Capacity: 4 },
+    { RoomNumber: 202, Building: 'B9', Capacity: 8 },
+  ]
+
+  const roomIds = []
+
+  for (const r of roomsData) {
+    const result = await pool
+      .request()
+      .input('RoomNumber', sql.Int, r.RoomNumber)
+      .input('Building', sql.NVarChar(10), r.Building)
+      .input('Capacity', sql.Int, r.Capacity)
+      .query(`
+        INSERT INTO Rooms (RoomNumber, Building, Capacity)
+        VALUES (@RoomNumber, @Building, @Capacity);
+        SELECT SCOPE_IDENTITY() AS RoomID;
+      `)
+
+    roomIds.push(result.recordset[0].RoomID)
+  }
+
+  console.log('✅ Rooms inserted:', roomIds)
 
   // insert users
   const usersData = [
@@ -42,6 +68,8 @@ async function seed() {
       ID: '0123456789',
       Role: 'Admin',
     },
+
+    // ===== ROOM B5-101 (4 slots - FULL) =====
     {
       Email: 'user1@example.com',
       FullName: 'Nguyen Van A',
@@ -49,6 +77,7 @@ async function seed() {
       BirthDate: '2006-05-10',
       StudentID: '20241234',
       ID: '0551231231',
+      RoomID: roomIds[0],
       Role: 'User',
     },
     {
@@ -58,6 +87,73 @@ async function seed() {
       BirthDate: '2005-08-22',
       StudentID: '20235719',
       ID: '0662342342',
+      RoomID: roomIds[0],
+      Role: 'User',
+    },
+    {
+      Email: 'user3@example.com',
+      FullName: 'Le Van C',
+      Password: 'password3',
+      BirthDate: '2005-11-02',
+      StudentID: '20236666',
+      ID: '0773453453',
+      RoomID: roomIds[0],
+      Role: 'User',
+    },
+    {
+      Email: 'user4@example.com',
+      FullName: 'Pham Thi D',
+      Password: 'password4',
+      BirthDate: '2006-02-14',
+      StudentID: '20237777',
+      ID: '0884564564',
+      RoomID: roomIds[0],
+      Role: 'User',
+    },
+
+    // ===== ROOM B5-102 (1/4) =====
+    {
+      Email: 'user5@example.com',
+      FullName: 'Hoang Van E',
+      Password: 'password5',
+      BirthDate: '2004-07-19',
+      StudentID: '20238888',
+      ID: '0995675675',
+      RoomID: roomIds[1],
+      Role: 'User',
+    },
+
+    // ===== ROOM B6-103 (2/8) =====
+    {
+      Email: 'user6@example.com',
+      FullName: 'Dang Thi F',
+      Password: 'password6',
+      BirthDate: '2005-03-09',
+      StudentID: '20239999',
+      ID: '0116786786',
+      RoomID: roomIds[2],
+      Role: 'User',
+    },
+    {
+      Email: 'user7@example.com',
+      FullName: 'Bui Van G',
+      Password: 'password7',
+      BirthDate: '2004-12-30',
+      StudentID: '20230001',
+      ID: '0227897897',
+      RoomID: roomIds[2],
+      Role: 'User',
+    },
+
+    // ===== NO ROOM =====
+    {
+      Email: 'user8@example.com',
+      FullName: 'Tran Van H',
+      Password: 'password8',
+      BirthDate: '2006-06-06',
+      StudentID: '20230002',
+      ID: '0338908908',
+      RoomID: null,
       Role: 'User',
     },
   ]
@@ -75,9 +171,10 @@ async function seed() {
       .input('BirthDate', sql.Date, u.BirthDate)
       .input('StudentID', sql.NVarChar(20), u.StudentID)
       .input('ID', sql.NVarChar(20), u.ID)
+      .input('RoomID', sql.Int, u.RoomID)
       .input('Role', sql.NVarChar(10), u.Role).query(`
-        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, Role)
-        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @Role);
+        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, RoomID, Role)
+        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @RoomID, @Role);
         SELECT SCOPE_IDENTITY() AS UserID;
       `)
 
@@ -140,44 +237,6 @@ async function seed() {
       `)
   }
   console.log('✅ TopUpTransactions inserted (random dates)')
-
-  const payments = [
-    {
-      UserID: user1,
-      ServiceName: 'Phí quản lý tháng 11',
-      Description: 'Phí quản lý tòa nhà tháng 11/2025',
-      Amount: 300000,
-    },
-    {
-      UserID: user1,
-      ServiceName: 'Tiền điện tháng 11',
-      Description: 'Tiêu thụ 120 kWh',
-      Amount: 245000,
-    },
-    {
-      UserID: user2,
-      ServiceName: 'Phí gửi xe máy',
-      Description: 'Xe tay ga - 1 tháng',
-      Amount: 80000,
-    },
-  ]
-
-  for (const p of payments) {
-    const fakeDate = randomNovember2025()
-
-    await pool
-      .request()
-      .input('UserID', sql.Int, p.UserID)
-      .input('ServiceName', sql.NVarChar(100), p.ServiceName)
-      .input('Description', sql.NVarChar(sql.MAX), p.Description)
-      .input('Amount', sql.Decimal(15, 3), p.Amount)
-      .input('Status', sql.NVarChar(20), 'Paid')
-      .input('CreatedAt', sql.DateTime, fakeDate).query(`
-        INSERT INTO ServicePayments (UserID, ServiceName, Description, Amount, Status, CreatedAt)
-        VALUES (@UserID, @ServiceName, @Description, @Amount, @Status, @CreatedAt)
-      `)
-  }
-  console.log('✅ ServicePayments inserted (random dates)')
   process.exit(0)
 }
 
