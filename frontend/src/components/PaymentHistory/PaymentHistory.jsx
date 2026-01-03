@@ -9,13 +9,13 @@ export default function PaymentHistory() {
     const [ payments, setPayments ] = useState([]);
     const getPayments = usePaymentStore((state) => state.getPayments);
 
-    async function fetchPayments() {
+    const handleFetchPayments = async () => {
         const data = await getPayments();
-        if(data) setPayments(data);
+        if(data) setPayments(data.data);
     }
 
     useEffect(() => {
-        fetchPayments();
+        handleFetchPayments();
     }, []);
 
     return (
@@ -23,7 +23,7 @@ export default function PaymentHistory() {
             <header>
                 <h2>Lịch sử giao dịch</h2>
                 <Button
-                    onClick={fetchPayments}
+                    onClick={handleFetchPayments}
                 >Làm mới</Button>
             </header>
 

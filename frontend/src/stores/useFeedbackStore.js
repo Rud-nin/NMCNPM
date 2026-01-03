@@ -20,4 +20,16 @@ export const useFeedbackStore = create((set, get) => ({
       set({ isSending: false });
     }
   },
+  getFeedbacks: async (page, limit) => {
+    set({ isLoading: true });
+    try {
+      const params = new URLSearchParams({ page, limit }).toString();
+      return await axiosInstance.get(`/feedbacks?${params}`);
+    } catch (err) {
+      toast.error('Có lỗi trong khi lấy thông tin phản hồi !');
+      console.error(err);
+    } finally {
+      set({ isLoading: false });
+    }
+  }
 }));

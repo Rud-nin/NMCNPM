@@ -29,10 +29,8 @@ export default function ServiceManagement() {
     const handleFetchServices = async () => {
         const res = await getServices(limit, page);
         if (res) {
-            const { pagination: { limit, page, totalPages } } = res;
-            setLimit(limit);
-            setPage(page);
-            setTotal(totalPages);
+            const { pagination } = res;
+            setTotal(pagination.totalPages);
         }
     }
 

@@ -21,4 +21,8 @@
 .pagination select {
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    padding: 0.5rem 1ch;
+    border: #edf2f7 1px solid;
+    outline: none;
+    border-radius: 5px;
 }

@@ -20,11 +20,11 @@ export const useNotificationStore = create((set) => ({
     }
   },
   
-  getAdminNotifications: async () => {
+  getAdminNotifications: async (page = 1, limit = 10) => {
     set({ isLoading: true });
     try {
-      return (await axiosInstance.get('/notifications')).data;
-      // return await fetch('/notification.example.json').then(res => res.json());
+      const params = new URLSearchParams({ page, limit }).toString();
+      return await axiosInstance.get(`/notifications?${params}`);
     } catch (err) {
       toast.error('Có lỗi trong khi lấy thông báo!');
       console.error(err);

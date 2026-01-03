@@ -14,7 +14,10 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
     const { getUserById } = useUsersStore();
     useEffect(() => {
         getUserById(UserID)
-            .then(res => setUser(res))
+            .then(res => {
+                res.BirthDate = res.BirthDate.split("T")[0];
+                setUser(res);
+            })
     }, []);
 
     return (
@@ -98,7 +101,7 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
 }
 
 export default function UserManagement() {
-    const { users, getUsers, getUserById, updateUser, deleteUser, createUser } = useUsersStore();
+    const { users, getUsers, updateUser, deleteUser, createUser } = useUsersStore();
     // const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState(null);
     const [selectingUser, setSelectingUser] = useState(null);
@@ -128,10 +131,11 @@ export default function UserManagement() {
         // setRooms(rooms);
         // setServices(services);
 
-        const { pagination } = await getUsers(page, limit);
-        // setLimit(pagination.limit);
-        // setPage(pagination.page);
-        setTotal(pagination.totalPages);
+        const res = await getUsers(page, limit);
+        if (res) {
+            const { pagination } = res;
+            setTotal(pagination.totalPages);
+        }
     }
 
     const handleCreateUser = async () => {
@@ -248,7 +252,7 @@ export default function UserManagement() {
                                 </div>
                             </td>
                             <td>
-                                {user.Role === "admin" ? "Quản trị viên" : "Người dùng"}
+                                {user.Role === "Admin" ? "Quản trị viên" : "Người dùng"}
                             </td>
                             <td>
                                 {user.RoomID ?? "Chưa được xếp"}

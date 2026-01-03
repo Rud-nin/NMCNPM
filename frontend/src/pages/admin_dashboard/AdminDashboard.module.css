@@ -4,11 +4,13 @@
 }
 
 .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
     background-color: var(--side-bar-bg);
     color: var(--side-bar-text);
-    height: 100%;
-    min-height: 100vh;
-    width: clamp(200px, 15%, 500px);
+    height: 100vh;
+    width: var(--sidebar-width);
     padding: 0 2rem;
 }
 
@@ -38,6 +40,7 @@
 
 .section {
     flex: 1;
+    margin-left: var(--sidebar-width);
 }
 
 .header {

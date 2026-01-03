@@ -28,7 +28,7 @@ export default function Pagination({
             </div>
             <div>
                 Hiển thị:{' '}
-                <select value={limit} onChange={(e) => setLimit(e.target.value)}>
+                <select value={limit} onChange={(e) => {setLimit(e.target.value); setPage(1);}}>
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
