@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const useServiceStore = create((set) => ({
     isLoading: false,
     services: [],
-    getServices: async (limit, page) => {
+    getServices: async (limit = 100, page = 1) => {
         set({ isLoading: true });
         try {
             const params = new URLSearchParams({ limit, page }).toString();

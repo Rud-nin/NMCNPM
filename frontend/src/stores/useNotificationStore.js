@@ -23,7 +23,7 @@ export const useNotificationStore = create((set) => ({
     }
   },
   
-  getAdminNotifications: async (page = 1, limit = 10) => {
+  getAdminNotifications: async (page = 1, limit = 100) => {
     set({ isLoading: true });
     try {
       const params = new URLSearchParams({ page, limit }).toString();

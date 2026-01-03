@@ -20,7 +20,7 @@ export const useFeedbackStore = create((set, get) => ({
       set({ isSending: false });
     }
   },
-  getFeedbacks: async (page, limit) => {
+  getFeedbacks: async (page = 1, limit = 100) => {
     set({ isLoading: true });
     try {
       const params = new URLSearchParams({ page, limit }).toString();

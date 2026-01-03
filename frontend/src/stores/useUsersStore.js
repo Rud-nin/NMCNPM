@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const useUsersStore = create((set, get) => ({
     users: [],
     isLoading: false,
-    getUsers: async (page = 1, limit = 20) => {
+    getUsers: async (page = 1, limit = 100) => {
         set({ isLoading: true });
         try {
             const params = new URLSearchParams({ page, limit }).toString();
@@ -33,7 +33,7 @@ export const useUsersStore = create((set, get) => ({
     getUserByName: async (name) => {
         set({ isLoading: true });
         try {
-            return await axiosInstance.get(`/users?name=${name}`);
+            return await axiosInstance.get(`/users?keyword=${name}`);
         } catch (error) {
             toast.error("Có lỗi xảy ra khi tìm kiếm người dùng");
             console.error(error);
