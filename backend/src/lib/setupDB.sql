@@ -16,6 +16,26 @@ CREATE TABLE dbo.Rooms (
         UNIQUE (Building, RoomNumber)
 );
 
+CREATE TABLE dbo.RoomRequests (
+    RequestID INT IDENTITY(1,1) PRIMARY KEY,
+
+    UserID INT NOT NULL,
+    RoomID INT NOT NULL,
+
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+    -- Pending | Approved | Rejected | Cancelled
+
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    ProcessedAt DATETIME NULL,
+
+    CONSTRAINT FK_RoomRequests_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID),
+    CONSTRAINT FK_RoomRequests_Room FOREIGN KEY (RoomID) REFERENCES dbo.Rooms(RoomID),
+
+    CONSTRAINT UQ_RoomRequests_User_Room_Status
+        UNIQUE (UserID, RoomID, Status)
+);
+
+
 CREATE TABLE dbo.Users (
     UserID INT IDENTITY(1,1) PRIMARY KEY,       -- Auto-increment unique ID
     Email NVARCHAR(50) NOT NULL UNIQUE,         -- Email must be unique and required
@@ -117,6 +137,38 @@ CREATE TABLE dbo.MonthlyBills (
     CONSTRAINT FK_Bills_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID)
 );
 
+GO
+CREATE TRIGGER TR_Users_UpdateRoomOccupancy
+ON dbo.Users
+AFTER INSERT, DELETE, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON; -- trigger im lặng khi chạy - không show (1 row(s) affected)
+
+    -- Giảm số người ở phòng cũ (DELETE hoặc UPDATE)
+    UPDATE r
+    SET r.Occupancy = r.Occupancy - x.cnt
+    FROM dbo.Rooms r
+    JOIN (
+        SELECT RoomID, COUNT(*) cnt
+        FROM deleted
+        WHERE RoomID IS NOT NULL
+        GROUP BY RoomID
+    ) x ON r.RoomID = x.RoomID;
+
+    -- Tăng số người ở phòng mới (INSERT hoặc UPDATE)
+    UPDATE r
+    SET r.Occupancy = r.Occupancy + x.cnt
+    FROM dbo.Rooms r
+    JOIN (
+        SELECT RoomID, COUNT(*) cnt
+        FROM inserted
+        WHERE RoomID IS NOT NULL
+        GROUP BY RoomID
+    ) x ON r.RoomID = x.RoomID;
+END;
+GO
+
 UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test
 INSERT INTO dbo.Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)
 VALUES ('test@example.com', 'Test1', 'secret123', '2005-04-11', '20235412', '12345', '');
@@ -141,6 +193,7 @@ UPDATE Users SET RoomID = 1 WHERE UserID = 2;
 -------------------------------------------
 
 SELECT * FROM Rooms;
+SELECT * FROM RoomRequests;
 SELECT * FROM Users;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;

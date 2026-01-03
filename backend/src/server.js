@@ -9,6 +9,8 @@ import feedbackRoutes from './routes/feedback.routes.js'
 import serviceRoutes from './routes/service.routes.js'
 import userRoutes from './routes/user.routes.js'
 import billRoutes from './routes/bill.routes.js'
+import roomRoutes from "./routes/room.routes.js";
+import roomRequestRoutes from "./routes/roomRequest.routes.js";
 
 const app = express()
 app.use(express.json())
@@ -29,6 +31,8 @@ app.use('/api/feedbacks', feedbackRoutes)
 app.use('/api/services', serviceRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/bills', billRoutes)
+app.use("/api/rooms", roomRoutes);
+app.use("/api/room-requests", roomRequestRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log('server is running on port', process.env.PORT)
