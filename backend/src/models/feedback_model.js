@@ -41,5 +41,31 @@ export const Feedback = {
         feedbacks: result.recordsets[0],
         totalCount: result.recordsets[1][0].Total
     };
+  },
+
+  async getById(id) {
+    const pool = await getConnection();
+    const result = await pool.request()
+      .input("FeedbackID", sql.Int, id)
+      .query("SELECT * FROM Feedbacks WHERE FeedbackID = @FeedbackID");
+    return result.recordset[0];
+  },
+
+  async updateStatus(id, status) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("FeedbackID", sql.Int, id)
+      .input("Status", sql.NVarChar(20), status)
+      .query("UPDATE Feedbacks SET Status = @Status WHERE FeedbackID = @FeedbackID");
+    return true;
+  },
+
+  async delete(id) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("FeedbackID", sql.Int, id)
+      .query("DELETE FROM Feedbacks WHERE FeedbackID = @FeedbackID");
+    return true;
   }
+
 };
