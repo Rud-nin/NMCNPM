@@ -1,7 +1,4 @@
-
-
-
-.notification, .feedback {
+.container {
     padding: 1rem;
 }
 
@@ -31,6 +28,7 @@
 
 .pagination {
     justify-self: center;
+    margin: 0.5rem 0;
 }
 
 .modal {
@@ -48,16 +46,7 @@
     margin: 0;
 }
 
-.modal input {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.modal input, .modal textarea {
+.modal input, .modal textarea, .modal select {
     outline: none;
     border: #edf2f7 solid 1px;
     border-radius: 5px;
@@ -76,4 +65,25 @@
 
 .modal *:not(button) {
     grid-column: span 2 / span 2;
+}
+
+.purple, .green, .yellow {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    border: 2px solid;
+}
+
+.purple {
+    background-color: #ab7df866;
+    color: #a371f7;
+}
+
+.yellow {
+    background-color: #bb800966;
+    color: #d29922;
+}
+
+.green {
+    background-color: #2ea04366;
+    color: #3fb950;
 }

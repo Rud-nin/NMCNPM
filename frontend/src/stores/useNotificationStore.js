@@ -6,12 +6,13 @@ export const useNotificationStore = create((set) => ({
   isLoading: false,
   userNotifications: [],
 
-  createNotification: async (title, content) => {
+  createNotification: async (title, content, receiverId) => {
     set({ isLoading: true })
     try {
       await axiosInstance.post('/notifications', {
         title,
         content,
+        receiverId,
       });
       toast.success('Tạo thông báo mới thành công');
     } catch (err) {

@@ -17,7 +17,7 @@ body {
   /* GLOBAL */
   --max-content-width: 1080px;
   --ideal-width: min(90vw, var(--max-content-width));
-  --sidebar-width: clamp(200px, 15%, 500px);
+  --sidebar-width: 250px;
 
   --bg-primary: hsl(0, 0%, 100%);
   --bg-secondary: hsl(0, 0%, 95%);

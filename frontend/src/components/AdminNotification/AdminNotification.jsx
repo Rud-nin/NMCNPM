@@ -14,17 +14,21 @@ function Feedback() {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total, setTotal] = useState(0);
-    const { getFeedbacks } = useFeedbackStore();
+    const { getFeedbacks, updateFeedBackStatus, deleteFeedback } = useFeedbackStore();
 
-    const nextStatus = {
-        "Pending": "In progress",
-        "In progress": "Done"
-    }
-
-    const convertStatus = {
-        "Pending": "Chờ xử lý",
-        "In progress": "Đang xử lý",
-        "Done": "Hoàn thành"
+    const status = {
+        "Pending": {
+            translated: "Chờ xử lý",
+            className: styles.green
+        },
+        "In Progress": {
+            translated: "Đang xử lý",
+            className: styles.yellow
+        },
+        "Done": {
+            translated: "Hoàn thành",
+            className: styles.purple
+        }
     }
 
     const handleFetchFeedbacks = async () => {
@@ -37,11 +41,22 @@ function Feedback() {
     }
 
     const handleUpdateFeedback = async () => {
-        console.log("TODO: handle update feedback");
+        if (selectingFeedback) {
+            await updateFeedBackStatus(
+                selectingFeedback.FeedbackID,
+                selectingFeedback.Status
+            );
+            setSelectingFeedback(null);
+            await handleFetchFeedbacks();
+        }
     }
 
     const handleDeleteFeedback = async () => {
-        console.log("TODO: handle delete feedback");
+        if (deletingFeedback) {
+            await deleteFeedback(deletingFeedback.FeedbackID);
+            setDeletingFeedback(null);
+            await handleFetchFeedbacks();
+        }
     }
 
     useEffect(() => {
@@ -80,7 +95,11 @@ function Feedback() {
                             <td>{feedback.FeedbackID}</td>
                             <td>{feedback.Title}</td>
                             <td>{feedback.Content}</td>
-                            <td>{convertStatus[feedback.Status]}</td>
+                            <td>
+                                <span className={status[feedback.Status].className}>
+                                    {status[feedback.Status].translated ?? feedback.Status}
+                                </span>
+                            </td>
                             <td>
                                 <div>
                                     {feedback.FullName}<br/>
@@ -92,7 +111,7 @@ function Feedback() {
                                     <Button
                                         onClick={() => setSelectingFeedback(feedback)}
                                     >
-                                        <i className="fa-solid fa-check"></i>
+                                        <i className="fa-solid fa-pen"></i>
                                     </Button>
                                     <Button
                                         onClick={() => setDeletingFeedback(feedback)}
@@ -120,8 +139,18 @@ function Feedback() {
                 <Overlay>
                     <div className={styles.modal}>
                         <h2>
-                            {`Cập nhật phản hồi của ${selectingFeedback.FullName} thành ${nextStatus[selectingFeedback.Status]}?`}
+                            {`Phản hồi của ${selectingFeedback.FullName}?`}
                         </h2>
+                        <div>{selectingFeedback.Title}</div>
+                        <div>{selectingFeedback.Content}</div>
+                        <select
+                            value={selectingFeedback.Status}
+                            onChange={(e) => setSelectingFeedback({ ...selectingFeedback, Status: e.target.value})}
+                        >
+                            <option value="Pending">Chờ xử lý</option>
+                            <option value="In Progress">Đang xử lý</option>
+                            <option value="Done">Hoàn thành</option>
+                        </select>
                         <Button
                             onClick={handleUpdateFeedback}
                         >
@@ -180,7 +209,11 @@ function Notification() {
 
     const handleCreateNotification = async () => {
         if (newNotification) {
-            await createNotification(newNotification.title, newNotification.content);
+            await createNotification(
+                newNotification.title,
+                newNotification.content,
+                newNotification.receiverId
+            );
             setNewNotification(null);
             await handleFetchNotification();
         }
@@ -258,16 +291,29 @@ function Notification() {
                         <h2>Nhập thông báo mới</h2>
                         <input
                             type="text"
-                            value={newNotification.title}
-                            placeholder="Nhập tiêu đề thông báo"
+                            value={newNotification.title ?? ""}
+                            placeholder="Tiêu đề thông báo"
                             onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value})}/>
                         <textarea
                             type="text"
-                            value={newNotification.content}
-                            placeholder="Nhập nội dung thông báo"
+                            value={newNotification.content ?? ""}
+                            placeholder="Nội dung thông báo"
                             onChange={(e) => setNewNotification({ ...newNotification, content: e.target.value})}/>
-                        <Button onClick={handleCreateNotification}>Thêm</Button>
-                        <Button onClick={() => setNewNotification(null)}>Hủy</Button>
+                        <input
+                            type="text"
+                            placeholder="ID người nhận thông báo, để trống để thông báo cho tất cả người dùng"
+                            value={newNotification.receiverId ?? ""}
+                            onChange={(e) => setNewNotification({ ...newNotification, receiverId: e.target.value})}/>
+                        <Button
+                            onClick={handleCreateNotification}
+                        >
+                            Thêm
+                        </Button>
+                        <Button
+                            onClick={() => setNewNotification(null)}
+                        >
+                            Hủy
+                        </Button>
                     </div>
                 </Overlay>
             )}

@@ -8,14 +8,17 @@ import Table from "../Table/Table";
 import Pagination from "../Pagination/Pagination";
 import styles from "./UserManagement.module.css";
 
-function UserDetail({ UserID, cancel, confirm, remove, services }) {
+function UserDetail({ UserID, cancel, confirm, remove }) {
     // Tách ra component nữa để gọi useEffect
     const [user, setUser] = useState(null);
     const { getUserById } = useUsersStore();
+    const { services } = useServiceStore();
+
     useEffect(() => {
         getUserById(UserID)
             .then(res => {
                 res.BirthDate = res.BirthDate.split("T")[0];
+                res.services = res.services ?? [];
                 setUser(res);
             })
     }, []);
@@ -69,16 +72,19 @@ function UserDetail({ UserID, cancel, confirm, remove, services }) {
             </div>
 
             <div className={styles.services}>
-                {services.map((service, index) => (
+                {services.map((service) => (
                     <button
-                        key={index}
+                        key={service.ServiceID}
                         className={
                             user?.services.includes(service.ServiceID) ? styles.selected : ""
                         }
-                        onClick={() => setUser(user?.services.includes(service.ServiceID) ?
-                            user?.services.filter(s => s != service.ServiceID) :
-                            [...user.services, service.ServiceID]
-                        )}
+                        onClick={() =>
+                        setUser(prev => ({
+                            ...prev,
+                            services: prev.services.includes(service.ServiceID)
+                            ? prev.services.filter(s => s !== service.ServiceID)
+                            : [...prev.services, service.ServiceID],
+                        }))}
                     >
                         {service.ServiceName}
                     </button>
@@ -233,7 +239,7 @@ export default function UserManagement() {
             <Table>
                 <thead>
                     <tr>
-                        <th>Stt</th>
+                        <th>ID</th>
                         <th>Người dùng</th>
                         <th>Vai trò</th>
                         <th>ID Phòng</th>
@@ -379,7 +385,6 @@ export default function UserManagement() {
                         cancel={() => setSelectingUser(null)}
                         confirm={handleUpdateUser}
                         remove={() => setDeletingUser(selectingUser)}
-                        services={services}
                     />
                 </Overlay>
             )}
