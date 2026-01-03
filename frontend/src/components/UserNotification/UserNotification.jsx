@@ -93,8 +93,7 @@ function UserNotification() {
               <td>{noti.Title}</td>
               <td>{noti.Content}</td>
               <td>{formatDateTime(noti.CreatedAt)}</td>
-              <td>
-              </td>
+              <td></td>
             </tr>
           ))}
         </tbody>
