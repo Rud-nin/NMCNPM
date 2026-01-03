@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 export const useRoomStore = create((set) => ({
     isLoading: false,
     rooms: [],
+    userRoom: [],
+    users: [],
     getRooms: async () => {
         set({ isLoading: true });
         try {
@@ -123,6 +125,32 @@ export const useRoomStore = create((set) => ({
             return res;
         } catch (error) {
             toast.error('Có lỗi khi từ chối yêu cầu');
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    fetchUserRoom: async () => {
+        set({ isLoading: true });
+
+        try {
+            const res = await axiosInstance.get(`/rooms/me`);
+            set({ 
+                userRoom: res.room,
+                users: res.users,  
+            });
+            return res;
+            // const res = await fetch('/userRoom.example.json');
+            // const data = await res.json();
+            // toast.success("Lấy thông tin thành công");
+            // set({ 
+            //   userRoom: data.room,
+            //   users: data.users,  
+            // });
+            // return res;
+        } catch (error) {
+            toast.error('Có lỗi khi lấy thông tin phòng');
             console.error(error);
         } finally {
             set({ isLoading: false });

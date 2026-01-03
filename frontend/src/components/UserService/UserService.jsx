@@ -62,7 +62,7 @@ function UserService() {
       <Table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Tên dịch vụ</th>
             <th>Mô tả</th>
             <th>Loại dịch vụ</th>

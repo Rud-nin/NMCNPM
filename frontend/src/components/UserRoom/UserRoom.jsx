@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import styles from './UserInformation.module.css';
+import styles from './UserRoom.module.css';
 import Table from "../Table/Table.jsx";
 import Button from "../Button/Button.jsx";
 import Overlay from "../Overlay/Overlay.jsx";
-import { useUserInformationStore } from '../../stores/useUserInformationStore.js';
+import { useRoomStore } from '../../stores/useRoomStore.js';
 import { useFeedbackStore } from "../../stores/useFeedbackStore.js";
 import { formatDate } from "../../lib/formatDate.js";
 
@@ -14,13 +14,14 @@ const InfoRow = ({ label, value, highlight }) => (
   </div>
 );
 
-function UserInformation() {
+function UserRoom() {
   const [feedback, setFeedback] = useState(null);
 
   const {
-    user,
-    fetchUserInformation
-  } = useUserInformationStore();
+    userRoom,
+    users,
+    fetchUserRoom
+  } = useRoomStore();
 
   const {
     sendFeedback
@@ -31,18 +32,18 @@ function UserInformation() {
     setFeedback(null);
   };
 
-  const handleFetchUserInformation = async () => {
-    await fetchUserInformation();
+  const handleFetchRoom = async () => {
+    await fetchUserRoom();
   }
 
   useEffect(() => {
-    handleFetchUserInformation();
+    fetchUserRoom();
   }, []);
 
   return (
-    <div className={styles.userInformation}>
+    <div className={styles.userRoom}>
       <header>
-        <h2>Thông tin cá nhân</h2>
+        <h2>Thông tin phòng</h2>
 
         <Button
           onClick={() => setFeedback({ title: '', content: '' })}
@@ -51,27 +52,19 @@ function UserInformation() {
       </header>
 
       <section className={styles.infoCard}>
-        <InfoRow label="Họ và tên" value={user.FullName} />
-        <InfoRow label="Email" value={user.Email} />
-        <InfoRow label="Ngày sinh" value={formatDate(user.BirthDate)} />
-        <InfoRow label="Mã số sinh viên" value={user.StudentID} />
-        <InfoRow label="Số CCCD" value={user.ID} />
-        <InfoRow label="Vai trò" value={user.Role === "User" ? "Người dùng" : "Admin"} />
-        <InfoRow label="Số phòng" value={user.RoomID} />
-        <InfoRow
-          label="Số dư"
-          value={`${user.Balance} VNĐ`}
-          highlight
-        />
+        <InfoRow label="Số phòng" value={userRoom.RoomNumber} />
+        <InfoRow label="Tòa nhà" value={userRoom.Building} />
+        <InfoRow label="Số thành viên tối đa" value={userRoom.Capacity} />
+        <InfoRow label="Số thành viên hiện có" value={userRoom.Occupancy} />
       </section>
 
-      {user?.UnpaidBills &&
-        <section className={styles.unpaidBills}>
+      {users &&
+        <section className={styles.users}>
           <div className={styles.titleBar}>
-            <h3>Danh sách hóa đơn chưa thanh toán</h3>
+            <h3>Danh sách thành viên</h3>
 
             <Button
-              onClick={handleFetchUserInformation}
+              onClick={handleFetchRoom}
             >
               <i className="fa-solid fa-arrows-rotate"></i>{' '}
               Làm mới
@@ -82,35 +75,27 @@ function UserInformation() {
             <thead>
               <tr>
                 <th>STT</th>
-                <th>Tên dịch vụ</th>
-                <th>Giai đoạn</th>
-                <th>Số tiền</th>
-                <th>Loại dịch vụ</th>
-                <th>Trạng thái</th>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Mã số sinh viên</th>
+                <th>Ngày sinh</th>
                 <th></th>
               </tr>
             </thead>
 
             <tbody>
-              {user?.UnpaidBills && user?.UnpaidBills.map((bill, index) => (
+              {users.map((user, index) => (
                 <tr key={index + 1}>
                   <td>{index + 1}</td>
-                  <td>{bill.ServiceName}</td>
-                  <td>{bill.Period}</td>
-                  <td>{bill.Price + " VNĐ"}</td>
-                  <td>{bill.UserID ? "Cá nhân" : "Phòng"}</td>
-                  <td>
-                    <span className={styles.status}>{"Chưa thanh toán"}</span>
-                  </td>
+                  <td>{user.FullName}</td>
+                  <td>{user.Email}</td>
+                  <td>{user.StudentID}</td>
+                  <td>{formatDate(user.BirthDate)}</td>
                   <td></td>
                 </tr>
               ))}
             </tbody>
           </Table>
-
-          <div className={styles.totalPayment}>
-            <h3>Tổng nợ: {user.TotalDebt} VNĐ</h3>
-          </div>
         </section>
       }
 
@@ -147,4 +132,4 @@ function UserInformation() {
   );
 }
 
-export default UserInformation;
+export default UserRoom;

@@ -4,6 +4,7 @@ import UserPayment from '../../components/UserPayment/UserPayment.jsx';
 import UserInformation from '../../components/UserInformation/UserInformation.jsx';
 import UserTopUp from '../../components/UserTopUp/UserTopUp.jsx';
 import UserService from '../../components/UserService/UserService.jsx';
+import UserRoom from '../../components/UserRoom/UserRoom.jsx';
 import styles from './UserDashboard.module.css';
 import { useState } from 'react';
 
@@ -27,7 +28,7 @@ export default function UserDashboard() {
         </div>
         {state === "Information" && <UserInformation />}
         {state === "Notification" && <UserNotification />}
-        {state === "Room" && <Room />}
+        {state === "Room" && <UserRoom />}
         {state === "Service" && <UserService />}
         {state === "Payment" && <UserPayment />}
         {state === "TopUp" && <UserTopUp />}
@@ -35,5 +36,3 @@ export default function UserDashboard() {
     </div>
   );
 }
-
-function Room() { }
