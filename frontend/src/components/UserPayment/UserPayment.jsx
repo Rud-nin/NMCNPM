@@ -121,7 +121,7 @@ function UserPayment() {
         <Table>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>STT</th>
               <th>Tên dịch vụ</th>
               <th>Giai đoạn</th>
               <th>Số tiền</th>
@@ -183,7 +183,7 @@ function UserPayment() {
         <Table>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>STT</th>
               <th>Tên các dịch vụ</th>
               <th>Số tiền</th>
               <th>Thời gian</th>

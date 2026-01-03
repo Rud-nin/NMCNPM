@@ -77,7 +77,7 @@ function UserNotification() {
       <Table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Tiêu đề</th>
             <th>Nội dung</th>
             <th>Thời gian</th>

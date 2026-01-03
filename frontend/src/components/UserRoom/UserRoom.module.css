@@ -1,0 +1,120 @@
+.userRoom {
+  padding: 1rem;
+}
+
+.userRoom header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoCard {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2rem;
+  row-gap: 1.5rem;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoRow span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.infoRow strong {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.highlight {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.users {
+  margin-top: 1.25rem;
+}
+
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.users td:not(td:nth-child(2)) {
+  text-align: center;
+}
+
+.users th:last-child,
+.users td:last-child {
+  white-space: nowrap;
+  width: 1%;
+}
+
+/* Tạo feedback */
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  padding: 0 1rem 1rem;
+  border-radius: 10px;
+  width: clamp(250px, 50%, 500px);
+}
+
+.modal h2 {
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input input,
+.input textarea {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1ch;
+  width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
+}
+
+.input span {
+  white-space: nowrap;
+}
+
+.modal .buttonContainer {
+  justify-self: center;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
