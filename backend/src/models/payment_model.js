@@ -30,8 +30,9 @@ export const Payment = {
       const listParams = billIds.map((_,i) => `@id${i}`).join(',');
       billIds.forEach((id,i) => requestBills.input(`id${i}`, sql.Int, id));
       const billsQuery = `
-        SELECT * FROM MonthlyBills WITH (UPDLOCK)
-        WHERE BillID IN (${listParams}) AND Status = 'Unpaid'
+        SELECT B.BillID, B.RoomID, B.UserID, B.Status, S.Price, S.ServiceName FROM MonthlyBills B WITH (UPDLOCK)
+        JOIN ServiceMonthly S ON B.ServiceID = S.ServiceID
+        WHERE B.BillID IN (${listParams}) AND B.Status = 'Unpaid'
         `;
       const billsResult = await requestBills.query(billsQuery);
       const billsToPay = billsResult.recordset;
@@ -51,7 +52,7 @@ export const Payment = {
         if ( bill.RoomID !== null && bill.RoomID !== userRoomId ) {
           throw new Error(`Bill ID ${bill.BillID} does not belong to the user's room`);
         }
-        totalAmount += bill.Amount;
+        totalAmount += bill.Price;
       }
 
       //Kiểm tra số dư
@@ -108,7 +109,6 @@ export const Payment = {
             B.BillID,
             S.ServiceName,
             B.Period,   -- Kỳ thu (VD: 11/2025)
-            B.Amount,
             B.RoomID,   -- Để FE biết đây là tiền phòng...
             B.UserID,   -- ...hay tiền riêng
             S.Price     -- Đơn giá gốc (tham khảo)
@@ -143,12 +143,7 @@ export const Payment = {
           FROM MonthlyBills B
           JOIN ServiceMonthly S ON B.ServiceID = S.ServiceID
           WHERE B.PaymentID = P.PaymentID
-        ) AS ServicesNames,
-         (
-          SELECT COUNT(*)
-          FROM MonthlyBills B
-          WHERE B.PaymentID = P.PaymentID
-         ) AS BillsCount
+        ) AS ServiceName
         FROM ServicePayments P
         WHERE P.UserID = @UserID
         ORDER BY P.CreatedAt DESC
@@ -194,7 +189,7 @@ export const Payment = {
                 FROM MonthlyBills B
                 JOIN ServiceMonthly S ON B.ServiceID = S.ServiceID
                 WHERE B.PaymentID = P.PaymentID
-            ) AS ServiceNames
+            ) AS ServiceName
         FROM ServicePayments P
         JOIN Users U ON P.UserID = U.UserID
         WHERE 1=1 ${searchCondition}

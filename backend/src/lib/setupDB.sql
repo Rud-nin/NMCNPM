@@ -105,8 +105,7 @@ CREATE TABLE dbo.MonthlyBills (
     RoomID INT NULL,           -- Có RoomID -> Hóa đơn chung (Điện, Nước)
     UserID INT NULL,           -- Có UserID -> Hóa đơn riêng (Gửi xe, Gym)
     ServiceID INT NOT NULL,    
-    
-    Amount DECIMAL(15, 3) NOT NULL,
+
     Period NVARCHAR(20) NOT NULL, 
     Status NVARCHAR(20) NOT NULL DEFAULT 'Unpaid', -- Mặc định là Chưa trả
     

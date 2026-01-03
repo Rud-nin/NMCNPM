@@ -36,7 +36,8 @@ export const signup = async (req, res) => {
       Password: hashedPassword,
       BirthDate,
       StudentID,
-      ID
+      ID,
+      Role: 'User'
     });
 
 
