@@ -26,12 +26,25 @@ export const createRoomRequest = async (req, res) => {
 
   } catch (error) {
     console.error("Create room request error:", error.message);
+    
+    if (error.message.includes("FK_RoomRequests_Room")) {
+      return res.status(409).json({
+        success: false,
+        message: "Room not found"
+      });
+    }
 
-    // Backup: DB constraint (race condition)
     if (error.message.includes("UQ_RoomRequests_User_Room_Status")) {
       return res.status(409).json({
 				success: false,
         message: "You already have a pending request for this room"
+      });
+    }
+
+    if (error.message.includes("UX_RoomRequests_User_Room_Pending")) {
+      return res.status(409).json({
+				success: false,
+        message: "Can not request to one room twice"
       });
     }
 

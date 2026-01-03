@@ -20,7 +20,7 @@ CREATE TABLE dbo.RoomRequests (
     RequestID INT IDENTITY(1,1) PRIMARY KEY,
 
     UserID INT NOT NULL,
-    RoomID INT NOT NULL,
+    RoomID INT NULL,
 
     Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
     -- Pending | Approved | Rejected | Cancelled
@@ -29,12 +29,9 @@ CREATE TABLE dbo.RoomRequests (
     ProcessedAt DATETIME NULL,
 
     CONSTRAINT FK_RoomRequests_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID),
-    CONSTRAINT FK_RoomRequests_Room FOREIGN KEY (RoomID) REFERENCES dbo.Rooms(RoomID),
-
-    CONSTRAINT UQ_RoomRequests_User_Room_Status
-        UNIQUE (UserID, RoomID, Status)
+    CONSTRAINT FK_RoomRequests_Room FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID)
+        ON DELETE SET NULL,
 );
-
 
 CREATE TABLE dbo.Users (
     UserID INT IDENTITY(1,1) PRIMARY KEY,       -- Auto-increment unique ID
@@ -168,6 +165,24 @@ BEGIN
     ) x ON r.RoomID = x.RoomID;
 END;
 GO
+
+ALTER TABLE RoomRequests
+    ALTER COLUMN RoomID INT NULL;
+
+ALTER TABLE RoomRequests
+    DROP CONSTRAINT FK_RoomRequests_Room;
+
+ALTER TABLE RoomRequests
+ADD CONSTRAINT FK_RoomRequests_Room
+    FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID)
+    ON DELETE SET NULL;
+
+DROP INDEX IF EXISTS UX_RoomRequests_User_Room_Status_NotNull
+    ON RoomRequests;
+CREATE UNIQUE INDEX UX_RoomRequests_User_Room_Pending
+    ON RoomRequests (UserID, RoomID)
+    WHERE Status = 'Pending'
+    AND RoomID IS NOT NULL;
 
 UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test
 INSERT INTO dbo.Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)
