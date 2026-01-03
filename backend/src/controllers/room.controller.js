@@ -1,4 +1,5 @@
 import { Room } from "../models/room.model.js";
+import { User } from "../models/user_auth_model.js";
 
 // @route GET /api/rooms
 export const getRooms = async (req, res) => {
@@ -72,10 +73,47 @@ export const createRoom = async (req, res) => {
 
 // @route DELETE /api/rooms/:id (admin)
 export const deleteRoom = async (req, res) => {
-  await Room.delete(req.params.id);
-  res.status(200).json({
-    success: true, message: "Room deleted (if empty)"
-	});
+  try {
+    const roomId = parseInt(req.params.id);
+
+    if (isNaN(roomId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid room ID"
+      });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found"
+      });
+    }
+
+    console.log(room)
+
+    if (room.Occupancy > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete room because it still has users"
+      });
+    }
+
+    await Room.delete(roomId);
+
+    res.status(200).json({
+      success: true,
+      message: "Room deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Delete room error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
 };
 
 // @route PUT /api/rooms/assign
@@ -98,6 +136,21 @@ export const assignRoomToUser = async (req, res) => {
         message: "Room not found"
       });
     }
+
+		const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+				success: false,
+        message: "User not found"
+      });
+    }
+
+    if (user.RoomID === roomId) {
+			return res.status(400).json({
+				success: false,
+        message: "User is already a resident of this room"
+			});
+		}
 
 		await Room.assignUser(userId, roomId);
 
@@ -128,13 +181,19 @@ export const getUsersInRoomByAdmin = async (req, res) => {
     const roomId = parseInt(req.params.id);
 
     if (isNaN(roomId)) {
-      return res.status(400).json({ message: "Invalid room ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid room ID"
+      });
     }
 
     // Check phòng tồn tại
     const room = await Room.findById(roomId);
     if (!room) {
-      return res.status(404).json({ message: "Room not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Room not found"
+      });
     }
 
     const users = await Room.getUsersInRoom(roomId);

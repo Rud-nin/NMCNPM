@@ -22,7 +22,7 @@ export const RoomRequest = {
       .query(`
         SELECT rr.*, r.RoomNumber, r.Building
         FROM RoomRequests rr
-        JOIN Rooms r ON rr.RoomID = r.RoomID
+        LEFT JOIN Rooms r ON rr.RoomID = r.RoomID
         WHERE rr.UserID = @UserID
         ORDER BY CreatedAt DESC
       `);
@@ -34,7 +34,7 @@ export const RoomRequest = {
     const pool = await getConnection();
 
     let whereClause = "";
-    if (status) {
+    if (status && status !== 'all') {
       whereClause = "WHERE Status = @Status";
     }
 
@@ -81,7 +81,8 @@ export const RoomRequest = {
       .input("UserID", sql.Int, userId)
       .query(`
         UPDATE RoomRequests
-        SET Status = 'Cancelled'
+        SET Status = 'Cancelled',
+          ProcessedAt = GETDATE()
         WHERE RequestID = @RequestID
           AND UserID = @UserID
           AND Status = 'Pending'
@@ -96,7 +97,7 @@ export const RoomRequest = {
       .query(`
         UPDATE RoomRequests
         SET Status = 'Approved',
-            ProcessedAt = GETDATE()
+          ProcessedAt = GETDATE()
         WHERE RequestID = @RequestID
       `);
     return true;
