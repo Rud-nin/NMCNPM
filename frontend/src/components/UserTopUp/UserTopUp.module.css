@@ -121,16 +121,16 @@
 }
 
 .status.Pending {
-  color: #5e35b1;
+  color: var(--pending);
   border: 1px solid;
 }
 
 .status.Completed {
-  color: #2e7d32;
+  color: var(--success);
   border: 1px solid;
 }
 
 .status.Failed {
-  color: #c62828;
+  color: var(--failed);
   border: 1px solid;
 }

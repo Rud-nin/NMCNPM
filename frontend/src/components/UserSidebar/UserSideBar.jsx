@@ -7,7 +7,7 @@ function Sidebar({ onChange }) {
       <nav>
         <ul>
           <li key={1}
-            onClick={() => onChange("PersonalInformation")}>
+            onClick={() => onChange("Information")}>
             Thông tin cá nhân
           </li>
           <li key={2}

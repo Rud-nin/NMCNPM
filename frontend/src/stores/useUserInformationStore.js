@@ -3,11 +3,11 @@ import { useAuthStore } from "./useAuthStore.js";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
-export const usePersonalInformationStore = create((set, get) => ({
+export const useUserInformationStore = create((set, get) => ({
   isLoading: false,
   user: [],
 
-  fetchPersonalInformation: async () => {
+  fetchUserInformation: async () => {
     const authUser = useAuthStore.getState().authUser;
     const id = authUser?.UserID; 
     set({ isLoading: true });
@@ -16,8 +16,13 @@ export const usePersonalInformationStore = create((set, get) => ({
       set({ user: res });
       toast.success("Lấy thông tin người dùng thành công");
       return res;
+      // const res = await fetch('/user.example.json');
+      // const data = await res.json();
+      // toast.success("Lấy thông tin thành công");
+      // set({ user: data });
+      // return res;
     } catch (error) {
-      console.log("Có lỗi trong fetchPersonalInformation", error);
+      console.log("Có lỗi trong fetchUserInformation", error);
       toast.error(error.response.data.message);
     } finally {
       set({ isLoading: false});

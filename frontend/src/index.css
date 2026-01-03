@@ -37,6 +37,9 @@ body {
   --error: #b71c1c;
   --error-muted: #fdecea;
 
+  --failed: #b71c1c;
+  --pending: #5e35b1
+
   --success: #1b5e20;
   --success-muted: #e8f5e9;
 

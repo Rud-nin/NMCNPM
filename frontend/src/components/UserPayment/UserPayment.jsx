@@ -6,7 +6,7 @@ import Table from "../Table/Table.jsx";
 import Button from "../Button/Button.jsx";
 import Overlay from "../Overlay/Overlay.jsx";
 import { formatDateTime } from "../../lib/formatDateTime.js";
-import { usePersonalInformationStore } from '../../stores/usePersonalInformationStore.js';
+import { useUserInformationStore } from '../../stores/useUserInformationStore.js';
 import toast from "react-hot-toast";
 import { useFeedbackStore } from "../../stores/useFeedbackStore.js";
 
@@ -31,7 +31,7 @@ function UserPayment() {
 
   const {
     user
-  } = usePersonalInformationStore();
+  } = useUserInformationStore();
 
   const {
     sendFeedback
