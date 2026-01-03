@@ -82,9 +82,10 @@ export const User = {
       .request()
       .input("UserID", sql.Int, userId)
       .query(`
-        SELECT U.UserID, U.Email, U.FullName, U.BirthDate, U.StudentID, U.ID, U.ProfilePic, U.Role, U.RoomID, ISNULL(UB.Balance,0) AS Balance
+        SELECT U.UserID, U.Email, U.FullName, U.BirthDate, U.StudentID, U.ID, U.ProfilePic, U.Role, U.RoomID, ISNULL(UB.Balance,0) AS Balance, R.RoomNumber, R.Building
         FROM Users U 
         LEFT JOIN UserBalance UB ON U.UserID = UB.UserID
+        LEFT JOIN Rooms R ON U.RoomID = R.RoomID
         WHERE U.UserID = @UserID`
         );
     return result.recordset[0];

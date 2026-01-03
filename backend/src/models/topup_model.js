@@ -23,28 +23,53 @@ export const TopUp = {
   },
 
   // Get all top-ups
-  async getAll() {
+  async getAll({ page = 1, limit = 10 }) {
     const pool = await getConnection()
-    const result = await pool.request().query(`
+    const offset = (page - 1) * limit;
+
+    const result = await pool.request()
+      .input('Limit', sql.Int, limit)
+      .input('Offset', sql.Int, offset)
+      .query(`
       SELECT t.*, u.FullName 
       FROM TopUpTransactions t
       JOIN Users u ON t.UserID = u.UserID
       ORDER BY t.CreatedAt DESC
+      OFFSET @Offset ROWS
+      FETCH NEXT @Limit ROWS ONLY;
+
+      SELECT COUNT(*) AS Total FROM TopUpTransactions;
     `)
-    return result.recordset
+    return {
+      data: result.recordsets[0],
+      totalCount: result.recordsets[1][0].Total
+    }
   },
 
   // Get top-ups by user
-  async getByUser(UserID) {
+  async getByUser(UserID, { page = 1, limit = 10 }) {
     const pool = await getConnection()
-    const result = await pool.request().input('UserID', sql.Int, UserID).query(`
+    const offset = (page - 1) * limit;
+
+    const result = await pool.request()
+      .input('UserID', sql.Int, UserID)
+      .input('Limit', sql.Int, limit)
+      .input('Offset', sql.Int, offset)
+      .query(`
         SELECT t.*, u.FullName 
         FROM TopUpTransactions t
         JOIN Users u ON t.UserID = u.UserID
         WHERE t.UserID = @UserID
         ORDER BY t.CreatedAt DESC
+        OFFSET @Offset ROWS
+        FETCH NEXT @Limit ROWS ONLY;
+
+        SELECT COUNT(*) AS Total FROM TopUpTransactions WHERE UserID = @UserID;
       `)
-    return result.recordset
+    return {
+      data: result.recordsets[0],
+      totalCount: result.recordsets[1][0].Total
+    }
   },
 
   // Update status

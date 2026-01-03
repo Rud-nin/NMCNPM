@@ -3,14 +3,20 @@ import { Service } from "../models/service_model.js";
 // @route POST /api/services
 export const createService = async (req, res) => {
     try {
-        const { ServiceName, Price, Descriptions } = req.body;
+        const { ServiceName, Price, Descriptions, Type } = req.body;
         
         // Validate: Chỉ cần Tên và Giá
         if (!ServiceName || Price === undefined) {
             return res.status(400).json({ message: "Service name and price are required." });
         }
+        const validTypes = ['Personal', 'Room'];
+        // Nếu người dùng không gửi Type, mặc định là Personal. Nếu gửi, phải đúng danh sách.
+        const finalType = Type || 'Personal';
+        if (!validTypes.includes(finalType)) {
+            return res.status(400).json({ message: "Invalid type. Must be 'Personal' or 'Room'." });
+        }
 
-        const newService = await Service.create({ ServiceName, Price, Descriptions });
+        const newService = await Service.create({ ServiceName, Price, Descriptions, Type: finalType });
         res.status(201).json({ success: true, data: newService });
     } catch (error) {
         console.error("Create service error:", error);
@@ -48,9 +54,11 @@ export const getServices = async (req, res) => {
 export const updateService = async (req, res) => {
     try {
         const { id } = req.params;
-        const { ServiceName, Price, Descriptions } = req.body;
-        
-        await Service.update(id, { ServiceName, Price, Descriptions });
+        const { ServiceName, Price, Descriptions, Type } = req.body;
+        if (Type && !['Personal', 'Room'].includes(Type)) {
+            return res.status(400).json({ message: "Invalid type. Must be 'Personal' or 'Room'." });
+        }
+        await Service.update(id, { ServiceName, Price, Descriptions, Type });
         res.status(200).json({ success: true, message: "Update completed" });
     } catch (error) {
         console.error("Update service error:", error);

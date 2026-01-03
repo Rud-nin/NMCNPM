@@ -113,6 +113,7 @@ CREATE TABLE dbo.ServiceMonthly (
     ServiceName NVARCHAR(100) NOT NULL UNIQUE,  -- Tên dịch vụ
     Price DECIMAL(15, 3) NOT NULL CHECK (Price >= 0), -- Đơn giá
     Descriptions NVARCHAR(200) NULL,             -- Mô tả chi tiết
+    Type NVARCHAR(20) NOT NULL DEFAULT 'Personal',
     
     CreatedAt DATETIME DEFAULT GETDATE()
 );

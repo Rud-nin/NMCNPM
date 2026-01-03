@@ -50,10 +50,36 @@ export const getUserById = async (req,res) => {
             success: true,
             ...user,
             UnpaidBills: unpaidBills,
-            TotalDebt: unpaidBills.reduce((sum, bill) => sum + bill.Amount, 0)
+            TotalDebt: unpaidBills.reduce((sum, bill) => sum + bill.Price, 0)
         });
     } catch(error) {
         res.status(500).json({message: "Server error" });
+    }
+};
+
+// @route GET /api/users/me
+export const getMe = async (req, res) => {
+    try {
+        const userId = req.user.UserID; 
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const unpaidBills = await Payment.getUnpaidBills(userId);
+        const totalDebt = unpaidBills.reduce((sum, bill) => sum + bill.Price, 0);
+
+        res.status(200).json({
+            success: true,
+            user: {
+                ...user,           
+                TotalDebt: totalDebt,
+                UnpaidBills: unpaidBills
+            }
+        });
+
+    } catch (error) {
+        console.error("Get Me Error:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };
 

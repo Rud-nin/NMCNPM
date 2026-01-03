@@ -16,8 +16,20 @@ router.post('/', async (req, res) => {
 // Get all top-ups
 router.get('/', async (req, res) => {
   try {
-    const data = await TopUp.getAll()
-    res.json(data)
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const { data, totalCount } = await TopUp.getAll({ page, limit })
+    const totalPages = Math.ceil(totalCount / limit)
+    res.json({
+      success: true,
+      pagination: {
+        page: page,
+        limit: limit,
+        total: totalCount,
+        totalPages: totalPages
+      },
+      data
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -26,8 +38,22 @@ router.get('/', async (req, res) => {
 // Get top-up by user
 router.get('/user/:id', async (req, res) => {
   try {
-    const data = await TopUp.getByUser(req.params.id)
-    res.json(data)
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const { data, totalCount } = await TopUp.getByUser(req.params.id, { page, limit });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.json({
+      success: true,
+      pagination: {
+        page: page,
+        limit: limit,
+        total: totalCount,
+        totalPages: totalPages
+      },
+      data
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
