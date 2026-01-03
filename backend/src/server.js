@@ -8,6 +8,7 @@ import topupRoutes from './routes/topup.routes.js'
 import feedbackRoutes from './routes/feedback.routes.js'
 import serviceRoutes from './routes/service.routes.js'
 import userRoutes from './routes/user.routes.js'
+import billRoutes from './routes/bill.routes.js'
 
 const app = express()
 app.use(express.json())
@@ -27,6 +28,7 @@ app.use('/api/topups', topupRoutes)
 app.use('/api/feedbacks', feedbackRoutes)
 app.use('/api/services', serviceRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/bills', billRoutes)
 
 app.listen(process.env.PORT, () => {
   console.log('server is running on port', process.env.PORT)
