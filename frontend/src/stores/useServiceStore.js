@@ -67,5 +67,24 @@ export const useServiceStore = create((set) => ({
         } finally {
             set({ isLoading: false });
         }
-    }
+    },
+
+
+    // user
+    userServices: [],
+
+    getUserServices: async (page, limit) => {
+        set({ isLoading: true });
+        
+        try {
+            const res = await axiosInstance.get(`/services?page=${page}&limit=${limit}`);
+            set({ userServices: res });
+            return res;
+        } catch (error) {
+            toast.error('Có lỗi khi lấy thông tin dịch vụ');
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
 }));

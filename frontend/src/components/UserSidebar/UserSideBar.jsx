@@ -19,10 +19,14 @@ function Sidebar({ onChange }) {
             Thông báo
           </li>
           <li key={4}
+            onClick={() => onChange("Service")}>
+            Dịch vụ
+          </li>
+          <li key={5}
             onClick={() => onChange("Payment")}>
             Thanh toán
           </li>
-          <li key={5}
+          <li key={6}
             onClick={() => onChange("TopUp")}>
             Nạp tiền
           </li>

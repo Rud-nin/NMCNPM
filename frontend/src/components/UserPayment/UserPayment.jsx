@@ -54,8 +54,6 @@ function UserPayment() {
     const res = await getUserPaidBills(page, limit);
     if (res) {
       const { pagination } = res;
-      setLimit(pagination.limit);
-      setPage(pagination.page);
       setTotal(pagination.totalPages);
     }
   };

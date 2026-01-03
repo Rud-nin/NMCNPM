@@ -40,8 +40,6 @@ function UserTopUp() {
     const res = await getUserTopUps(page, limit);
     if (res) {
       const { pagination } = res;
-      setLimit(pagination.limit);
-      setPage(pagination.page);
       setTotal(pagination.totalPages);
     }
   }

@@ -1,8 +1,8 @@
-.topup {
+.userService {
   padding: 1rem;
 }
 
-.topup header {
+.userService header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,12 +15,12 @@
   margin-top: 0.5rem;
 }
 
-.topup td:not(td:nth-child(3)) {
+.userService td:not(td:nth-child(3)) {
   text-align: center;
 }
 
-.topup th:last-child,
-.topup td:last-child {
+.userService th:last-child,
+.userService td:last-child {
   white-space: nowrap;
   width: 1%;
 }
@@ -36,7 +36,7 @@
   justify-items: center;
 }
 
-.topup input {
+.userService input {
   padding: 0.5rem 1ch;
   border: 1px solid #edf2f7;
   outline: none;
@@ -45,16 +45,16 @@
   color: var(--text-primary);
 }
 
-.topup input::placeholder {
+.userService input::placeholder {
   color: var(--text-muted);
 }
 
-.topup td:has(.buttonContainer) {
+.userService td:has(.buttonContainer) {
   width: 1%;
 }
 
 
-/* Tạo yêu cầu nạp tiền */
+/* Tạo feedback */
 .modal {
   position: absolute;
   top: 50%;
@@ -79,12 +79,17 @@
   margin-bottom: 0.5rem;
 }
 
-.input input {
+.input input,
+.input textarea {
   outline: none;
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1ch;
   width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
 }
 
 .input span {
@@ -93,44 +98,4 @@
 
 .modal .buttonContainer {
   justify-self: center;
-}
-
-/* QR chuyển tiền */
-.qrWrap {
-  margin: 20px auto;
-  text-align: center;
-}
-
-.qrImage {
-  width: 220px;
-  height: auto;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  padding: 8px;
-  background: white;
-}
-
-/* Trạng thái */
-.status {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-block;
-  text-transform: capitalize;
-}
-
-.status.Pending {
-  color: var(--pending);
-  border: 1px solid;
-}
-
-.status.Completed {
-  color: var(--success);
-  border: 1px solid;
-}
-
-.status.Failed {
-  color: var(--failed);
-  border: 1px solid;
 }
