@@ -7,25 +7,24 @@ import { useState, useEffect } from 'react';
 import { formatDateTime } from '../../lib/formatDateTime.js';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/useAuthStore.js';
+import Pagination from '../Pagination/Pagination.jsx';
 
-function UserNotification() {
+function UserTopUp() {
   const authUser = useAuthStore(s => s.authUser);
-  const [topUpsHistory, setTopUpsHistory] = useState([]);
   const [amount, setAmount] = useState(null);
   const [open, setOpen] = useState(false);
-  const [sort, setSort] = useState("new-to-old");
-  const getUserTopUpsHistory = useTopUpStore(s => s.getUserTopUpsHistory);
+  const getUserTopUps = useTopUpStore(s => s.getUserTopUps);
   const createTopUp = useTopUpStore(s => s.createTopUp);
+  const topUps = useTopUpStore(s => s.userTopUps);
+
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(1);
 
   // chuyển tiền
   const bankCode = "MB";
   const account = "678911042005";
   const content = encodeURIComponent(`Nạp tiền cho người dùng ${authUser?.FullName || ""} ID: ${authUser?.UserID || ""}`)
-
-  async function fetchTopUps() {
-    const data = await getUserTopUpsHistory();
-    if (data) setTopUpsHistory(data);
-  }
 
   async function handleCreateTopUp() {
     if (typeof amount === "number") {
@@ -37,45 +36,41 @@ function UserNotification() {
     }
   }
 
+  async function handleFetchTopUps() {
+    const res = await getUserTopUps(page, limit);
+    if (res) {
+      const { pagination } = res;
+      setLimit(pagination.limit);
+      setPage(pagination.page);
+      setTotal(pagination.totalPages);
+    }
+  }
+
   useEffect(() => {
-    fetchTopUps();
+    handleFetchTopUps();
   }, []);
 
-  const sortedTopUps = topUpsHistory.sort((a, b) => {
-    if (sort === "new-to-old") {
-      return new Date(b.CreatedAt) - new Date(a.CreatedAt);
-    }
-    return new Date(a.CreatedAt) - new Date(b.CreatedAt);
-  });
 
   return (
-    <section className={styles.notification}>
+    <section className={styles.topup}>
       <header>
         <h2>Nạp tiền</h2>
-        <div className={styles.btnContainer}>
-          <Button
-            onClick={() => setOpen(true)}
-          >Tạo yêu cầu nạp tiền</Button>
-          <Button
-            onClick={fetchTopUps}
-          >Làm mới</Button>
-        </div>
+
+        <Button
+          onClick={() => setOpen(true)}
+        >Tạo yêu cầu nạp tiền</Button>
+
       </header>
 
       <div className={styles.titleBar}>
         <h3>Lịch sử nạp tiền</h3>
 
-        <div className={styles.selectWrap}>
-          <select
-            id="sort"
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className={styles.select}
-          >
-            <option value="new-to-old">Từ mới đến cũ</option>
-            <option value="old-to-new">Từ cũ đến mới</option>
-          </select>
-        </div>
+        <Button
+          onClick={handleFetchTopUps}
+        >
+          <i className="fa-solid fa-arrows-rotate"></i>{' '}
+          Làm mới
+        </Button>
       </div>
 
       <Table>
@@ -89,16 +84,16 @@ function UserNotification() {
           </tr>
         </thead>
         <tbody>
-          {sortedTopUps && sortedTopUps.map((topUp) => (
-            <tr>
-              <td>{topUp.TopUpID}</td>
+          {topUps && topUps.map((topUp, index) => (
+            <tr key={index + 1}>
+              <td>{index + 1}</td>
               <td>{topUp.Amount + " VNĐ"}</td>
               <td>
                 <span className={`${styles.status} ${styles[topUp.Status]}`}>
-                  { 
+                  {
                     topUp.Status === "Completed" ? "Thành công" :
-                    topUp.Status === "Pending" ? "Chờ duyệt" : 
-                    "Thất bại"
+                      topUp.Status === "Pending" ? "Chờ duyệt" :
+                        "Thất bại"
                   }
                 </span>
               </td>
@@ -109,6 +104,16 @@ function UserNotification() {
           ))}
         </tbody>
       </Table>
+
+      <div className={styles.pagination}>
+        <Pagination
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          total={total} />
+      </div>
+
 
       {open && (
         <Overlay>
@@ -128,7 +133,7 @@ function UserNotification() {
                   }
                 }} />
             </div>
-            { amount > 0 && (
+            {amount > 0 && (
               <div className={styles.qrWrap}>
                 <img
                   src={`https://img.vietqr.io/image/${bankCode}-${account}-compact.png?amount=${amount}&addInfo=${content}`}
@@ -138,11 +143,11 @@ function UserNotification() {
               </div>
             )}
 
-            <div className={styles.btnContainer}>
+            <div className={styles.buttonContainer}>
               <Button onClick={handleCreateTopUp}>Gửi</Button>
               <Button onClick={() => {
                 setAmount(null),
-                setOpen(false)
+                  setOpen(false)
               }}>Hủy</Button>
             </div>
           </div>
@@ -153,4 +158,4 @@ function UserNotification() {
 }
 
 
-export default UserNotification;
+export default UserTopUp;

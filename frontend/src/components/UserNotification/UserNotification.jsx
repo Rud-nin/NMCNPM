@@ -6,17 +6,21 @@ import styles from './UserNotification.module.css';
 import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
 import { formatDateTime } from '../../lib/formatDateTime.js';
+import Pagination from '../Pagination/Pagination.jsx';
 
 function UserNotification() {
-  const [notifications, setNotifications] = useState([]);
+  const [search, setSearch] = useState("");
   const [feedback, setFeedback] = useState(null);
-  const [sort, setSort] = useState("new-to-old");
   const getUserNotifications = useNotificationStore((s) => s.getUserNotifications);
   const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
+  const notifications = useNotificationStore(s => s.userNotifications);
 
-  async function fetchNoti() {
-    const data = await getUserNotifications();
-    if (data) setNotifications(data);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(1);
+
+  async function handleSearchNotifications() {
+    console.log("TODO: search services");
   };
 
   async function handleSendFeedback() {
@@ -24,44 +28,51 @@ function UserNotification() {
     setFeedback(null);
   };
 
-  useEffect(() => {
-    fetchNoti();
-  }, []);
-
-  const sortedNotifications = notifications.sort((a, b) => {
-    if (sort === "new-to-old") {
-      return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+  async function handleFetchNotifications() {
+    const res = await getUserNotifications(page, limit);
+    if (res) {
+      const { pagination } = res;
+      setLimit(pagination.limit);
+      setPage(pagination.page);
+      setTotal(pagination.totalPages);
     }
-    return new Date(a.CreatedAt) - new Date(b.CreatedAt);
-  });
+  };
+
+  useEffect(() => {
+    handleFetchNotifications();
+  }, [limit, page]);
 
   return (
     <section className={styles.notification}>
       <header>
-        <h2>Thông báo</h2>
-        <div className={styles.btnContainer}>
-          <Button
-            onClick={() => setFeedback({ title: '', content: '' })}
-          >Tạo phản hồi</Button>
-          <Button
-            onClick={fetchNoti}
-          >Làm mới</Button>
-        </div>
+        <h2>Danh sách thông báo</h2>
+
+        <Button
+          onClick={() => setFeedback({ title: '', content: '' })}
+        >Tạo phản hồi</Button>
+
       </header>
 
-      <div className={styles.titleBar}>
-        <h3>Danh sách thông báo đã nhận</h3>
-
-        <div className={styles.selectWrap}>
-          <select
-            id="sort"
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className={styles.select}
+      <div className={styles.search}>
+        <input
+          type="text"
+          placeholder="Tìm kiếm tên thông báo"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className={styles.buttonContainer}>
+          <Button
+            onClick={handleSearchNotifications}
           >
-            <option value="new-to-old">Từ mới đến cũ</option>
-            <option value="old-to-new">Từ cũ đến mới</option>
-          </select>
+            <i className="fa-solid fa-magnifying-glass"></i>{' '}
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={handleFetchNotifications}
+          >
+            <i className="fa-solid fa-arrows-rotate"></i>{' '}
+            Làm mới
+          </Button>
         </div>
       </div>
 
@@ -76,9 +87,9 @@ function UserNotification() {
           </tr>
         </thead>
         <tbody>
-          {sortedNotifications && sortedNotifications.map((noti) => (
-            <tr>
-              <td>{noti.NotificationID}</td>
+          {notifications && notifications.map((noti, index) => (
+            <tr key={index + 1}>
+              <td>{index + 1}</td>
               <td>{noti.Title}</td>
               <td>{noti.Content}</td>
               <td>{formatDateTime(noti.CreatedAt)}</td>
@@ -88,6 +99,15 @@ function UserNotification() {
           ))}
         </tbody>
       </Table>
+
+      <div className={styles.pagination}>
+        <Pagination
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          total={total} />
+      </div>
 
       {feedback && (
         <Overlay>
@@ -109,7 +129,7 @@ function UserNotification() {
                 placeholder="Nhập nội dung phản hồi"
                 onChange={(e) => setFeedback({ ...feedback, content: e.target.value })} />
             </div>
-            <div className={styles.btnContainer}>
+            <div className={styles.buttonContainer}>
               <Button onClick={handleSendFeedback}>Gửi</Button>
               <Button onClick={() => setFeedback(null)}>Hủy</Button>
             </div>

@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 
 export const useNotificationStore = create((set) => ({
   isLoading: false,
+  userNotifications: [],
+
   createNotification: async (title, content) => {
     set({ isLoading: true })
     try {
@@ -33,12 +35,13 @@ export const useNotificationStore = create((set) => ({
     }
   },
 
-  getUserNotifications: async () => {
+  getUserNotifications: async (page, limit) => {
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.get('/notifications');
+      const res = await axiosInstance.get(`/notifications?page=${page}&limit=${limit}`);
+      set({ userNotifications: res.data });
       toast.success("Lấy dữ liệu thành công");
-      return res.data;
+      return res;
       // const res = await fetch('/notifications.example.json');
       // toast.success("Lấy dữ liệu thành công");
       // return res.json();
