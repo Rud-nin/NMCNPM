@@ -3,6 +3,7 @@ import UserNotification from '../../components/UserNotification/UserNotification
 import UserTopUp from '../../components/UserTopUp/UserTopUp.jsx';
 import styles from './UserDashboard.module.css';
 import { useState } from 'react';
+import UserPayment from '../../components/UserPayment/UserPayment.jsx';
 
 export default function UserDashboard() {
   const [state, changeState] = useState("PersonalInformation");
@@ -24,7 +25,7 @@ export default function UserDashboard() {
         {state === "PersonalInformation" && <PersonalInformation />}
         {state === "Notification" && <UserNotification />}
         {state === "Room" && <Room />}
-        {state === "Payment" && <Payment />}
+        {state === "Payment" && <UserPayment />}
         {state === "TopUp" && <UserTopUp />}
       </section>
     </div>
@@ -35,6 +36,3 @@ function PersonalInformation() {
 
 }
 function Room() { }
-function Payment() {
-
-}
