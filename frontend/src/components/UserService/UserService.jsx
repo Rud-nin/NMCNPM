@@ -6,6 +6,7 @@ import styles from './UserService.module.css';
 import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
 import Pagination from '../Pagination/Pagination.jsx';
+import { formatMoney } from '../../lib/formatMoney.js';
 
 function UserService() {
   const [feedback, setFeedback] = useState(null);
@@ -64,8 +65,8 @@ function UserService() {
           <tr>
             <th>STT</th>
             <th>Tên dịch vụ</th>
-            <th>Mô tả</th>
             <th>Loại dịch vụ</th>
+            <th>Mô tả</th>
             <th>Giá dịch vụ</th>
             <th></th>
           </tr>
@@ -75,9 +76,9 @@ function UserService() {
             <tr key={index + 1}>
               <td>{index + 1}</td>
               <td>{service.ServiceName}</td>
-              <td>{service.Descriptions}</td>
               <td>{(service.Type === "Personal") ? "Phòng" : "Cá nhân"}</td>
-              <td>{service.Price + " VNĐ"}</td>
+              <td>{service.Descriptions}</td>
+              <td>{formatMoney(service.Price)}</td>
               <td></td>
             </tr>
           ))}

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 export const useUserInformationStore = create((set, get) => ({
   isLoading: false,
-  user: [],
+  user: null,
 
   fetchUserInformation: async () => {
     const authUser = useAuthStore.getState().authUser;
@@ -27,5 +27,18 @@ export const useUserInformationStore = create((set, get) => ({
       set({ isLoading: false});
     }
   },
-  
+
+  decreaseBalance: async (totalAmount) => {
+    set((state) => {
+      if (!state.user) return state;
+
+      return {
+        user: {
+          ...state.user,
+          Balance: state.user.Balance - totalAmount,
+        },
+      };
+    });
+  },
+
 }));

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { useUserInformationStore } from "./useUserInformationStore";
 
 export const usePaymentStore = create((set) => ({
     isLoading: false,

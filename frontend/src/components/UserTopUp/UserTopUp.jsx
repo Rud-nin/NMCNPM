@@ -8,6 +8,7 @@ import { formatDateTime } from '../../lib/formatDateTime.js';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/useAuthStore.js';
 import Pagination from '../Pagination/Pagination.jsx';
+import { formatMoney } from '../../lib/formatMoney.js';
 
 function UserTopUp() {
   const authUser = useAuthStore(s => s.authUser);
@@ -76,8 +77,8 @@ function UserTopUp() {
           <tr>
             <th>STT</th>
             <th>Số tiền</th>
-            <th>Trạng thái</th>
             <th>Thời gian</th>
+            <th>Trạng thái</th>
             <th></th>
           </tr>
         </thead>
@@ -85,7 +86,8 @@ function UserTopUp() {
           {topUps && topUps.map((topUp, index) => (
             <tr key={index + 1}>
               <td>{index + 1}</td>
-              <td>{topUp.Amount + " VNĐ"}</td>
+              <td>{formatMoney(topUp.Amount)}</td>
+              <td>{formatDateTime(topUp.CreatedAt)}</td>
               <td>
                 <span className={`${styles.status} ${styles[topUp.Status]}`}>
                   {
@@ -95,7 +97,6 @@ function UserTopUp() {
                   }
                 </span>
               </td>
-              <td>{formatDateTime(topUp.CreatedAt)}</td>
               <td>
               </td>
             </tr>
