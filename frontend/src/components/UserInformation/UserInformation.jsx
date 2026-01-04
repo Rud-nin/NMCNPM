@@ -6,6 +6,7 @@ import Overlay from "../Overlay/Overlay.jsx";
 import { useUserInformationStore } from '../../stores/useUserInformationStore.js';
 import { useFeedbackStore } from "../../stores/useFeedbackStore.js";
 import { formatDate } from "../../lib/formatDate.js";
+import { formatMoney } from "../../lib/formatMoney.js";
 
 const InfoRow = ({ label, value, highlight }) => (
   <div className={styles.infoRow}>
@@ -51,16 +52,22 @@ function UserInformation() {
       </header>
 
       <section className={styles.infoCard}>
-        <InfoRow label="Họ và tên" value={user.FullName} />
-        <InfoRow label="Email" value={user.Email} />
-        <InfoRow label="Ngày sinh" value={formatDate(user.BirthDate)} />
-        <InfoRow label="Mã số sinh viên" value={user.StudentID} />
-        <InfoRow label="Số CCCD" value={user.ID} />
-        <InfoRow label="Vai trò" value={user.Role === "User" ? "Người dùng" : "Admin"} />
-        <InfoRow label="Số phòng" value={user.RoomID} />
+        <InfoRow label="Họ và tên" value={user?.FullName} />
+        <InfoRow label="Email" value={user?.Email} />
+        <InfoRow label="Ngày sinh" value={formatDate(user?.BirthDate)} />
+        <InfoRow label="Mã số sinh viên" value={user?.StudentID} />
+        <InfoRow label="Số CCCD" value={user?.ID} />
+        <InfoRow label="Vai trò" value={user?.Role === "User" ? "Người dùng" : "Admin"} />
+        <InfoRow label="Số phòng" value={user?.RoomNumber} />
+        <InfoRow label="Tòa nhà" value={user?.Building} />
         <InfoRow
           label="Số dư"
-          value={`${user.Balance} VNĐ`}
+          value={formatMoney(user?.Balance)}
+          highlight
+        />
+        <InfoRow
+          label="Số nợ"
+          value={formatMoney(user?.TotalDebt)}
           highlight
         />
       </section>
@@ -83,9 +90,9 @@ function UserInformation() {
               <tr>
                 <th>STT</th>
                 <th>Tên dịch vụ</th>
-                <th>Giai đoạn</th>
-                <th>Số tiền</th>
                 <th>Loại dịch vụ</th>
+                <th>Kỳ thu</th>
+                <th>Số tiền</th>
                 <th>Trạng thái</th>
                 <th></th>
               </tr>
@@ -96,9 +103,9 @@ function UserInformation() {
                 <tr key={index + 1}>
                   <td>{index + 1}</td>
                   <td>{bill.ServiceName}</td>
-                  <td>{bill.Period}</td>
-                  <td>{bill.Price + " VNĐ"}</td>
                   <td>{bill.UserID ? "Cá nhân" : "Phòng"}</td>
+                  <td>{bill.Period}</td>
+                  <td>{formatMoney(bill.Price)}</td>
                   <td>
                     <span className={styles.status}>{"Chưa thanh toán"}</span>
                   </td>
@@ -109,7 +116,7 @@ function UserInformation() {
           </Table>
 
           <div className={styles.totalPayment}>
-            <h3>Tổng nợ: {user.TotalDebt} VNĐ</h3>
+            <h3>Tổng nợ: {formatMoney(user.TotalDebt)}</h3>
           </div>
         </section>
       }

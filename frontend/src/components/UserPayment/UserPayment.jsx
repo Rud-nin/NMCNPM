@@ -9,6 +9,7 @@ import { formatDateTime } from "../../lib/formatDateTime.js";
 import { useUserInformationStore } from '../../stores/useUserInformationStore.js';
 import toast from "react-hot-toast";
 import { useFeedbackStore } from "../../stores/useFeedbackStore.js";
+import { formatMoney } from "../../lib/formatMoney.js";
 
 function UserPayment() {
   const [limit, setLimit] = useState(10);
@@ -30,7 +31,8 @@ function UserPayment() {
   } = usePaymentStore();
 
   const {
-    user
+    user,
+    decreaseBalance
   } = useUserInformationStore();
 
   const {
@@ -72,6 +74,7 @@ function UserPayment() {
     }
 
     await payBill(billIds);
+    await decreaseBalance(totalAmount);
     setBillIds([]);
     setTotalAmount(0);
   };
@@ -104,7 +107,10 @@ function UserPayment() {
         <Button
           onClick={() => setFeedback({ title: '', content: '' })}
         >Tạo phản hồi</Button>
+      </header>
 
+      <header>
+        <h3>Số dư: {formatMoney(user?.Balance)}</h3>
       </header>
 
       <section className={styles.unpaidBills}>
@@ -139,7 +145,7 @@ function UserPayment() {
                 <td>{bill.ServiceName}</td>
                 <td>{bill.UserID ? "Cá nhân" : "Phòng"}</td>
                 <td>{bill.Period}</td>
-                <td>{bill.Price + " VNĐ"}</td>
+                <td>{formatMoney(bill.Price)}</td>
                 <td>
                   <input
                     type="checkbox"
@@ -155,7 +161,7 @@ function UserPayment() {
 
         {unpaidBills.length ? (
           <div className={styles.totalPayment}>
-            <h3>Tổng đóng: {totalAmount} VNĐ</h3>
+            <h3>Tổng đóng: {formatMoney(totalAmount)}</h3>
             <Button
               onClick={handlePayBill}
             >
@@ -198,7 +204,7 @@ function UserPayment() {
               <tr key={index + 1}>
                 <td>{index + 1}</td>
                 <td>{bill.ServiceName}</td>
-                <td>{bill.TotalAmount + " VNĐ"}</td>
+                <td>{formatMoney(bill.TotalAmount)}</td>
                 <td>{formatDateTime(bill.CreatedAt)}</td>
                 <td>
                   <span className={styles.status}>

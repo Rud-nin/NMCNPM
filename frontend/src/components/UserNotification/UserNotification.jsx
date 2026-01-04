@@ -9,7 +9,6 @@ import { formatDateTime } from '../../lib/formatDateTime.js';
 import Pagination from '../Pagination/Pagination.jsx';
 
 function UserNotification() {
-  const [search, setSearch] = useState("");
   const [feedback, setFeedback] = useState(null);
   const getUserNotifications = useNotificationStore((s) => s.getUserNotifications);
   const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
@@ -17,11 +16,7 @@ function UserNotification() {
 
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(1);
-
-  async function handleSearchNotifications() {
-    console.log("TODO: search services");
-  };
+  const [total, setTotal] = useState(1);;
 
   async function handleSendFeedback() {
     await sendFeedback(feedback.title, feedback.content);
@@ -43,7 +38,7 @@ function UserNotification() {
   return (
     <section className={styles.notification}>
       <header>
-        <h2>Danh sách thông báo</h2>
+        <h2>Thông báo</h2>
 
         <Button
           onClick={() => setFeedback({ title: '', content: '' })}
@@ -51,27 +46,15 @@ function UserNotification() {
 
       </header>
 
-      <div className={styles.search}>
-        <input
-          type="text"
-          placeholder="Tìm kiếm tên thông báo"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className={styles.buttonContainer}>
-          <Button
-            onClick={handleSearchNotifications}
-          >
-            <i className="fa-solid fa-magnifying-glass"></i>{' '}
-            Tìm kiếm
-          </Button>
-          <Button
-            onClick={handleFetchNotifications}
-          >
-            <i className="fa-solid fa-arrows-rotate"></i>{' '}
-            Làm mới
-          </Button>
-        </div>
+      <div className={styles.titleBar}>
+        <h3>Danh sách dịch vụ</h3>
+
+        <Button
+          onClick={handleFetchNotifications}
+        >
+          <i className="fa-solid fa-arrows-rotate"></i>{' '}
+          Làm mới
+        </Button>
       </div>
 
       <Table>

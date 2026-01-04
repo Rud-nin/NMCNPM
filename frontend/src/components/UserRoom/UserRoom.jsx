@@ -51,13 +51,13 @@ function UserRoom() {
       </header>
 
       <section className={styles.infoCard}>
-        <InfoRow label="Số phòng" value={userRoom.RoomNumber} />
-        <InfoRow label="Tòa nhà" value={userRoom.Building} />
-        <InfoRow label="Số thành viên tối đa" value={userRoom.Capacity} />
-        <InfoRow label="Số thành viên hiện có" value={userRoom.Occupancy} />
+        <InfoRow label="Số phòng" value={userRoom?.room.RoomNumber} />
+        <InfoRow label="Tòa nhà" value={userRoom?.room.Building} />
+        <InfoRow label="Số thành viên tối đa" value={userRoom?.room.Capacity} />
+        <InfoRow label="Số thành viên hiện có" value={userRoom?.room.Occupancy} />
       </section>
 
-      {userRoom.users &&
+      {userRoom?.users &&
         <section className={styles.users}>
           <div className={styles.titleBar}>
             <h3>Danh sách thành viên</h3>
@@ -83,7 +83,7 @@ function UserRoom() {
             </thead>
 
             <tbody>
-              {userRoom.users.map((user, index) => (
+              {userRoom?.users.map((user, index) => (
                 <tr key={index + 1}>
                   <td>{index + 1}</td>
                   <td>{user.FullName}</td>

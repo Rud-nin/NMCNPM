@@ -1,19 +1,19 @@
-.notification {
+.roomRequest {
   padding: 1rem;
 }
 
-.notification header {
+.roomRequest header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.notification td:not(td:nth-child(3)) {
+.roomRequest td:not(td:nth-child(3)) {
   text-align: center;
 }
 
-.notification th:last-child,
-.notification td:last-child {
+.roomRequest th:last-child,
+.roomRequest td:last-child {
   white-space: nowrap;
   width: 1%;
 }
@@ -24,8 +24,8 @@
   align-items: center;
 }
 
-.notification input,
-.notification select {
+.roomRequest input,
+.roomRequest select {
   padding: 0.5rem 1ch;
   border: 1px solid #edf2f7;
   outline: none;
@@ -34,7 +34,7 @@
   color: var(--text-primary);
 }
 
-.notification input::placeholder {
+.roomRequest input::placeholder {
   color: var(--text-muted);
 }
 
@@ -45,13 +45,8 @@
   margin-top: 0.5rem;
 }
 
-.notification td:has(.buttonContainer) {
+.roomRequest td:has(.buttonContainer) {
   width: 1%;
-}
-
-.pagination {
-  margin-top: 0.5rem;
-  justify-items: center;
 }
 
 /* Tạo feedback */
@@ -98,4 +93,36 @@
 
 .modal .buttonContainer {
   justify-self: center;
+}
+
+
+/* Trạng thái */
+.status {
+  width: 6rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status.Pending {
+  color: var(--pending);
+  border: 1px solid;
+}
+
+.status.Approved {
+  color: var(--success);
+  border: 1px solid;
+}
+
+.status.Rejected {
+  color: var(--failed);
+  border: 1px solid;
+}
+
+.status.Canceled {
+  color: var(--canceled);
+  border: 1px solid;
 }

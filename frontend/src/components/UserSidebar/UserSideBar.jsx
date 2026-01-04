@@ -1,6 +1,7 @@
 import styles from './UserSidebar.module.css';
+import { useAuthStore } from '../../stores/useAuthStore.js';
 
-function Sidebar({ onChange }) {
+function Sidebar({ onChange, logout }) {
   return (
     <div className={styles.sidebar}>
       <h2>Người dùng</h2>
@@ -29,6 +30,10 @@ function Sidebar({ onChange }) {
           <li key={6}
             onClick={() => onChange("TopUp")}>
             Nạp tiền
+          </li>
+          <li key={7}
+            onClick={() => logout()}>
+            Đăng xuất
           </li>
         </ul>
       </nav>

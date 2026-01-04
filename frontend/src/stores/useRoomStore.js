@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const useRoomStore = create((set) => ({
     isLoading: false,
     rooms: [],
-    userRoom: [],
+    userRoom: null,
     getRooms: async () => {
         set({ isLoading: true });
         try {
