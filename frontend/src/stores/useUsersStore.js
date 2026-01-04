@@ -33,7 +33,7 @@ export const useUsersStore = create((set, get) => ({
     getUserByName: async (name) => {
         set({ isLoading: true });
         try {
-            return await axiosInstance.get(`/users?keyword=${name}`);
+            return await axiosInstance.get(`/users?search=${name}`);
         } catch (error) {
             toast.error("Có lỗi xảy ra khi tìm kiếm người dùng");
             console.error(error);

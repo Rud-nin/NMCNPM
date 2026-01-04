@@ -26,6 +26,11 @@ export default function ServiceManagement() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(1);
 
+    const translated = {
+        "Room": "Dịch vụ chung",
+        "Personal": "Dịch vụ cá nhân",
+    }
+
     const handleFetchServices = async () => {
         const res = await getServices(limit, page);
         if (res) {
@@ -43,7 +48,7 @@ export default function ServiceManagement() {
             if (!newService.ServiceName ||
                 !newService.Descriptions ||
                 !newService.Price ||
-                !newService.type) {
+                !newService.Type) {
                 return toast.error("Vui lòng điền đầy đủ thông tin");
             }
             await createService(newService);
@@ -56,7 +61,7 @@ export default function ServiceManagement() {
             if (!selectingService.ServiceName ||
                 !selectingService.Descriptions ||
                 !selectingService.Price ||
-                !selectingService.type) {
+                !selectingService.Type) {
                 return toast.error("Vui lòng điền đầy đủ thông tin");
             }
             await updateService(selectingService.ServiceID, selectingService);
@@ -81,7 +86,7 @@ export default function ServiceManagement() {
             <header>
                 <h2>Quản lý dịch vụ</h2>
                 <Button
-                    onClick={() => setNewService({ type: "Dịch vụ chung" })}
+                    onClick={() => setNewService({})}
                 >
                     + Thêm dịch vụ mới
                 </Button>
@@ -122,12 +127,12 @@ export default function ServiceManagement() {
                     </tr>
                 </thead>
                 <tbody>
-                    {services.map((service, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>
+                    {services.map((service) => (
+                        <tr key={service.ServiceID}>
+                            <td>{service.ServiceID}</td>
                             <td>{service.ServiceName}</td>
                             <td>{service.Descriptions}</td>
-                            <td>{service.type}</td>
+                            <td>{translated[service.Type]}</td>
                             <td>{service.Price.toLocaleString()}</td>
                             <td>
                                 <div className={styles.buttonContainer}>
@@ -147,6 +152,10 @@ export default function ServiceManagement() {
                     ))}
                 </tbody>
             </Table>
+
+            {(!services || services.length === 0) && (
+                <div className={styles.noResult}>Không có kết quả</div>
+            )}
 
             <div className={styles.pagination}>
                 <Pagination
@@ -178,13 +187,14 @@ export default function ServiceManagement() {
                                 setSelectingService({...selectingService, Descriptions: e.target.value})}/>
                         
                         <select 
-                            value={newService?.type || selectingService?.type || ''}
+                            value={newService?.Type || selectingService?.Type || Object.entries(translated)[0]?.[0] || "Room"}
                             onChange={(e) => newService ?
-                                setNewService({...newService, type: e.target.value}) :
-                                setSelectingService({...selectingService, type: e.target.value})}
+                                setNewService({...newService, Type: e.target.value}) :
+                                setSelectingService({...selectingService, Type: e.target.value})}
                         >
-                            <option value="Dịch vụ chung">Dịch vụ chung</option>
-                            <option value="Dịch vụ cá nhân">Dịch vụ cá nhân</option>
+                            {Object.entries(translated).map(([key, value]) => (
+                                <option key={key} value={key}>{value}</option>
+                            ))}
                         </select>
 
                         <input

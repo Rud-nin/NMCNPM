@@ -60,15 +60,15 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
 
             <select
                 className={styles.oneCell}
-                value={user?.Role ?? "user"}
+                value={user?.Role ?? "User"}
                 onChange={(e) => setUser({...user, Role: e.target.value})}
             >
-                <option value="user">Người dùng</option>
-                <option value="admin">Quản trị viên</option>
+                <option value="User">Người dùng</option>
+                <option value="Admin">Quản trị viên</option>
             </select>
             
             <div>
-                ID Phòng: {user?.RoomID || "Chưa được xếp"}
+                ID Phòng: {user?.RoomID ? `${user.Building}-${user.RoomNumber}` : "Chưa được xếp"}
             </div>
 
             <div className={styles.services}>
@@ -107,40 +107,32 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
 }
 
 export default function UserManagement() {
-    const { users, getUsers, updateUser, deleteUser, createUser } = useUsersStore();
-    // const [users, setUsers] = useState([]);
+    const { users, getUsers, getUserByName, updateUser, deleteUser, createUser } = useUsersStore();
     const [newUser, setNewUser] = useState(null);
     const [selectingUser, setSelectingUser] = useState(null);
     const [deletingUser, setDeletingUser] = useState(null);
-    const [rooms, setRooms] = useState([]);
-    // const [services, setServices] = useState([]);
 
-    const { services } = useServiceStore(); 
+    const { services, getServices } = useServiceStore(); 
     
     const [searchName, setSearchName] = useState("");
+    const [searchResultDisplaying, setSearchResultDisplaying] = useState(false);
+    const [searchResult, setSearchResult] = useState([]);
+
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total, setTotal] = useState(1);
 
-    const handleFetchUsers = async () => {
-        /*
-         * Dữ liệu tạm thời để hiển thị trong khi đợi be
-         * Thay thế đoạn dưới khi be có api
-         */
-        // console.log("TODO: Handle Fetch Users");
-        // const [users, rooms, services] = await Promise.all([
-        //     fetch("users.example.json").then(res => res.json()),
-        //     fetch("rooms.example.json").then(res => res.json()),
-        //     fetch("services.example.json").then(res => res.json()),
-        // ]);
-        // setUsers(users.data);
-        // setRooms(rooms);
-        // setServices(services);
+    const hasResult = searchResultDisplaying ? 
+        searchResult.length > 0 : 
+        users.length > 0;
 
+    const handleFetchUsers = async () => {
         const res = await getUsers(page, limit);
         if (res) {
             const { pagination } = res;
             setTotal(pagination.totalPages);
+            setSearchResultDisplaying(false);
+            setSearchResult([]);
         }
     }
 
@@ -159,8 +151,12 @@ export default function UserManagement() {
         }
     }
 
-    const handleSearchUsername = () => {
-        console.log("TODO: Handle Search Username");
+    const handleSearchUsername = async () => {
+        const res = await getUserByName(searchName);
+        if (res) {
+            setSearchResult(res.data);
+            setSearchResultDisplaying(true);
+        }
     }
 
     const handleUpdateUser = async (selectingUser) => {
@@ -189,20 +185,16 @@ export default function UserManagement() {
         handleFetchUsers();
     }, [limit, page]);
 
+    useEffect(() => {
+        getServices();
+    }, []);
+
     return (
         <div className={styles.userReport}>
             <header>
                 <h2>Quản lý người dùng</h2>
                 <Button
                     onClick={() => setNewUser({
-                        FullName: "",
-                        Email: "",
-                        Password: "",
-                        BirthDate: "",
-                        StudentID: "",
-                        ID: "",
-                        Role: "",
-                        RoomID: "",
                         services: [],
                     })}
                 >
@@ -242,14 +234,13 @@ export default function UserManagement() {
                         <th>ID</th>
                         <th>Người dùng</th>
                         <th>Vai trò</th>
-                        <th>ID Phòng</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user, index) => (
-                        <tr key={index}>
-                            <td>{user.UserID || (index + 1)*page}</td>
+                    {!searchResultDisplaying ? users.map((user) => (
+                        <tr key={user.UserID}>
+                            <td>{user.UserID}</td>
                             <td>
                                 <div>
                                     {user.FullName}
@@ -261,7 +252,35 @@ export default function UserManagement() {
                                 {user.Role === "Admin" ? "Quản trị viên" : "Người dùng"}
                             </td>
                             <td>
-                                {user.RoomID ?? "Chưa được xếp"}
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        onClick={() => setSelectingUser({
+                                            ...user,
+                                            services: [...(user.services || [])],
+                                        })}
+                                    >
+                                        <i className="fa-solid fa-user-pen"></i>
+                                    </Button>
+                                    <Button
+                                        onClick={() => setDeletingUser(user)}
+                                    >
+                                        <i className="fa-solid fa-trash"></i>
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    )) : searchResult.map((user) => (
+                        <tr key={user.UserID}>
+                            <td>{user.UserID}</td>
+                            <td>
+                                <div>
+                                    {user.FullName}
+                                    <br/>
+                                    {user.Email}
+                                </div>
+                            </td>
+                            <td>
+                                {user.Role === "Admin" ? "Quản trị viên" : "Người dùng"}
                             </td>
                             <td>
                                 <div className={styles.buttonContainer}>
@@ -285,14 +304,18 @@ export default function UserManagement() {
                 </tbody>
             </Table>
 
-            <div className={styles.paginationContainer}>
-                <Pagination
-                    page={page}
-                    setPage={setPage}
-                    limit={limit}
-                    setLimit={setLimit}
-                    total={total}/>
-            </div>
+            {!hasResult && <div className={styles.noResult}>Không có kết quả</div>}
+
+            {!searchResultDisplaying && (
+                <div className={styles.paginationContainer}>
+                    <Pagination
+                        page={page}
+                        setPage={setPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        total={total}/>
+                </div>
+            )}
 
             {newUser && (
                 <Overlay>
@@ -336,11 +359,11 @@ export default function UserManagement() {
 
                         <select
                             className={styles.oneCell}
-                            value={newUser.Role ?? "user"}
+                            value={newUser.Role ?? "User"}
                             onChange={(e) => setNewUser({...newUser, Role: e.target.value})}
                         >
-                            <option value="user">Người dùng</option>
-                            <option value="admin">Quản trị viên</option>
+                            <option value="User">Người dùng</option>
+                            <option value="Admin">Quản trị viên</option>
                         </select>
 
                         <div>

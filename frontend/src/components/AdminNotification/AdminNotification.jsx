@@ -125,6 +125,10 @@ function Feedback() {
                 </tbody>
             </Table>
 
+            {(!feedbacks || feedbacks.length === 0) && (
+                <div className={styles.noResult}>Không có kết quả</div>
+            )}
+
             <div className={styles.pagination}>
                 <Pagination
                     page={page}
@@ -274,6 +278,10 @@ function Notification() {
                     ))}
                 </tbody>
             </Table>
+
+            {(!notifications || notifications.length === 0) && (
+                <div className={styles.noResult}>Không có kết quả</div>
+            )}
 
             <div className={styles.pagination}>
                 <Pagination

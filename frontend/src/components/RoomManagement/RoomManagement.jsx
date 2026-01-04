@@ -132,6 +132,10 @@ function RoomRequests() {
                 </tbody>
             </Table>
 
+            {(!requests || requests.length === 0) && (
+                <div className={styles.noResult}>Không có kết quả</div>
+            )}
+
             <div className={styles.paginationContainer}>
                 <Pagination
                     limit={limit}
@@ -438,6 +442,10 @@ function Rooms() {
                         </button>
                     ))}
                 </div>
+            )}
+
+            {(!rooms || rooms.length === 0) && (
+                <div className={styles.noResult}>Không có kết quả</div>
             )}
 
             {newRoom && (
