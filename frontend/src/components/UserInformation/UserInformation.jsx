@@ -52,22 +52,22 @@ function UserInformation() {
       </header>
 
       <section className={styles.infoCard}>
-        <InfoRow label="Họ và tên" value={user.FullName} />
-        <InfoRow label="Email" value={user.Email} />
-        <InfoRow label="Ngày sinh" value={formatDate(user.BirthDate)} />
-        <InfoRow label="Mã số sinh viên" value={user.StudentID} />
-        <InfoRow label="Số CCCD" value={user.ID} />
-        <InfoRow label="Vai trò" value={user.Role === "User" ? "Người dùng" : "Admin"} />
-        <InfoRow label="Số phòng" value={user.RoomNumber} />
-        <InfoRow label="Tòa nhà" value={user.Building} />
+        <InfoRow label="Họ và tên" value={user?.FullName} />
+        <InfoRow label="Email" value={user?.Email} />
+        <InfoRow label="Ngày sinh" value={formatDate(user?.BirthDate)} />
+        <InfoRow label="Mã số sinh viên" value={user?.StudentID} />
+        <InfoRow label="Số CCCD" value={user?.ID} />
+        <InfoRow label="Vai trò" value={user?.Role === "User" ? "Người dùng" : "Admin"} />
+        <InfoRow label="Số phòng" value={user?.RoomNumber} />
+        <InfoRow label="Tòa nhà" value={user?.Building} />
         <InfoRow
           label="Số dư"
-          value={formatMoney(user.Balance)}
+          value={formatMoney(user?.Balance)}
           highlight
         />
         <InfoRow
           label="Số nợ"
-          value={formatMoney(user.TotalDebt)}
+          value={formatMoney(user?.TotalDebt)}
           highlight
         />
       </section>
