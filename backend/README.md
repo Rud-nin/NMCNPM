@@ -100,3 +100,526 @@ File user_auth_model.js: Dùng để kết nối với CSDL(User)
 - User.create: ghi thông tin người dùng vào bảng với các tham số Email, Fullnam, Password, ProfilePic(cái này chưa kịp làm =)))), Trả về 1 đối tượng
 - User.getAll: Lấy tất cả thông tin từ Users, trả về các đối tượng
 - User.findByEmail: Tìm người dùng duy nhất bằng cột Email 
+
+
+
+1. Nhóm API Thông báo (Notification)
+- a. Lấy danh sách thông báo
+- Method & Endpoint: GET /api/notifications ?page=x&limit=y(với x và y là muốn ở trang mấy và lấy bnh trong trang đó)
+- Quyền hạn: User đã đăng nhập (protectRoute).
+- Đầu vào (Input):
+- Headers: Authorization: Bearer <token> (Token xác thực người dùng).
+- Đầu ra (Output):
+T- hành công (200): Mảng JSON chứa danh sách thông báo. Mỗi phần tử bao gồm: NotificationID, Title, Content, CreatedAt và UserID (ID người nhận, nếu để là null thì gửi cho toàn bộ).
+- Lỗi (500): { message: "Server error" }.
+- Tác dụng: Cho phép cư dân/người dùng xem các thông báo mới nhất từ ban quản lý (sắp xếp mới nhất lên đầu).
+
+- b. Gửi thông báo mới
+- Method & Endpoint: POST /api/notifications
+- Quyền hạn: Chỉ Admin (requireAdmin).
+- Đầu vào (Input):
+- Headers: Authorization: Bearer <token> (Token của Admin).
+- Body (JSON):
+- JSON
+{
+  "title": "Thông báo cắt nước",
+  "content": "Sẽ cắt nước từ 8h đến 17h ngày..."
+}
+- Đầu ra (Output):
+- Thành công (201): Object thông báo vừa tạo (dữ liệu lấy từ DB sau khi insert).
+- Lỗi (400): Thiếu title hoặc content.
+- Lỗi (500): Server error.
+- Tác dụng: Giúp Ban quản lý (Admin) gửi thông báo chung đến toàn bộ hệ thống.
+
+
+2. Nhóm API Nạp tiền (TopUp)
+- File liên quan: topup.routes.js, topup_model.js, setupDB.sql
+- a. Tạo giao dịch nạp tiền
+- Method & Endpoint: POST / 
+- Đầu vào (Input):
+- Body (JSON):
+- JSON
+{
+  "UserID": 123,
+  "Amount": 500000,
+  "Status": "Pending",  // Tùy chọn, mặc định là Pending hoặc Completed tùy logic
+  "CreatedAt": "2025-11-20..." // Tùy chọn
+}
+- Đầu ra (Output):
+- Thành công: { success: true, data: { TopUpID: ... } }
+- Tác dụng: Người dùng tạo yêu cầu nạp tiền vào ví điện tử trong hệ thống (để sau này trừ tiền dịch vụ).
+
+- b. Lấy tất cả lịch sử nạp tiền
+- Method & Endpoint: GET /
+- Đầu vào (Input): Không có (hoặc query params nếu mở rộng sau này).
+- Đầu ra (Output):
+- Mảng JSON danh sách tất cả giao dịch nạp tiền, kèm theo FullName của người nạp (Join với bảng Users).
+- Tác dụng: Admin xem toàn bộ lịch sử nạp tiền của hệ thống để đối soát doanh thu.
+
+- c. Lấy lịch sử nạp tiền theo User
+- Method & Endpoint: GET /user/:id 
+- Đầu vào (Input):
+- id: ID của User cần xem .
+- Đầu ra (Output):
+- Mảng JSON danh sách các giao dịch nạp tiền của riêng user đó.
+- Tác dụng: Hiển thị lịch sử nạp tiền tại màn hình cá nhân của cư dân.
+
+- d. Cập nhật trạng thái nạp tiền
+- Method & Endpoint: PATCH /:id/status
+- Đầu vào (Input):
+- id: TopUpID (trên URL).
+- Body: { "Status": "Completed" } (hoặc "Failed").
+- Đầu ra (Output): { success: true }
+- Tác dụng: Admin duyệt yêu cầu nạp tiền. Ví dụ: Khách chuyển khoản ngân hàng -> Admin kiểm tra -> Gọi API này để chuyển trạng thái từ 'Pending' sang 'Completed'.
+
+3. Nhóm API Thanh toán Dịch vụ (Payment/ServicePayment)
+- a. Tạo hóa đơn/thanh toán mới
+- Method & Endpoint: POST / 
+- Đầu vào (Input):
+- Body (JSON):
+- JSON
+{
+  "UserID": 123,
+  "ServiceName": "Tiền điện tháng 11",
+  "Description": "120kWh",
+  "Amount": 245000,
+  "Status": "Paid"
+}
+- Đầu ra (Output):
+- Thành công: { success: true, data: { PaymentID: ... } }
+- Tác dụng: Hệ thống (hoặc Admin) tạo ra một bản ghi thanh toán. Ví dụ: Cuối tháng chốt số điện và trừ tiền trong ví của User, sau đó gọi API này để lưu lại lịch sử "Đã thanh toán tiền điện".
+
+- b. Lấy tất cả lịch sử thanh toán
+- Method & Endpoint: GET /
+- Đầu vào (Input): Không.
+- Đầu ra (Output):
+- Mảng JSON chứa tất cả hóa đơn dịch vụ, kèm FullName của người dùng.
+- Tác dụng: Admin quản lý, thống kê xem tháng này đã thu được những khoản phí nào.
+
+- c. Lấy lịch sử thanh toán theo User
+- Method & Endpoint: GET /user/:id
+- Đầu vào (Input): id (UserID).
+- Đầu ra (Output):
+- Mảng JSON danh sách hóa đơn của user đó.
+- Tác dụng: Cư dân xem lại lịch sử chi tiêu (tiền điện, nước, phí gửi xe...) của chính mình.
+
+4. API feedback
+- a. API gửi phản hồi từ người dùng
+- Method & Endpoint: POST /api/feedbacks
+- Đầu vào (Input):
+- Body(JSON): 
+{
+	"title": "Khiếu nại tiền điện",
+    "content": "test"
+}
+- Đầu ra:
+- Trường hợp thành công
+{
+  "success": true,
+  "message": "Feedback submitted successfully",
+  "feedback": {
+    "FeedbackID": 8
+  }
+}
+- Trường hợp lỗi (HTTP 400 - Thiếu dữ liệu)
+{
+  "message": "Title and content are required"
+}
+
+- b.API lấy danh sách phản hồi(Dành cho Admin xem toàn bộ phản hồi từ người dùng kèm theo thông tin chi tiết)
+- Method: GET (http://localhost:3000/api/feedbacks?page=x&limit=y)(phân trang)
+- Đầu vào (Input):
+- Body(JSON): Không
+- Đầu ra:
+- Trường hợp thành công HTTP 200
+Mảng JSON chứa danh sách các thông báo của User
+{
+    "success": true,
+    "count": 8,
+    "data": [
+        {
+            "FeedbackID": 8,
+            "UserID": 1,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-31T00:53:39.170Z",
+            "FullName": "Test4",
+            "Email": "test3@example.com",
+            "studentID": "20235421"
+        },
+        {
+            "FeedbackID": 7,
+            "UserID": 1,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-31T00:53:22.130Z",
+            "FullName": "Test4",
+            "Email": "test3@example.com",
+            "studentID": "20235421"
+        },
+        {
+            "FeedbackID": 6,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "test",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:12:31.500Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 5,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:10:22.440Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 4,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:07:39.197Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 3,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:07:17.010Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 2,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:06:33.890Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        },
+        {
+            "FeedbackID": 1,
+            "UserID": 3,
+            "Title": "Khiếu nại tiền điện",
+            "Content": "Trả tiền điện như muối bỏ biển, đầu tư vào hdpe thì ngon luôn",
+            "Status": "Pending",
+            "CreatedAt": "2025-12-29T00:06:30.750Z",
+            "FullName": "Test",
+            "Email": "test@example.com",
+            "studentID": "20235429"
+        }
+    ]
+}
+- Trường hợp lỗi: HTTP 403 - Không phải quyền admin
+Output: 
+{
+    "message": "Forbidden - Admin access required"
+}
+
+5. Quản lý Người dùng (Users) - Chỉ dành cho Admin
+- Yêu cầu chung: Header phải có Token của Admin (Cookie hoặc Bearer Token). Middleware: protectRoute, requireAdmin.
+
+- a. Lấy danh sách người dùng (Có phân trang & Tìm kiếm)
+- Route: GET /api/users
+Input (Query Params):
+- page: (Number, Optional) Trang hiện tại. Mặc định là 1.
+- limit: (Number, Optional) Số lượng user mỗi trang. Mặc định là 10.
+- search: (String, Optional) Từ khóa tìm kiếm (Tên hoặc Email).
+- Output (JSON):
+- Thành công (200):
+- JSON(với /api/users?page=x&limit=y)
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 50,
+        "totalPages": 5
+    },
+    "data": [
+        {
+            "UserID": 3,
+            "Email": "test@example.com",
+            "FullName": "Test",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235429",
+            "ID": "12324",
+            "ProfilePic": "",
+            "Role": "User"
+        },
+    ]
+}
+- JSON với /api/users?search=x
+{
+    "success": true,
+    "message": "Found 2 results for \"test\"",
+    "pagination": null,
+    "data": [
+        {
+            "UserID": 3,
+            "Email": "test@example.com",
+            "FullName": "Test",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235429",
+            "ID": "12324",
+            "ProfilePic": "",
+            "Role": "User"
+        },
+        {
+            "UserID": 1,
+            "Email": "test3@example.com",
+            "FullName": "Test4",
+            "BirthDate": "2005-05-12T00:00:00.000Z",
+            "StudentID": "20235421",
+            "ID": "12344",
+            "ProfilePic": "",
+            "Role": "Admin"
+        }
+    ]
+}
+- b. Xem chi tiết người dùng
+- Route: GET /api/users/:id
+- Input (Params):
+- id: ID của user cần xem.
+- Output (JSON):
+- Thành công (200): Object thông tin User.
+- Thất bại (404): { "message": "User not found" }.
+- c. Tạo người dùng mới (Cấp tài khoản)
+- Route: POST /api/users
+- Input (Body JSON):
+- FullName (Required): Họ tên.
+- Email (Required): Email đăng nhập.
+- Password (Required): Mật khẩu.
+- BirthDate (Required): Ngày sinh (YYYY-MM-DD).
+- StudentID (Required): Mã sinh viên.
+- ID (Required): Số CCCD.
+- Role: "Admin" hoặc "User" (Mặc định "User").
+- Output (JSON):
+- Thành công (201): { "message": "User created successfully", "data": {"UserID": } }.
+- Thất bại (400): Lỗi thiếu trường hoặc Email đã tồn tại.
+
+- d. Cập nhật thông tin người dùng
+- Route: PUT /api/users/:id
+- Input:
+- Params: id (ID user cần sửa).
+- Body JSON: FullName, BirthDate, StudentID, ID, Role (Các trường cần sửa).
+- Output (JSON):
+- Thành công (200): { "message": "User updated successfully" }.
+- e. Xóa người dùng
+- Route: DELETE /api/users/:id
+- Input (Params): id (ID user cần xóa).
+- Output (JSON):
+- Thành công (200): { "message": "User deleted successfully" }.
+- Thất bại (400): Không thể tự xóa chính mình.
+- Thất bại (409): Lỗi ràng buộc khóa ngoại (User đã có giao dịch nạp tiền/thanh toán).
+
+6. Quản lý Dịch vụ (Services)
+- Quyền hạn:
+- Xem (GET): User và Admin đều xem được.
+- Thêm/Sửa/Xóa (POST, PUT, DELETE): Chỉ Admin.
+- a. Lấy danh sách dịch vụ (Có phân trang)
+- Route: GET /api/services?page=x&limit=y
+- Input (Query Params):
+- page: (Number) Mặc định 1.
+- limit: (Number) Mặc định 10.
+- Output (JSON):
+- Thành công (200):
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 5,
+        "total": 7,
+        "totalPages": 2
+    },
+    "data": [
+        {
+            "ServiceID": 7,
+            "ServiceName": "Kiểm tra định kỳ 2",
+            "Price": 80000,
+            "Descriptions": "kiểm tra kiến trúc chung cư",
+            "CreatedAt": "2025-12-29T21:40:51.700Z"
+        },
+    ]
+}
+- b. Tạo dịch vụ mới
+- Route: POST /api/services
+- Input (Body JSON):
+- ServiceName (Required): Tên dịch vụ (Unique).
+- Price (Required): Giá tiền.
+- Descriptions: Mô tả chi tiết.
+- Output (JSON):
+- Thành công (201): { "success": true, "data": { "ServiceID": 8 } }.
+- Thất bại (400): Thiếu tên hoặc giá.
+- c. Cập nhật dịch vụ
+- Route: PUT /api/services/:id
+- Input:
+- Params: id.
+- Body JSON: ServiceName, Price, Descriptions.
+- Output (JSON):
+- Thành công (200): { "success": true, "message": "Update completed" }.
+- d. Xóa dịch vụ
+- Route: DELETE /api/services/:id
+- Input (Params): id.
+- Output (JSON):
+- Thành công (200): { "success": true, "message": "Delete completed" }.
+- Thất bại (409): Lỗi nếu dịch vụ này đã có trong lịch sử thanh toán (Ràng buộc khóa ngoại).
+
+7. Nhóm API thanh toán
+- a. Xem danh sách hóa đơn chưa thanh toán
+- Route: GET /api/payments/unpaid
+- Input: Token chứa UserID của người đăng nhập
+- Output:
+{
+    "success": true,
+    "count": 2,
+    "data": [
+        {
+            "BillID": 6,
+            "ServiceName": "Phí gửi xe máy",
+            "Period": "11/2025",
+            "Amount": 80000,
+            "RoomID": null,
+            "UserID": 3,
+            "Price": 80000
+        },
+        {
+            "BillID": 5,
+            "ServiceName": "Tiền điện",
+            "Period": "11/2025",
+            "Amount": 360000,
+            "RoomID": 101,
+            "UserID": null,
+            "Price": 360000
+        }
+    ]
+}
+- b.Thực hiện thanh toán(Giao dịch chính) - Khi 1 user trong phòng thanh toán dịch vụ chung thành công thì tất cả thành viên trong phòng đều sẽ được chuyển trạng thái
+- Route: POST /api/payments/pay-bills
+- Input: Header: Token (Xác định ai là người trả tiền). Body: Danh sách ID muốn trả. VD: {"billIds": [1, 2]}
+- Output: 
+{
+    "success": true,
+    "message": "Bills paid successfully",
+    "data": {
+        "success": true,
+        "paymentId": 4,
+        "totalPaid": 440000,
+        "paidBillsCount": 2
+    }
+}
+- c.Xem lịch sử thanh toán(Người dùng)
+- Route:  GET /api/payments/history
+- Input: Header: Token. Query Param: page=1, limit=10
+- Output
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 4,
+        "totalPages": 1
+    },
+    "data": [
+        {
+            "PaymentID": 4,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:50:42.790Z",
+            "ServicesNames": "Tiền điện, Phí gửi xe máy",
+            "BillsCount": 2
+        },
+        {
+            "PaymentID": 3,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:03:40.773Z",
+            "ServicesNames": "Tiền điện, Phí gửi xe máy",
+            "BillsCount": 2
+        },
+        {
+            "PaymentID": 2,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T21:44:26.360Z",
+            "ServicesNames": null,
+            "BillsCount": 0
+        },
+        {
+            "PaymentID": 1,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T18:55:36.410Z",
+            "ServicesNames": null,
+            "BillsCount": 0
+        }
+    ]
+}
+- d. Xem lịch sử thanh toán(Admin)
+- Route: POST api/payments/admin/history?search=name(or email)
+- Input: Header: Token, Query param: page =1, limit = 10, search =
+- Output
+{
+    "success": true,
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalRows": 4,
+        "totalPages": 1
+    },
+    "data": [
+        {
+            "PaymentID": 4,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:50:42.790Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": "Tiền điện, Phí gửi xe máy"
+        },
+        {
+            "PaymentID": 3,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T22:03:40.773Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": "Tiền điện, Phí gửi xe máy"
+        },
+        {
+            "PaymentID": 2,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T21:44:26.360Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": null
+        },
+        {
+            "PaymentID": 1,
+            "TotalAmount": 440000,
+            "Status": "Paid",
+            "CreatedAt": "2026-01-02T18:55:36.410Z",
+            "FullName": "Test",
+            "RoomID": 101,
+            "ServiceNames": null
+        }
+    ]
+}
