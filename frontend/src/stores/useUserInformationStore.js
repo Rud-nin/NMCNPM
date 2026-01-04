@@ -21,8 +21,8 @@ export const useUserInformationStore = create((set, get) => ({
       // set({ user: data });
       // return res;
     } catch (error) {
-      console.log("Có lỗi trong fetchUserInformation", error);
-      toast.error(error.response.data.message);
+      toast.error("Có lỗi trong fetchUserInformation");
+      console.error(error);
     } finally {
       set({ isLoading: false});
     }

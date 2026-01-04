@@ -110,7 +110,7 @@ function UserPayment() {
       </header>
 
       <header>
-        <h2>Số dư: {formatMoney(user.Balance)}</h2>
+        <h3>Số dư: {formatMoney(user?.Balance)}</h3>
       </header>
 
       <section className={styles.unpaidBills}>

@@ -13,7 +13,8 @@ export const useAuthStore = create((set) => ({
       const res = await axiosInstance.get("/auth/check");
       set({ authUser: res });
     } catch (error) {
-      console.log("Lỗi trong checkAuth:", error);
+      toast.error('Có lỗi khi kiểm tra quyền truy cập');
+      console.error(error);
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -27,7 +28,8 @@ export const useAuthStore = create((set) => ({
       set({authUser: res});
       toast.success("Tạo tài khoản thành công!");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error('Có lỗi khi đăng ký');
+      console.error(error);
     } finally {
       set({isSigningUp: false});
     }
@@ -40,7 +42,8 @@ export const useAuthStore = create((set) => ({
       set({ authUser: res });
       toast.success("Đăng nhập thành công!");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error('Có lỗi khi đăng nhập');
+      console.error(error);
     } finally {
       set({ isSigningIn: false});
     }
@@ -52,7 +55,8 @@ export const useAuthStore = create((set) => ({
       set({ authUser: null });
       toast.success("Đăng xuất thành công");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error('Có lỗi khi đăng xuất');
+      console.error(error);
     }
   },
 }));

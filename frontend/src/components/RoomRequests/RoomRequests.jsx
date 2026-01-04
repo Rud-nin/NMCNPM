@@ -1,56 +1,62 @@
-import { useNotificationStore } from '../../stores/useNotificationStore.js';
+import { useRoomSelectingStore } from '../../stores/useRoomSelectingStore.js';
 import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
 import Button from '../../components/Button/Button.jsx';
 import Table from '../Table/Table.jsx';
-import styles from './UserNotification.module.css';
+import styles from './RoomRequests.module.css';
 import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
 import { formatDateTime } from '../../lib/formatDateTime.js';
-import Pagination from '../Pagination/Pagination.jsx';
 
-function UserNotification() {
+function RoomRequests() {
   const [feedback, setFeedback] = useState(null);
-  const getUserNotifications = useNotificationStore((s) => s.getUserNotifications);
   const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
-  const notifications = useNotificationStore(s => s.userNotifications);
 
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(1);;
+  const {
+    roomRequests,
+    getRoomRequests,
+    cancelRoomRequest,
+    isLoadingRequest,
+    isCanceling,
+  } = useRoomSelectingStore();
 
   async function handleSendFeedback() {
     await sendFeedback(feedback.title, feedback.content);
     setFeedback(null);
   };
 
-  async function handleFetchNotifications() {
-    const res = await getUserNotifications(page, limit);
-    if (res) {
-      const { pagination } = res;
-      setTotal(pagination.totalPages);
-    }
+  async function handleFetchRoomRequests() {
+    if (isLoadingRequest) return;
+
+    await getRoomRequests();
+  };
+
+  async function handleCancelRoomRequest(requestId) {
+    if (isCanceling) return;
+
+    await cancelRoomRequest(requestId);
+    await getRoomRequests();
   };
 
   useEffect(() => {
-    handleFetchNotifications();
-  }, [limit, page]);
+    handleFetchRoomRequests();
+  }, []);
 
   return (
-    <section className={styles.notification}>
+    <section className={styles.roomRequest}>
       <header>
-        <h2>Thông báo</h2>
+        <h2>Yêu cầu vào phòng</h2>
 
         <Button
           onClick={() => setFeedback({ title: '', content: '' })}
-        >Tạo phản hồi</Button>
+        >Tạo thắc mắc</Button>
 
       </header>
 
       <div className={styles.titleBar}>
-        <h3>Danh sách dịch vụ</h3>
+        <h3>Danh sách yêu cầu</h3>
 
         <Button
-          onClick={handleFetchNotifications}
+          onClick={handleFetchRoomRequests}
         >
           <i className="fa-solid fa-arrows-rotate"></i>{' '}
           Làm mới
@@ -61,33 +67,48 @@ function UserNotification() {
         <thead>
           <tr>
             <th>STT</th>
-            <th>Tiêu đề</th>
-            <th>Nội dung</th>
-            <th>Thời gian</th>
+            <th>Số phòng</th>
+            <th>Tòa nhà</th>
+            <th>Thời gian gửi</th>
+            <th>Thời gian xử lý</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {notifications && notifications.map((noti, index) => (
+          {roomRequests && roomRequests.map((roomRequest, index) => (
             <tr key={index + 1}>
               <td>{index + 1}</td>
-              <td>{noti.Title}</td>
-              <td>{noti.Content}</td>
-              <td>{formatDateTime(noti.CreatedAt)}</td>
+              <td>{roomRequest.RoomNumber}</td>
+              <td>{roomRequest.Building}</td>
+              <td>{formatDateTime(roomRequest.CreatedAt)}</td>
+              <td>{roomRequest.Proccessed ? formatDateTime(roomRequest.Proccessed) : "Chưa xử lý"}</td>
+              <td>
+                <span className={`${styles.status} ${styles[roomRequest.Status]}`}>
+                  {
+                    roomRequest.Status === "Rejected" ? "Từ chối" :
+                    roomRequest.Status === "Pending" ? "Chờ duyệt" :
+                    roomRequest.Status === "Canceled" ? "Hủy bỏ" :
+                      "Chấp nhận"
+                  }
+                </span>
+              </td>
+              <td>
+                { roomRequest.Status === "Pending" ? (
+                    <Button
+                      onClick={() => handleCancelRoomRequest(roomRequest.RequestID)}
+                    >
+                      Hủy
+                    </Button>
+                  ) : ("")
+                }
+              </td>
               <td></td>
             </tr>
           ))}
         </tbody>
       </Table>
-
-      <div className={styles.pagination}>
-        <Pagination
-          limit={limit}
-          setLimit={setLimit}
-          page={page}
-          setPage={setPage}
-          total={total} />
-      </div>
 
       {feedback && (
         <Overlay>
@@ -120,4 +141,4 @@ function UserNotification() {
   );
 };
 
-export default UserNotification;
+export default RoomRequests;
