@@ -1,0 +1,20 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.section {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  box-shadow: 0 4px 6px var(--border-strong);
+  font-size: 1.5rem;
+}

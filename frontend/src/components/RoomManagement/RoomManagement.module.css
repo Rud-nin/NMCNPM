@@ -1,0 +1,226 @@
+.container {
+    padding: 1rem;
+}
+
+.roomManagement header, .search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.roomManagement input, .roomManagement select {
+    padding: 0.5rem 1ch;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    outline: none;
+    border: #edf2f7 1px solid;
+    border-radius: 5px;
+}
+
+.roomManagement input::placeholder {
+    color: var(--text-muted);
+}
+
+.search {
+    margin: 1rem 0;
+}
+
+.search input {
+    width: min(50vw, 400px);
+}
+
+.roomManagement td:has(.buttonContainer),
+.roomManagement td:first-child {
+    width: 1%;
+    margin: 0 1rem;
+}
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.paginationContainer {
+    justify-items: center;
+}
+
+.green,
+.red,
+.yellow {
+    padding: 0.25rem 1ch;
+    border-radius: 3rem;
+    border: 2px solid;
+}
+
+.green {
+    background-color: #2ea04366;
+    color: #3fb950;
+}
+
+.red {
+    background-color: var(--error-muted);
+    color: var(--error);
+}
+
+.yellow {
+    background-color: #bb800966;
+    color: #d29922;
+}
+
+.roomGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.roomGrid > button {
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border: var(--bg-inverse-primary) 3px solid;
+    outline: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition-property: background-color, color;
+    transition-duration: 0.2s;
+}
+
+.roomGrid > button:hover {
+    background-color: var(--bg-inverse-primary);
+    color: var(--text-inverse-primary);
+}
+
+.noResult {
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 10px;
+    background-color: var(--bg-secondary);
+    margin-top: 0.5rem;
+}
+
+.modal, .deleteModal, .requestModal {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: 5px;
+    width: min(50vw, 500px);
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal h2, .deleteModal h2, .requestModal h2 {
+    text-align: center;
+    margin: 0;
+}
+
+.modal .buttonContainer {
+    justify-content: end;
+}
+
+.requestModal {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.requestModal h2 {
+    grid-column: span 2 / span 2;
+    text-align: center;
+    margin: 0;
+}
+
+.services, .humanResources {
+    display: flex;
+    gap: 1ch;
+}
+
+.services {
+    overflow-x: scroll;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+
+.services button {
+    padding: 0.5rem 1ch;
+    border-radius: 5px;
+    outline: none;
+    border: #edf2f7 1px solid;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.employee {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.humanResources span {
+    position: relative;
+    border-bottom: 2px solid var(--bg-inverse-primary);
+}
+
+.humanResources button {
+    font-size: 0.5rem;
+    width: 1rem;
+    aspect-ratio: 1 / 1;
+    border: none;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.humanResources span:hover button {
+    display: flex;
+}
+
+.selected {
+    background-color: var(--bg-inverse-primary) !important;
+    color: var(--text-inverse-primary) !important;
+}
+
+.users {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 20vh;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.users button {
+    width: 100%;
+}
+
+.deleteModal {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.deleteModal h2 {
+    text-align: center;
+    margin: 0;
+    grid-column: span 2 / span 2;
+}

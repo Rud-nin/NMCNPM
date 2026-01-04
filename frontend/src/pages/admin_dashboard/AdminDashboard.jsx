@@ -1,6 +1,33 @@
-import Notification from "../../components/Notification/Notification";
+import AdminNotification from "../../components/AdminNotification/AdminNotification";
+import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
+import UserManagement from "../../components/UserManagement/UserManagement";
+import RoomManagement from "../../components/RoomManagement/RoomManagement";
+import ServiceManagement from "../../components/ServiceManagement/ServiceManagement";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
+
+const states = {
+    "Dashboard": {
+        translated: "Bảng điều khiển",
+        component: <AdminNotification />
+    },
+    "User": {
+        translated: "Quản lý người dùng",
+        component: <UserManagement />
+    },
+    "Room": {
+        translated: "Quản lý phòng",
+        component: <RoomManagement />
+    },
+    "Service": {
+        translated: "Quản lý dịch vụ",
+        component: <ServiceManagement />
+    },
+    "Sys": {
+        translated: "Hệ thống",
+        component: <PaymentHistory />
+    }
+}
 
 function Sidebar({ onChange }) {
     
@@ -9,26 +36,12 @@ function Sidebar({ onChange }) {
             <h2>Admin</h2>
             <nav>
                 <ul>
-                    <li key={1}
-                        onClick={() => onChange("Dashboard")}>
-                        Bảng điều kiển
-                    </li>
-                    <li key={2}
-                        onClick={() => onChange("User")}>
-                        Người dùng
-                    </li>
-                    <li key={3}
-                        onClick={() => onChange("Report")}>
-                        Báo cáo
-                    </li>
-                    <li key={4}
-                        onClick={() => onChange("Setting")}>
-                        Cài đặt
-                    </li>
-                    <li key={5}
-                        onClick={() => onChange("Dev")}>
-                        Đội phát triển
-                    </li>
+                    {Object.entries(states).map(([key, value]) => (
+                        <li key={key}
+                            onClick={() => onChange(key)}>
+                            {value.translated}
+                        </li>
+                    ))}
                 </ul>
             </nav>
         </div>
@@ -37,15 +50,12 @@ function Sidebar({ onChange }) {
 
 function Dashboard() {
     return (
-        <div>
-            <Notification />
-        </div>
+        <AdminNotification />
     );
 }
-function User() {}
-function Report() {}
-function Setting() {}
-function Dev() {}
+function Sys() {
+    return <PaymentHistory />
+}
 
 export default function AdminDashboard() {
     const [state, changeState] = useState("Dashboard");
@@ -57,14 +67,10 @@ export default function AdminDashboard() {
             />
             <section className={styles.section}>
                 <div className={styles.header}>
-                    <div>{state}</div>
+                    <div>{states[state].translated}</div>
                     <button>Làm mới</button>
                 </div>
-                { state === "Dashboard" && <Dashboard /> }
-                { state === "User" && <User /> }
-                { state === "Report" && <Report /> }
-                { state === "Setting" && <Setting /> }
-                { state === "Dev" && <Dev /> }
+                {states[state].component}
             </section>
         </div>
     );

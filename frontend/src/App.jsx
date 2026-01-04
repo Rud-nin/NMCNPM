@@ -6,6 +6,7 @@ import NotFoundPage from './pages/notfound/NotFoundPage';
 import Home from './pages/home/Home';
 import AdminDashboard from './pages/admin_dashboard/AdminDashboard';
 import UserDashboard from './pages/user_dashboard/UserDashboard';
+import RoomSelecting from './pages/room_selecting/RoomSelecting';
 
 import ThemeToggle from './components/themeToggle/ThemeToggle';
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/user" element={<UserDashboard />} />
+        <Route path="/rooms" element={<RoomSelecting />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>

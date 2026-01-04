@@ -1,0 +1,98 @@
+.container {
+    padding: 1rem;
+    min-width: 100vh;
+}
+
+.notification header, .feedback header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification td:not(td:nth-child(3)) {
+    text-align: center;
+}
+
+.notification th:last-child,
+.notification td:last-child,
+.feedback th:last-child,
+.feedback td:last-child{
+    white-space: nowrap;
+    width: 1%;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 1ch;
+    align-items: center;
+}
+
+.noResult {
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 10px;
+    background-color: var(--bg-secondary);
+    margin-top: 0.5rem;
+}
+
+.pagination {
+    justify-self: center;
+    margin: 0.5rem 0;
+}
+
+.modal {
+    background-color: var(--bg-primary);
+    border-radius: 10px;
+    padding: 1rem;
+    min-width: max(400px, 35vw);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.modal h2 {
+    text-align: center;
+    margin: 0;
+}
+
+.modal input, .modal textarea, .modal select {
+    outline: none;
+    border: #edf2f7 solid 1px;
+    border-radius: 5px;
+    padding: 0.5rem 1ch;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.modal input::placeholder, .modal textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.modal textarea {
+    height: 3rem;
+}
+
+.modal *:not(button) {
+    grid-column: span 2 / span 2;
+}
+
+.purple, .green, .yellow {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    border: 2px solid;
+}
+
+.purple {
+    background-color: #ab7df866;
+    color: #a371f7;
+}
+
+.yellow {
+    background-color: #bb800966;
+    color: #d29922;
+}
+
+.green {
+    background-color: #2ea04366;
+    color: #3fb950;
+}

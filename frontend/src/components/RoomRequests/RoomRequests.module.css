@@ -1,0 +1,128 @@
+.roomRequest {
+  padding: 1rem;
+}
+
+.roomRequest header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roomRequest td:not(td:nth-child(3)) {
+  text-align: center;
+}
+
+.roomRequest th:last-child,
+.roomRequest td:last-child {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.roomRequest input,
+.roomRequest select {
+  padding: 0.5rem 1ch;
+  border: 1px solid #edf2f7;
+  outline: none;
+  border-radius: 5px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.roomRequest input::placeholder {
+  color: var(--text-muted);
+}
+
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.roomRequest td:has(.buttonContainer) {
+  width: 1%;
+}
+
+/* Tạo feedback */
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  padding: 0 1rem 1rem;
+  border-radius: 10px;
+  width: clamp(250px, 50%, 500px);
+}
+
+.modal h2 {
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input input,
+.input textarea {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1ch;
+  width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
+}
+
+.input span {
+  white-space: nowrap;
+}
+
+.modal .buttonContainer {
+  justify-self: center;
+}
+
+
+/* Trạng thái */
+.status {
+  width: 6rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status.Pending {
+  color: var(--pending);
+  border: 1px solid;
+}
+
+.status.Approved {
+  color: var(--success);
+  border: 1px solid;
+}
+
+.status.Rejected {
+  color: var(--failed);
+  border: 1px solid;
+}
+
+.status.Canceled {
+  color: var(--canceled);
+  border: 1px solid;
+}

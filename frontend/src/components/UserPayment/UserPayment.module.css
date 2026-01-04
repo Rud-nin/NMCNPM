@@ -1,0 +1,131 @@
+.userPayment {
+  padding: 1rem;
+}
+
+.userPayment header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unpaidBills,
+.paidBills {
+  margin-top: 1rem;
+}
+
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.unpaidBills td:not(td:nth-child(2)),
+.paidBills td:not(td:nth-child(2)) {
+  text-align: center;
+}
+
+.unpaidBills th:last-child,
+.unpaidBills td:last-child,
+.paidBills th:last-child,
+.paidBills td:last-child {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.unpaidBills input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.totalPayment {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.totalPayment h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.totalPayment:has(h3:only-child) {
+  justify-content: center;
+}
+
+
+.status {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: #e6fffa;
+  color: var(--success);
+  border: 1px solid var(--success);
+  border-radius: 10rem;
+}
+
+.pagination {
+  margin-top: 0.5rem;
+  justify-items: center;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-primary);
+  padding: 0 1rem 1rem;
+  border-radius: 10px;
+  width: clamp(250px, 50%, 500px);
+}
+
+.modal h2 {
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input input,
+.input textarea {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1ch;
+  width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
+}
+
+.input span {
+  white-space: nowrap;
+}
+
+.modal .buttonContainer {
+  justify-self: center;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

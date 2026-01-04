@@ -1,0 +1,14 @@
+.paymentHistory {
+    padding: 1rem;
+}
+
+.paymentHistory thead {
+    background-color: var(--bg-inverse-primary);
+    color: var(--text-inverse-primary);
+}
+
+.paymentHistory header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
