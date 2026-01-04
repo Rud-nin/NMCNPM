@@ -76,7 +76,7 @@ function UserService() {
               <td>{index + 1}</td>
               <td>{service.ServiceName}</td>
               <td>{service.Descriptions}</td>
-              <td>{(true === true) ? "Phòng" : "Cá nhân"}</td>
+              <td>{(service.Type === "Personal") ? "Phòng" : "Cá nhân"}</td>
               <td>{service.Price + " VNĐ"}</td>
               <td></td>
             </tr>
