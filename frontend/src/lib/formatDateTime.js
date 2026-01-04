@@ -9,5 +9,5 @@ export function formatDateTime(dateTimeString) {
   const month = String((dateTime.getMonth() + 1)).padStart(2, "0");
   const year = String(dateTime.getFullYear());
 
-  return `${hh}:${mm}:${ss} ${day}:${month}:${year}`;
+  return `${hh}:${mm}:${ss} ${day}/${month}/${year}`;
 };

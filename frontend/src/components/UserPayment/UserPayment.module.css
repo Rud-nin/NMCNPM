@@ -65,19 +65,13 @@
 
 .status {
   padding: 0.25rem 0.75rem;
-  border-radius: 999px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
-}
-
-.status:has(:not()) {
-  /* fallback – giữ cho CSS module không lỗi */
-}
-
-.status {
   background-color: #e6fffa;
   color: var(--success);
+  border: 1px solid var(--success);
+  border-radius: 10rem;
 }
 
 .pagination {

@@ -78,7 +78,7 @@ export const useServiceStore = create((set) => ({
         
         try {
             const res = await axiosInstance.get(`/services?page=${page}&limit=${limit}`);
-            set({ userServices: res });
+            set({ userServices: res.data });
             return res;
         } catch (error) {
             toast.error('Có lỗi khi lấy thông tin dịch vụ');

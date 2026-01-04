@@ -28,7 +28,7 @@ function UserTopUp() {
 
   async function handleCreateTopUp() {
     if (typeof amount === "number") {
-      await createTopUp();
+      await createTopUp(amount);
       setAmount(null);
       setOpen(false);
     } else {

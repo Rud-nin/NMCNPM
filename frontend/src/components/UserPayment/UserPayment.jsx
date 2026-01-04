@@ -45,7 +45,7 @@ function UserPayment() {
   const handleFetchUnpaidBills = async () => {
     if (isLoading) return;
 
-    await getUserUnpaidBills;
+    await getUserUnpaidBills();
   };
 
   const handeFetchPaidBills = async () => {
@@ -72,6 +72,8 @@ function UserPayment() {
     }
 
     await payBill(billIds);
+    setBillIds([]);
+    setTotalAmount(0);
   };
 
   const handleToggleBill = async (bill) => {
@@ -123,9 +125,9 @@ function UserPayment() {
             <tr>
               <th>STT</th>
               <th>Tên dịch vụ</th>
-              <th>Giai đoạn</th>
-              <th>Số tiền</th>
               <th>Loại dịch vụ</th>
+              <th>Kỳ thu</th>
+              <th>Số tiền</th>
               <th>Thanh toán</th>
               <th></th>
             </tr>
@@ -135,9 +137,9 @@ function UserPayment() {
               <tr key={index + 1}>
                 <td>{index + 1}</td>
                 <td>{bill.ServiceName}</td>
+                <td>{bill.UserID ? "Cá nhân" : "Phòng"}</td>
                 <td>{bill.Period}</td>
                 <td>{bill.Price + " VNĐ"}</td>
-                <td>{bill.UserID ? "Cá nhân" : "Phòng"}</td>
                 <td>
                   <input
                     type="checkbox"
@@ -153,7 +155,7 @@ function UserPayment() {
 
         {unpaidBills.length ? (
           <div className={styles.totalPayment}>
-            <h3>Tổng đóng: {totalAmount}</h3>
+            <h3>Tổng đóng: {totalAmount} VNĐ</h3>
             <Button
               onClick={handlePayBill}
             >
@@ -195,12 +197,12 @@ function UserPayment() {
             {paidBills && paidBills.map((bill, index) => (
               <tr key={index + 1}>
                 <td>{index + 1}</td>
-                <td>{bill.ServiceNames}</td>
-                <td>{bill.TotalAmount + "VNĐ"}</td>
+                <td>{bill.ServiceName}</td>
+                <td>{bill.TotalAmount + " VNĐ"}</td>
                 <td>{formatDateTime(bill.CreatedAt)}</td>
                 <td>
-                  <span className={`${styles.status}`}>
-                    {bill.Status === "Paid" ? "Đã đóng" : "Chưa đóng"}
+                  <span className={styles.status}>
+                    Đã đóng
                   </span>
                 </td>
                 <td></td>

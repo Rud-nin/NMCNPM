@@ -33,7 +33,6 @@ export const useTopUpStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get(`/topups/user/${authUser?.UserID}`);
       set({ userTopUps: res.data })
-      toast.success("Lấy lịch sử nạp tiền thành công");
       return res;
       // const res = await fetch('/topups.example.json');
       // toast.success("Lấy lịch sử nạp tiền thành công");

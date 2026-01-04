@@ -40,7 +40,7 @@ export const usePaymentStore = create((set) => ({
         set({ isLoading: true });
 
         try {
-            const res = await axiosInstance.get('/payments/unpaid');
+            const res = await axiosInstance.get('/payments/unpaid-bills');
             set({ unpaidBills: res.data });
             return res;
         } catch (error) {
@@ -60,7 +60,7 @@ export const usePaymentStore = create((set) => ({
             });
 
             set((state) => ({
-                unpaidBills: state.unpaidBills.filter(bill => Number(bill.BillID) !== Number(billId)),
+                unpaidBills: state.unpaidBills.filter(bill => !billIds.includes(bill.BillID)),
             }));
 
             toast.success("Thanh toán thành công");

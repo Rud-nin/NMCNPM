@@ -6,7 +6,6 @@ export const useRoomStore = create((set) => ({
     isLoading: false,
     rooms: [],
     userRoom: [],
-    users: [],
     getRooms: async () => {
         set({ isLoading: true });
         try {
@@ -137,8 +136,7 @@ export const useRoomStore = create((set) => ({
         try {
             const res = await axiosInstance.get(`/rooms/me`);
             set({ 
-                userRoom: res.room,
-                users: res.users,  
+                userRoom: res,
             });
             return res;
             // const res = await fetch('/userRoom.example.json');

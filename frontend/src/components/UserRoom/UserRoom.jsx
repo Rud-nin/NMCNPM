@@ -19,7 +19,6 @@ function UserRoom() {
 
   const {
     userRoom,
-    users,
     fetchUserRoom
   } = useRoomStore();
 
@@ -58,7 +57,7 @@ function UserRoom() {
         <InfoRow label="Số thành viên hiện có" value={userRoom.Occupancy} />
       </section>
 
-      {users &&
+      {userRoom.users &&
         <section className={styles.users}>
           <div className={styles.titleBar}>
             <h3>Danh sách thành viên</h3>
@@ -84,7 +83,7 @@ function UserRoom() {
             </thead>
 
             <tbody>
-              {users.map((user, index) => (
+              {userRoom.users.map((user, index) => (
                 <tr key={index + 1}>
                   <td>{index + 1}</td>
                   <td>{user.FullName}</td>

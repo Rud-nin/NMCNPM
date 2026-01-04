@@ -14,7 +14,6 @@ export const useUserInformationStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get(`/users/${id}`);
       set({ user: res });
-      toast.success("Lấy thông tin người dùng thành công");
       return res;
       // const res = await fetch('/user.example.json');
       // const data = await res.json();
