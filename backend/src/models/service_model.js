@@ -72,5 +72,13 @@ export const Service = {
         } catch (error) {
             throw new Error("Cannot delete service:" + error.message);
         }
-    }
+    },
+
+    async findById(serviceId) {
+			const pool = await getConnection();
+			const result = await pool.request()
+					.input("ServiceID", sql.Int, serviceId)
+					.query(`SELECT * FROM ServiceMonthly WHERE ServiceID = @ServiceID`);
+			return result.recordset[0];
+		},
 };
