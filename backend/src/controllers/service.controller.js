@@ -1,4 +1,4 @@
-import { Service } from "../models/service_model.js";
+import { Service } from "../models/service.model.js";
 
 // @route POST /api/services
 export const createService = async (req, res) => {

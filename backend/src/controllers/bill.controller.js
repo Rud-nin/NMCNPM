@@ -1,5 +1,5 @@
-import { Bill } from "../models/bill_model.js";
-import { User } from "../models/user_auth_model.js";
+import { Bill } from "../models/bill.model.js";
+import { User } from "../models/user.model.js";
 
 // @route POST /api/bills/assign
 export const assignService = async (req, res) => {

@@ -1,5 +1,5 @@
 import express from 'express'
-import { TopUp } from '../models/topup_model.js'
+import { TopUp } from '../models/topup.model.js'
 
 const router = express.Router()
 

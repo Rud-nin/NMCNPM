@@ -1,5 +1,5 @@
-import { Feedback } from "../models/feedback_model.js";
-import { Notification } from "../models/notification_model.js";
+import { Feedback } from "../models/feedback.model.js";
+import { Notification } from "../models/notification.model.js";
 export const sendFeedback = async (req, res) => {
     try {
         const { title, content } = req.body;

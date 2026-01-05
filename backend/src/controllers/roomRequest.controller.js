@@ -1,6 +1,6 @@
 import { RoomRequest } from "../models/roomRequest.model.js";
 import { Room } from "../models/room.model.js";
-import { Notification } from "../models/notification_model.js";
+import { Notification } from "../models/notification.model.js";
 
 // @route POST /api/room-requests
 export const createRoomRequest = async (req, res) => {

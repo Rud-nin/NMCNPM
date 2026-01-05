@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user_auth_model.js";
+import { User } from "../models/user.model.js";
 import { getConnection } from "../lib/db.js";
 
 
