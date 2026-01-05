@@ -1,72 +1,23 @@
-import express from 'express'
-import { TopUp } from '../models/topup.model.js'
+import express from "express"
+import { protectRoute } from "../midddleware/auth.middleware.js"
+import { requireAdmin } from "../midddleware/admin.middleware.js"
+import {
+  createTopUp,
+  getAllTopUps,
+  getMyTopUps,
+  acceptTopUp,
+  rejectTopUp
+} from "../controllers/topup.controller.js"
 
 const router = express.Router()
 
-// Create top-up
-router.post('/', async (req, res) => {
-  try {
-    const data = await TopUp.create(req.body)
-    res.json({ success: true, data })
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message })
-  }
-})
+router.use(protectRoute)
 
-// Get all top-ups
-router.get('/', async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const { data, totalCount } = await TopUp.getAll({ page, limit })
-    const totalPages = Math.ceil(totalCount / limit)
-    res.json({
-      success: true,
-      pagination: {
-        page: page,
-        limit: limit,
-        total: totalCount,
-        totalPages: totalPages
-      },
-      data
-    })
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-})
+router.get("/me", getMyTopUps)
+router.post("/", createTopUp)
 
-// Get top-up by user
-router.get('/user/:id', async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-
-    const { data, totalCount } = await TopUp.getByUser(req.params.id, { page, limit });
-    const totalPages = Math.ceil(totalCount / limit);
-
-    res.json({
-      success: true,
-      pagination: {
-        page: page,
-        limit: limit,
-        total: totalCount,
-        totalPages: totalPages
-      },
-      data
-    })
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-})
-
-// Update status
-router.patch('/:id/status', async (req, res) => {
-  try {
-    await TopUp.updateStatus(req.params.id, req.body.Status)
-    res.json({ success: true })
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-})
+router.get("/", requireAdmin, getAllTopUps)
+router.patch("/:id/accept", requireAdmin, acceptTopUp)
+router.patch("/:id/reject", requireAdmin, rejectTopUp)
 
 export default router
