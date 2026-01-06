@@ -1,5 +1,6 @@
 import { Service } from "../models/service.model.js";
 import { User } from "../models/user.model.js";
+import { Room } from "../models/room.model.js";
 
 // @route POST /api/services
 export const createService = async (req, res) => {
@@ -90,6 +91,15 @@ export const getMyServices = async (req, res) => {
   }
 };
 
+export const getMyRoomServices = async (req, res) => {
+  try {
+    const services = await Service.getRoomServices(req.user.RoomID);
+    res.status(200).json({ success: true, data: services });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @route GET /api/services/users/:userId
 export const getUserServices = async (req, res) => {
   try {
@@ -109,8 +119,8 @@ export const getUserServices = async (req, res) => {
   }
 };
 
-// @route POST /api/services/assign
-export const assignService = async (req, res) => {
+// @route POST /api/services/users/assign
+export const assignUserService = async (req, res) => {
 	try {
 		const { UserID, ServiceID } = req.body;
 
@@ -125,7 +135,7 @@ export const assignService = async (req, res) => {
     await Service.addServiceToUser(UserID, ServiceID);
     res.status(200).json({ success: true, message: "Service assigned successfully" });
   } catch (error) {
-		console.log("Assign service error:", error.message);
+		console.log("Assign user service error:", error.message);
 
 		if (error.message.includes("PK_UserServices")) {
       return res.status(409).json({
@@ -138,7 +148,7 @@ export const assignService = async (req, res) => {
   }
 };
 
-// @route DELETE /api/services/remove
+// @route DELETE /api/services/users/remove
 export const removeUserService = async (req, res) => {
 	
 	try {
@@ -156,6 +166,76 @@ export const removeUserService = async (req, res) => {
     res.status(200).json({ success: true, message: "Service removed successfully" });
   } catch (error) {
 		console.log("Remove user service error: ", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route GET /api/services/rooms/:roomId
+export const getRoomServices = async (req, res) => {
+  try {
+		const roomId = req.params.roomId;
+		const room = await Room.findById(roomId);
+		if (!room) {
+			return res.status(404).json({
+				success: false,
+				message: "Room not found"
+			});
+		}
+
+    const services = await Service.getRoomServices(roomId);
+    res.status(200).json({ success: true, data: services });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @route POST /api/services/rooms/assign
+export const assignRoomService = async (req, res) => {
+	try {
+		const { RoomID, ServiceID } = req.body;
+
+		const service = await Service.findById(ServiceID);
+		if (!service || service.Type !== "Room") {
+			return res.status(400).json({
+				success: false,
+				message: "Không tìm thấy dịch vụ phòng hợp lệ"
+			});
+		}
+
+    await Service.addServiceToRoom(RoomID, ServiceID);
+    res.status(200).json({ success: true, message: "Service assigned successfully" });
+  } catch (error) {
+		console.log("Assign room service error:", error.message);
+
+		if (error.message.includes("PK_RoomServices")) {
+      return res.status(409).json({
+        success: false,
+        message: "Room has already had this service"
+      });
+    }
+
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route DELETE /api/services/rooms/remove
+export const removeRoomService = async (req, res) => {
+	
+	try {
+		const { RoomID, ServiceID } = req.body;
+
+		const service = await Service.findById(ServiceID);
+		if (!service || service.Type !== "Room") {
+			return res.status(400).json({
+				success: false,
+				message: "Không tìm thấy dịch vụ phongf hợp lệ"
+			});
+		}
+
+    await Service.removeServiceFromRoom(RoomID, ServiceID);
+    res.status(200).json({ success: true, message: "Service removed successfully" });
+  } catch (error) {
+		console.log("Remove room service error: ", error.message);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

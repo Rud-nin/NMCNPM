@@ -81,7 +81,7 @@ export const Service = {
     return result.recordset[0]
   },
 
-  // Lấy Service kèm theo thông tin Hóa đơn (Period, Status)
+  // Lấy Service của user kèm theo thông tin Hóa đơn (Period, Status)
   async getUserServices(userID) {
     const pool = await getConnection();
     const result = await pool.request()
@@ -130,6 +130,10 @@ export const Service = {
         .input("UserID", sql.Int, userID)
         .input("ServiceID", sql.Int, serviceID)
         .query(`
+          IF NOT EXISTS (
+            SELECT 1 FROM MonthlyBills 
+            WHERE UserID = @UserID AND ServiceID = @ServiceID AND Period = FORMAT(GETDATE(), 'MM/yy')
+          )
           INSERT INTO MonthlyBills (UserID, ServiceID, Status) 
           VALUES (@UserID, @ServiceID, 'Unpaid')
         `);
@@ -149,6 +153,70 @@ export const Service = {
       .input("UserID", sql.Int, userID)
       .input("ServiceID", sql.Int, serviceID)
       .query("DELETE FROM UserServices WHERE UserID = @UserID AND ServiceID = @ServiceID");
+    return { success: true };
+  },
+
+  // Lấy Service của room kèm theo thông tin Hóa đơn (Period, Status)
+  async getRoomServices(roomID) {
+    const pool = await getConnection();
+    const result = await pool.request()
+      .input("RoomID", sql.Int, roomID)
+      .query(`
+        -- Lấy dịch vụ cá nhân kèm Bill của tháng hiện tại
+        SELECT s.*, mb.Period, mb.Status
+        FROM ServiceMonthly s
+        JOIN RoomServices rs ON s.ServiceID = rs.ServiceID
+        LEFT JOIN MonthlyBills mb ON (s.ServiceID = mb.ServiceID AND mb.RoomID = @RoomID)
+        WHERE rs.RoomID = @RoomID 
+          AND mb.Period = FORMAT(GETDATE(), 'MM/yy')
+      `);
+    return result.recordset;
+  },
+
+  // Thêm service và tự động tạo Bill cho tháng hiện tại
+  async addServiceToRoom(roomID, serviceID) {
+    const pool = await getConnection();
+    const transaction = new sql.Transaction(pool);
+
+    try {
+      await transaction.begin();
+
+      // Thêm vào bảng danh mục dịch vụ đang sử dụng
+      await transaction.request()
+        .input("RoomID", sql.Int, roomID)
+        .input("ServiceID", sql.Int, serviceID)
+        .query(`
+          INSERT INTO RoomServices (RoomID, ServiceID) VALUES (@RoomID, @ServiceID)
+        `);
+
+      // Thêm ngay Bill cho tháng hiện tại (Sử dụng DEFAULT Period MM/yy)
+      await transaction.request()
+        .input("RoomID", sql.Int, roomID)
+        .input("ServiceID", sql.Int, serviceID)
+        .query(`
+          IF NOT EXISTS (
+            SELECT 1 FROM MonthlyBills 
+            WHERE RoomID = @RoomID AND ServiceID = @ServiceID AND Period = FORMAT(GETDATE(), 'MM/yy')
+          )
+          INSERT INTO MonthlyBills (RoomID, ServiceID, Status) 
+          VALUES (@RoomID, @ServiceID, 'Unpaid')
+        `);
+
+      await transaction.commit();
+      return { success: true };
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+  },
+
+  // Admin xóa dịch vụ của User
+  async removeServiceFromRoom(roomID, serviceID) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("RoomID", sql.Int, roomID)
+      .input("ServiceID", sql.Int, serviceID)
+      .query("DELETE FROM RoomServices WHERE RoomID = @RoomID AND ServiceID = @ServiceID");
     return { success: true };
   }
 }
