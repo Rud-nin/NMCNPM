@@ -35,7 +35,7 @@ router.post("/rooms/assign", requireAdmin, assignRoomService); // Thêm service 
 router.delete("/rooms/remove", requireAdmin, removeRoomService); // Xoá service của room
 
 router.post("/", requireAdmin, createService);
-router.put("/:id", requireAdmin, updateService);
+router.patch("/:id", requireAdmin, updateService);
 router.delete("/:id", requireAdmin, deleteService);
 
 export default router;

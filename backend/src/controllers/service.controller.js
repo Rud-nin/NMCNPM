@@ -228,7 +228,7 @@ export const removeRoomService = async (req, res) => {
 		if (!service || service.Type !== "Room") {
 			return res.status(400).json({
 				success: false,
-				message: "Không tìm thấy dịch vụ phongf hợp lệ"
+				message: "Không tìm thấy dịch vụ phòng hợp lệ"
 			});
 		}
 
