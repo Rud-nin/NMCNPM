@@ -126,7 +126,7 @@
   border: 1px solid;
 }
 
-.status.Completed {
+.status.Success {
   color: var(--success);
   border: 1px solid;
 }
@@ -134,4 +134,17 @@
 .status.Failed {
   color: var(--failed);
   border: 1px solid;
+}
+
+/* Tạo feedback */
+.input textarea {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1ch;
+  width: 80%;
+}
+
+.input textarea {
+  height: 3rem;
 }

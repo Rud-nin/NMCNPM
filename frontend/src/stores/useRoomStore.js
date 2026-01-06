@@ -139,14 +139,6 @@ export const useRoomStore = create((set) => ({
                 userRoom: res,
             });
             return res;
-            // const res = await fetch('/userRoom.example.json');
-            // const data = await res.json();
-            // toast.success("Lấy thông tin thành công");
-            // set({ 
-            //   userRoom: data.room,
-            //   users: data.users,  
-            // });
-            // return res;
         } catch (error) {
             toast.error('Có lỗi khi lấy thông tin phòng');
             console.error(error);

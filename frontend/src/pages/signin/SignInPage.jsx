@@ -116,9 +116,11 @@ export function SignInPage() {
                   />
                   <label>Ghi nhớ đăng nhập</label>
                 </div>
+                { /* 
                 <div>
                   <Link className={styles.forgotLink} to="/forgot">Quên mật khẩu</Link>
                 </div>
+                */}
               </div>
             </form>
 

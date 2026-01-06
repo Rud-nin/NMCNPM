@@ -122,7 +122,7 @@
   border: 1px solid;
 }
 
-.status.Canceled {
-  color: var(--canceled);
+.status.Cancelled {
+  color: var(--cancelled);
   border: 1px solid;
 }

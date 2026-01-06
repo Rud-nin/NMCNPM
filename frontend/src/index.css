@@ -39,7 +39,7 @@ body {
 
   --failed: #b71c1c;
   --pending: #5e35b1;
-  --canceled: #656667;
+  --cancelled: #656667;
 
   --success: #1b5e20;
   --success-muted: #e8f5e9;

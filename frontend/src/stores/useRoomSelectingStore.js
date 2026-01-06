@@ -86,7 +86,7 @@ export const useRoomSelectingStore = create((set, get) => ({
     const roomRequests = get().roomRequests;
     const pendingRequest = roomRequests.filter((request) => request.Status === "Pending");
 
-    if (!pendingRequest) {
+    if (pendingRequest.length) {
       return true;
     }
     return false;
