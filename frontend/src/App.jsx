@@ -15,15 +15,17 @@ import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './stores/useAuthStore';
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router';
+import { useUserInformationStore } from './stores/useUserInformationStore';
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-
+  const { user, fetchUserInformation } = useUserInformationStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
       await checkAuth();
+      await fetchUserInformation();
       if(authUser?.Role === 'Admin') navigate('/admin');
       else if(authUser?.Role === 'User') navigate('/user');
     })();
@@ -38,16 +40,11 @@ function App() {
       <ThemeToggle />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={authUser ? (user?.RoomID ? <Navigate to='/user'/> : <Navigate to='/rooms' />) : <SignInPage />} />
+        <Route path="/signup" element={authUser ? (user?.RoomID ? <Navigate to='/user'/> : <Navigate to='/rooms' />) : <SignUpPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/user" element={authUser ? 
-          (authUser.RoomID ? <UserDashboard /> : <Navigate to='/rooms' />)
-          : <Navigate to='/signin'/>
-        } />
-        <Route path="/rooms" element={authUser ? 
-          (authUser.RoomID ? <Navigate to='/user' /> : <RoomSelecting />)
-          : <Navigate to='/signin' />} />
+        <Route path="/user" element={authUser ? (user?.RoomID ? <UserDashboard/> : <Navigate to='/rooms' />) : <Navigate to='/signin'/> } />
+        <Route path="/rooms" element={authUser ? (user?.RoomID ? <Navigate to='/user'/> : <RoomSelecting />) : <Navigate to='/signin' />} />
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>
       <Toaster />
