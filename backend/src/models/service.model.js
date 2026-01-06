@@ -81,40 +81,65 @@ export const Service = {
     return result.recordset[0]
   },
 
-  // Lấy danh sách dịch vụ mà User ĐANG ĐĂNG KÝ (Cả phòng và cá nhân)
+  // Lấy Service kèm theo thông tin Hóa đơn (Period, Status)
   async getUserServices(userID) {
     const pool = await getConnection();
     const result = await pool.request()
       .input("UserID", sql.Int, userID)
       .query(`
-        -- Dịch vụ cá nhân đăng ký
-        SELECT s.*
+        -- Lấy dịch vụ cá nhân kèm Bill của tháng hiện tại
+        SELECT s.*, mb.Period, mb.Status
         FROM ServiceMonthly s
         JOIN UserServices us ON s.ServiceID = us.ServiceID
-        WHERE us.UserID = @UserID
+        LEFT JOIN MonthlyBills mb ON (s.ServiceID = mb.ServiceID AND mb.UserID = @UserID)
+        WHERE us.UserID = @UserID 
+          AND mb.Period = FORMAT(GETDATE(), 'MM/yy')
 
         UNION ALL
 
-        -- Dịch vụ của phòng mà User đang ở
-        SELECT s.*
+        -- Lấy dịch vụ của phòng kèm Bill tháng hiện tại
+        SELECT s.*, mb.Period, mb.Status
         FROM ServiceMonthly s
         JOIN RoomServices rs ON s.ServiceID = rs.ServiceID
         JOIN Users u ON u.RoomID = rs.RoomID
+        LEFT JOIN MonthlyBills mb ON (s.ServiceID = mb.ServiceID AND mb.RoomID = u.RoomID)
         WHERE u.UserID = @UserID
+          AND mb.Period = FORMAT(GETDATE(), 'MM/yy')
       `);
     return result.recordset;
   },
 
-  // Admin thêm dịch vụ cho User
+  // Thêm service và tự động tạo Bill cho tháng hiện tại
   async addServiceToUser(userID, serviceID) {
     const pool = await getConnection();
-    await pool.request()
-      .input("UserID", sql.Int, userID)
-      .input("ServiceID", sql.Int, serviceID)
-      .query(`
-        INSERT INTO UserServices (UserID, ServiceID) VALUES (@UserID, @ServiceID)
-      `);
-    return { success: true };
+    const transaction = new sql.Transaction(pool);
+
+    try {
+      await transaction.begin();
+
+      // Thêm vào bảng danh mục dịch vụ đang sử dụng
+      await transaction.request()
+        .input("UserID", sql.Int, userID)
+        .input("ServiceID", sql.Int, serviceID)
+        .query(`
+          INSERT INTO UserServices (UserID, ServiceID) VALUES (@UserID, @ServiceID)
+        `);
+
+      // Thêm ngay Bill cho tháng hiện tại (Sử dụng DEFAULT Period MM/yy)
+      await transaction.request()
+        .input("UserID", sql.Int, userID)
+        .input("ServiceID", sql.Int, serviceID)
+        .query(`
+          INSERT INTO MonthlyBills (UserID, ServiceID, Status) 
+          VALUES (@UserID, @ServiceID, 'Unpaid')
+        `);
+
+      await transaction.commit();
+      return { success: true };
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
   },
 
   // Admin xóa dịch vụ của User

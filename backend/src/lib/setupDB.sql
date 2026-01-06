@@ -96,7 +96,9 @@ CREATE TABLE dbo.MonthlyBills (
     UserID INT NULL,           -- Có UserID -> Hóa đơn riêng (Gửi xe, Gym)
     ServiceID INT NOT NULL,    
 
-    Period NVARCHAR(20) NOT NULL, 
+    -- Tự động điền MM/yy nếu không truyền giá trị
+    Period NVARCHAR(20) NOT NULL DEFAULT (FORMAT(GETDATE(), 'MM/yy')),
+
     Status NVARCHAR(20) NOT NULL DEFAULT 'Unpaid', -- Mặc định là Chưa trả
     
     PaymentID INT NULL, -- Khi trả xong, update ID biên lai vào đây
@@ -220,21 +222,17 @@ CREATE UNIQUE INDEX UX_RoomRequests_User_Room_Pending
     AND RoomID IS NOT NULL;
 GO
 
+-- 1. Đảm bảo 1 User không có 2 hóa đơn trùng Service và Period
+CREATE UNIQUE INDEX UX_MonthlyBills_User_Service_Period
+ON dbo.MonthlyBills (UserID, ServiceID, Period)
+WHERE UserID IS NOT NULL;
+
+-- 2. Đảm bảo 1 Phòng không có 2 hóa đơn trùng Service và Period
+CREATE UNIQUE INDEX UX_MonthlyBills_Room_Service_Period
+ON dbo.MonthlyBills (RoomID, ServiceID, Period)
+WHERE RoomID IS NOT NULL;
+
 -- END_SCHEMA --
-
-ALTER TABLE RoomRequests
-    ALTER COLUMN RoomID INT NULL;
-
-ALTER TABLE RoomRequests
-    DROP CONSTRAINT FK_RoomRequests_Room;
-
-ALTER TABLE RoomRequests
-ADD CONSTRAINT FK_RoomRequests_Room
-    FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID)
-    ON DELETE SET NULL;
-
-DROP INDEX IF EXISTS UX_RoomRequests_User_Room_Status_NotNull
-    ON RoomRequests;
 
 UPDATE dbo.Users SET Role = 'Admin' WHERE UserID = 1;   -- Để test
 INSERT INTO dbo.Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic)

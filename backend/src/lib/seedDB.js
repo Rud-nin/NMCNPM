@@ -22,6 +22,7 @@ async function seed() {
     DELETE FROM Notifications;
     DELETE FROM TopUpTransactions;
     DELETE FROM RoomRequests;
+    DELETE FROM UserServices;
     DELETE FROM RoomServices;
     DELETE FROM MonthlyBills;
 
@@ -334,9 +335,19 @@ async function seed() {
         INSERT INTO UserServices (UserID, ServiceID)
         VALUES (@UserID, @ServiceID)
       `)
+    
+    // Tạo Bill tương ứng cho tháng hiện tại
+    await pool
+      .request()
+      .input('UserID', sql.Int, us.UserID)
+      .input('ServiceID', sql.Int, us.ServiceID)
+      .query(`
+        INSERT INTO MonthlyBills (UserID, ServiceID, Status) 
+        VALUES (@UserID, @ServiceID, 'Unpaid')
+      `);
   }
 
-  console.log('✅ UserServices inserted')
+  console.log('✅ UserServices & Personal Bills inserted');
 
   // ================== ROOM SERVICE ==================
   const roomServicesData = [
@@ -364,26 +375,18 @@ async function seed() {
         INSERT INTO RoomServices (RoomID, ServiceID)
         VALUES (@RoomID, @ServiceID)
       `)
-  }
-
-  console.log('✅ RoomServices inserted')
-
-  // ================== MONTHLY BILLS (ROOM) ==================
-  const period = getCurrentPeriod()
-
-  for (const rs of roomServicesData) {
-    await pool
-      .request()
+    
+    // Tạo Bill cho cả phòng (Dùng RoomID, UserID để NULL)
+    await pool.request()
       .input('RoomID', sql.Int, rs.RoomID)
       .input('ServiceID', sql.Int, rs.ServiceID)
-      .input('Period', sql.NVarChar(20), period)
       .query(`
-        INSERT INTO MonthlyBills (RoomID, ServiceID, Period)
-        VALUES (@RoomID, @ServiceID, @Period)
-      `)
+        INSERT INTO MonthlyBills (RoomID, ServiceID, Status) 
+        VALUES (@RoomID, @ServiceID, 'Unpaid')
+      `);
   }
 
-  console.log(`✅ MonthlyBills (Room) generated for ${period}`)
+  console.log('✅ RoomServices & Room Bills inserted');
   
   process.exit(0)
 }
