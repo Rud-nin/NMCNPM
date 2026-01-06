@@ -17,25 +17,33 @@ async function seed() {
 
   // clear old data (optional)
   await pool.request().query(`
+    -- 1. Xóa các bảng phụ thuộc hoàn toàn (Bảng con)
+    DELETE FROM Feedbacks;
     DELETE FROM Notifications;
-    DELETE FROM UserBalance;
     DELETE FROM TopUpTransactions;
-    DELETE FROM Users;
-    DELETE FROM Rooms;
     DELETE FROM RoomRequests;
     DELETE FROM RoomServices;
     DELETE FROM MonthlyBills;
+
+    -- 2. Xóa các bảng trung gian hoặc bảng bị tham chiếu bởi bảng trên
     DELETE FROM ServicePayments;
+    DELETE FROM UserBalance;
+
+    DELETE FROM Users;
+
+    -- 3. Xoá các bảng gốc
+    DELETE FROM Rooms;
     DELETE FROM ServiceMonthly;
 
     --Reset identity counter to 1
+    DBCC CHECKIDENT ('Feedbacks', RESEED, 0);
     DBCC CHECKIDENT ('Notifications', RESEED, 0);
     DBCC CHECKIDENT ('TopUpTransactions', RESEED, 0);
-    DBCC CHECKIDENT ('Users', RESEED, 0);
-    DBCC CHECKIDENT ('Rooms', RESEED, 0);
     DBCC CHECKIDENT ('RoomRequests', RESEED, 0);
     DBCC CHECKIDENT ('MonthlyBills', RESEED, 0);
     DBCC CHECKIDENT ('ServicePayments', RESEED, 0);
+    DBCC CHECKIDENT ('Users', RESEED, 0);
+    DBCC CHECKIDENT ('Rooms', RESEED, 0);
     DBCC CHECKIDENT ('ServiceMonthly', RESEED, 0);
   `)
 
@@ -69,6 +77,63 @@ async function seed() {
   }
 
   console.log('✅ Rooms inserted:', roomIds)
+
+  // ================== SERVICE ==================
+  const servicesData = [
+    // Room services
+    {
+      ServiceName: 'Electricity',
+      Price: 3500,
+      Descriptions: 'Electricity usage per month',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Water',
+      Price: 15000,
+      Descriptions: 'Water usage per month',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Internet',
+      Price: 120000,
+      Descriptions: 'Internet service per month',
+      Type: 'Room',
+    },
+
+    // Personal services
+    {
+      ServiceName: 'Parking',
+      Price: 80000,
+      Descriptions: 'Motorbike parking',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Gym',
+      Price: 100000,
+      Descriptions: 'Gym membership',
+      Type: 'Personal',
+    },
+  ]
+
+  const serviceIds = {}
+
+  for (const s of servicesData) {
+    const result = await pool
+      .request()
+      .input('ServiceName', sql.NVarChar(100), s.ServiceName)
+      .input('Price', sql.Decimal(15, 3), s.Price)
+      .input('Descriptions', sql.NVarChar(200), s.Descriptions)
+      .input('Type', sql.NVarChar(20), s.Type)
+      .query(`
+        INSERT INTO ServiceMonthly (ServiceName, Price, Descriptions, [Type])
+        VALUES (@ServiceName, @Price, @Descriptions, @Type);
+        SELECT SCOPE_IDENTITY() AS ServiceID;
+      `)
+
+    serviceIds[s.ServiceName] = result.recordset[0].ServiceID
+  }
+
+  console.log('✅ Services inserted:', serviceIds)
 
   // ================== USER ==================
   const usersData = [
@@ -251,63 +316,6 @@ async function seed() {
       `)
   }
   console.log('✅ TopUpTransactions inserted (random dates)')
-
-  // ================== SERVICE ==================
-  const servicesData = [
-    // Room services
-    {
-      ServiceName: 'Electricity',
-      Price: 3500,
-      Descriptions: 'Electricity usage per month',
-      Type: 'Room',
-    },
-    {
-      ServiceName: 'Water',
-      Price: 15000,
-      Descriptions: 'Water usage per month',
-      Type: 'Room',
-    },
-    {
-      ServiceName: 'Internet',
-      Price: 120000,
-      Descriptions: 'Internet service per month',
-      Type: 'Room',
-    },
-
-    // Personal services
-    {
-      ServiceName: 'Parking',
-      Price: 80000,
-      Descriptions: 'Motorbike parking',
-      Type: 'Personal',
-    },
-    {
-      ServiceName: 'Gym',
-      Price: 100000,
-      Descriptions: 'Gym membership',
-      Type: 'Personal',
-    },
-  ]
-
-  const serviceIds = {}
-
-  for (const s of servicesData) {
-    const result = await pool
-      .request()
-      .input('ServiceName', sql.NVarChar(100), s.ServiceName)
-      .input('Price', sql.Decimal(15, 3), s.Price)
-      .input('Descriptions', sql.NVarChar(200), s.Descriptions)
-      .input('Type', sql.NVarChar(20), s.Type)
-      .query(`
-        INSERT INTO ServiceMonthly (ServiceName, Price, Descriptions, [Type])
-        VALUES (@ServiceName, @Price, @Descriptions, @Type);
-        SELECT SCOPE_IDENTITY() AS ServiceID;
-      `)
-
-    serviceIds[s.ServiceName] = result.recordset[0].ServiceID
-  }
-
-  console.log('✅ Services inserted:', serviceIds)
 
   // ================== ROOM SERVICE ==================
   const roomServicesData = [
