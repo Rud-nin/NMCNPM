@@ -218,5 +218,31 @@ export const Service = {
       .input("ServiceID", sql.Int, serviceID)
       .query("DELETE FROM RoomServices WHERE RoomID = @RoomID AND ServiceID = @ServiceID");
     return { success: true };
+  },
+
+  async generateMonthlyBills(period) {
+    const pool = await getConnection();
+    const result = await pool.request()
+      .input("Period", sql.NVarChar, period)
+      .query(`
+        -- 1. Tạo bill cho dịch vụ cá nhân từ UserServices
+        INSERT INTO MonthlyBills (UserID, ServiceID, Period, Status)
+        SELECT us.UserID, us.ServiceID, @Period, 'Unpaid'
+        FROM UserServices us
+        WHERE NOT EXISTS (
+          SELECT 1 FROM MonthlyBills mb 
+          WHERE mb.UserID = us.UserID AND mb.ServiceID = us.ServiceID AND mb.Period = @Period
+        );
+
+        -- 2. Tạo bill cho dịch vụ phòng từ RoomServices
+        INSERT INTO MonthlyBills (RoomID, ServiceID, Period, Status)
+        SELECT rs.RoomID, rs.ServiceID, @Period, 'Unpaid'
+        FROM RoomServices rs
+        WHERE NOT EXISTS (
+          SELECT 1 FROM MonthlyBills mb 
+          WHERE mb.RoomID = rs.RoomID AND mb.ServiceID = rs.ServiceID AND mb.Period = @Period
+        );
+      `);
+    return result.rowsAffected;
   }
 }

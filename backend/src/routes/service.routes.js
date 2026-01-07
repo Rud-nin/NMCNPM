@@ -12,7 +12,8 @@ import { createService,
     getMyRoomServices,
     getRoomServices,
     assignRoomService,
-    removeRoomService
+    removeRoomService,
+    generateBills
 } from "../controllers/service.controller.js";
 
 const router = express.Router();
@@ -35,6 +36,7 @@ router.post("/rooms/assign", requireAdmin, assignRoomService); // Thêm service 
 router.delete("/rooms/remove", requireAdmin, removeRoomService); // Xoá service của room
 
 router.post("/", requireAdmin, createService);
+router.post("/generate-bills", requireAdmin, generateBills);
 router.patch("/:id", requireAdmin, updateService);
 router.delete("/:id", requireAdmin, deleteService);
 

@@ -1,6 +1,7 @@
 import { Service } from "../models/service.model.js";
 import { User } from "../models/user.model.js";
 import { Room } from "../models/room.model.js";
+import { getCurrentPeriod } from "../lib/utils.js";
 
 // @route POST /api/services
 export const createService = async (req, res) => {
@@ -237,5 +238,37 @@ export const removeRoomService = async (req, res) => {
   } catch (error) {
 		console.log("Remove room service error: ", error.message);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route POST /api/services/generate-bills
+export const generateBills = async (req, res) => {
+  try {
+    let period = req.body?.Period;
+    if (!period) period = getCurrentPeriod();
+    // Validate format MM/yy
+    const periodRegex = /^(0[1-9]|1[0-2])\/\d{2}$/
+    if (!periodRegex.test(period)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid period format. Expected MM/yy"
+      })
+    }
+
+    const result = await Service.generateMonthlyBills(period);
+    // result[0] - số bill dịch vụ cá nhân
+    // result[1] - số bill dịch vụ phòng
+
+    res.status(200).json({
+      success: true,
+      message: `Bills generated for ${period}`,
+      createdBills: result[0] + result[1] || 0
+    });
+  } catch (error) {
+    console.log("Generate Bill error: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 };
