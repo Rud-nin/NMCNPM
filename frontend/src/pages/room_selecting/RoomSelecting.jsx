@@ -1,12 +1,20 @@
 import RoomList from '../../components/RoomList/RoomList.jsx';
 import RoomRequests from '../../components/RoomRequests/RoomRequests.jsx';
 import { useAuthStore } from '../../stores/useAuthStore.js';
-import styles from './RoomSelecting.module.css';
+import { useUserInformationStore } from '../../stores/useUserInformationStore.js';
 import { useState } from 'react';
+import { Navigate } from 'react-router';
+import styles from './RoomSelecting.module.css';
 
 export default function RoomSelecting() {
   const [state, changeState] = useState("RoomList");
+  const { isLoading, user } = useUserInformationStore();
   const { logout } = useAuthStore();
+
+  if (!isLoading) {
+    if (user && user.RoomID)
+      return <Navigate to='/user' />
+  }
 
   return (
     <div className={styles.wrapper}>

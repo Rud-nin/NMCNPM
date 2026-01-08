@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/useAuthStore.js';
 import Pagination from '../Pagination/Pagination.jsx';
 import { formatMoney } from '../../lib/formatMoney.js';
+import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
 
 function UserTopUp() {
   const authUser = useAuthStore(s => s.authUser);
@@ -21,6 +22,16 @@ function UserTopUp() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
+
+  const [feedback, setFeedback] = useState(null);
+  const {
+    sendFeedback
+  } = useFeedbackStore();
+
+  const handleSendFeedback = async () => {
+    await sendFeedback(feedback.title, feedback.content);
+    setFeedback(null);
+  };
 
   // chuyển tiền
   const bankCode = "MB";
@@ -55,9 +66,15 @@ function UserTopUp() {
       <header>
         <h2>Nạp tiền</h2>
 
-        <Button
-          onClick={() => setOpen(true)}
-        >Tạo yêu cầu nạp tiền</Button>
+        <div className={styles.buttonContainer}>
+          <Button
+            onClick={() => setFeedback({ title: '', content: '' })}
+          >Tạo phản hồi</Button>
+
+          <Button
+            onClick={() => setOpen(true)}
+          >Tạo yêu cầu nạp tiền</Button>
+        </div>
 
       </header>
 
@@ -91,7 +108,7 @@ function UserTopUp() {
               <td>
                 <span className={`${styles.status} ${styles[topUp.Status]}`}>
                   {
-                    topUp.Status === "Completed" ? "Thành công" :
+                    topUp.Status === "Success" ? "Thành công" :
                       topUp.Status === "Pending" ? "Chờ duyệt" :
                         "Thất bại"
                   }
@@ -152,6 +169,35 @@ function UserTopUp() {
           </div>
         </Overlay>
       )}
+
+      {feedback && (
+        <Overlay>
+          <div className={styles.modal}>
+            <h2>Nhập phản hồi mới</h2>
+            <div className={styles.input}>
+              <span>Tiêu đề</span>
+              <input
+                type="text"
+                value={feedback.title}
+                placeholder="Nhập tiêu đề phản hồi"
+                onChange={(e) => setFeedback({ ...feedback, title: e.target.value })} />
+            </div>
+            <div className={styles.input}>
+              <span>Nội dung</span>
+              <textarea
+                type="text"
+                value={feedback.content}
+                placeholder="Nhập nội dung phản hồi"
+                onChange={(e) => setFeedback({ ...feedback, content: e.target.value })} />
+            </div>
+            <div className={styles.buttonContainer}>
+              <Button onClick={handleSendFeedback}>Gửi</Button>
+              <Button onClick={() => setFeedback(null)}>Hủy</Button>
+            </div>
+          </div>
+        </Overlay>
+      )}
+
     </section>
   );
 }

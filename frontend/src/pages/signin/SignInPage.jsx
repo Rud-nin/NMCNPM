@@ -1,11 +1,10 @@
 import { Link } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { Loader2, EyeOff, Eye } from "lucide-react";
 import toast from 'react-hot-toast';
 import styles from "./SignInPage.module.css";
-
 
 export function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,10 +42,16 @@ export function SignInPage() {
       }
 
       await signin(formData);
-      if(authUser?.Role === 'Admin') navigate('/admin');
-      else if(authUser?.Role === 'User') navigate('/user');
     }
   }
+
+  useEffect(() => {
+    if (authUser?.Role === "Admin") {
+      navigate("/admin");
+    } else if (authUser?.Role === "User") {
+      navigate("/user");
+    }
+  }, [authUser]);
 
   return (
     <>
@@ -116,9 +121,11 @@ export function SignInPage() {
                   />
                   <label>Ghi nhớ đăng nhập</label>
                 </div>
+                { /* 
                 <div>
                   <Link className={styles.forgotLink} to="/forgot">Quên mật khẩu</Link>
                 </div>
+                */}
               </div>
             </form>
 

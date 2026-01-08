@@ -45,9 +45,18 @@ function UserInformation() {
       <header>
         <h2>Thông tin cá nhân</h2>
 
-        <Button
-          onClick={() => setFeedback({ title: '', content: '' })}
-        >Tạo phản hồi</Button>
+        <div className={styles.buttonContainer}>
+          <Button
+            onClick={handleFetchUserInformation}
+          >
+            <i className="fa-solid fa-arrows-rotate"></i>{' '}
+            Làm mới
+          </Button>
+
+          <Button
+            onClick={() => setFeedback({ title: '', content: '' })}
+          >Tạo phản hồi</Button>
+        </div>
 
       </header>
 

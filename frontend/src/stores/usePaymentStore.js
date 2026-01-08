@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
-import { useUserInformationStore } from "./useUserInformationStore";
 
 export const usePaymentStore = create((set) => ({
     isLoading: false,
@@ -12,8 +11,8 @@ export const usePaymentStore = create((set) => ({
     getPayments: async () => {
         set({ isLoading: true });
         try {
-            return await axiosInstance.get('/payments/admin/history');
-            // return await fetch('/paymentsData.example.json').then(res => res.json());
+            const res = await axiosInstance.get('/payments/admin/history');
+            return res;
         } catch (error) {
             toast.error('Có lỗi khi lấy thông tin các giao dịch');
             console.error(error);

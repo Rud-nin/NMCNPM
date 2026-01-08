@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 import styles from "./Home.module.css";
 
 function FeatureCard({image, text}) {
@@ -22,6 +23,15 @@ function ContactCard({image, text}) {
 export default function Home() {
     const navigate = useNavigate();
 
+    const overviewRef = useRef(null);
+    const featuresRef = useRef(null);
+    const aboutRef = useRef(null);
+
+    const scrollTo = (ref) => {
+        ref.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+
     return (
         <>
             <header className={styles.header}>
@@ -37,27 +47,48 @@ export default function Home() {
 
                     <nav>
                         <ul>
-                            <li><a href="#">Tổng quan</a></li>
-                            <li><a href="#">Tính năng</a></li>
-                            <li><a href="#">Về chúng tôi</a></li>
-                            <li><a href="#">Đăng nhập</a></li>
+                            <li>
+                                <button onClick={() => scrollTo(overviewRef)}>
+                                    Tổng quan
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => scrollTo(featuresRef)}>
+                                    Tính năng
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => scrollTo(aboutRef)}>
+                                    Về chúng tôi
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => navigate('/signin')}>
+                                    Đăng nhập
+                                </button>
+                            </li>
                         </ul>
                     </nav>
                 </div>
             </header>
 
             <main className={styles.main}>
-                <section className={`${styles.overview} ${styles.width1020px}`}>
+                <section ref={overviewRef} className={`${styles.overview} ${styles.width1020px}`}>
                     {/* Overview section */}
                     <div>
                         <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" />
                     </div>
                     <h1>Hệ thống quản lý chung cư - KTX Ehust-max</h1>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure, sint reiciendis cupiditate alias optio est quos aut, illo harum ducimus modi laudantium velit laboriosam ratione illum earum tempora similique quo!</p>
+                    <p>Ehust-max là hệ thống quản lý chung cư – ký túc xá hiện đại, được xây dựng
+    nhằm hỗ trợ ban quản lý và người sử dụng trong việc theo dõi phòng ở,
+    dịch vụ, chi phí và các thông báo một cách nhanh chóng, chính xác và tiện lợi.
+    Hệ thống hướng tới sự minh bạch, an toàn dữ liệu và trải nghiệm người dùng
+    thân thiện.
+                    </p>
                     <button onClick={() => navigate('/signin')}>Đăng nhập</button>
                 </section>
 
-                <section className={styles.features}>
+                <section ref={featuresRef} className={styles.features}>
                     <div className={styles.width1020px}>
                         {/* Features section */}
                         <div>
@@ -99,7 +130,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <section className={styles.width1020px}>
+                <section ref={aboutRef} className={styles.width1020px}>
                     {/* Contact section */}
                     <h2>Về chúng tôi</h2>
                     <div className={styles.cardContainer}>

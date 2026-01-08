@@ -167,3 +167,15 @@
   color: var(--text-muted);
   margin-top: 2rem;
 }
+
+nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+nav button:hover {
+  text-decoration: underline;
+}

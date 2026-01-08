@@ -89,7 +89,7 @@ function RoomRequests() {
                   {
                     roomRequest.Status === "Rejected" ? "Từ chối" :
                     roomRequest.Status === "Pending" ? "Chờ duyệt" :
-                    roomRequest.Status === "Canceled" ? "Hủy bỏ" :
+                    roomRequest.Status === "Cancelled" ? "Hủy bỏ" :
                       "Chấp nhận"
                   }
                 </span>

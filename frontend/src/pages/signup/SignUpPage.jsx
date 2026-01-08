@@ -1,6 +1,6 @@
 import { Link, Navigate, useNavigate } from 'react-router';
 import styles from './SignUpPage.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
 
 import toast from "react-hot-toast";
@@ -27,16 +27,51 @@ export function SignUpPage() {
     return regex.test(date);
   };
 
+
+  function formatDate(dateStr) {
+    // dateStr: "DD/MM/YYYY"
+    const [dd, mm, yyyy] = dateStr.split("/");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+
   const validateForm = () => {
-    if (!formData.FullName.trim()) return toast.error("Bạn chưa điền Họ và tên!");
-    if (!formData.BirthDate.trim()) return toast.error("Bạn chưa điền Ngày sinh!");
-    if (!isValidDate(formData.BirthDate)) return toast.error("Sai định dạng Ngày sinh: DD/MM/YYYY");
-    if (!formData.StudentID.trim()) return toast.error("Bạn chưa điền Mã số sinh viên!");
-    if (!formData.ID) return toast.error("Bạn chưa điền Số CCCD");
-    if (!formData.Email.trim()) return toast.error("Bạn chưa điền Email!");
-    if (!/\S+@\S+\.\S+/.test(formData.Email)) return toast.error("Sai định dạng Email"); // Kiểm tra định dạng email
-    if (!formData.Password) return toast.error("Bạn chưa điền Mật khẩu!");
-    if (formData.Password.length < 6) return toast.error("Mật khẩu phải ít nhất 6 kí tự")
+    if (!formData.FullName.trim()){
+      toast.error("Bạn chưa điền Họ và tên!");
+      return false;
+    }
+    if (!formData.BirthDate.trim()) {
+      toast.error("Bạn chưa điền Ngày sinh!");
+      return false;
+    }
+    if (!isValidDate(formData.BirthDate)){
+      toast.error("Sai định dạng Ngày sinh: DD/MM/YYYY");
+      return false;
+    } 
+    if (!formData.StudentID.trim()) {
+      toast.error("Bạn chưa điền Mã số sinh viên!");
+      return false;
+    } 
+    if (!formData.ID) {
+      toast.error("Bạn chưa điền Số CCCD");
+      return false;
+    } 
+    if (!formData.Email.trim()) {
+      toast.error("Bạn chưa điền Email!");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.Email)) {
+      toast.error("Sai định dạng Email"); // Kiểm tra định dạng email
+      return false;
+    } 
+    if (!formData.Password) {
+      toast.error("Bạn chưa điền Mật khẩu!");
+      return false;
+    } 
+    if (formData.Password.length < 6) {
+      toast.error("Mật khẩu phải ít nhất 6 kí tự");
+      return false;
+    } 
 
     return true;
   };
@@ -44,9 +79,15 @@ export function SignUpPage() {
   const submit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
-      await signup(formData);
-      if(authUser?.Role === 'Admin') navigate('/admin');
-      else if(authUser?.Role === 'User') navigate('/user');
+      await signup({
+        FullName: formData.FullName,
+        Email: formData.Email,
+        Password: formData.Password,
+        BirthDate: formatDate(formData.BirthDate),
+        StudentID:  formData.BirthDate,
+        ID: formData.ID,
+      });
+      navigate("/signin");
     }
   }
 

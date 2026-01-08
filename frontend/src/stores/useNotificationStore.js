@@ -41,11 +41,7 @@ export const useNotificationStore = create((set) => ({
     try {
       const res = await axiosInstance.get(`/notifications?page=${page}&limit=${limit}`);
       set({ userNotifications: res.data });
-      toast.success("Lấy dữ liệu thành công");
       return res;
-      // const res = await fetch('/notifications.example.json');
-      // toast.success("Lấy dữ liệu thành công");
-      // return res.json();
     } catch (err) {
       toast.error('Có lỗi trong khi lấy thông báo!');
       console.error(err);

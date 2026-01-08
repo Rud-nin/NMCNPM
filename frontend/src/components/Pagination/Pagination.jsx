@@ -1,11 +1,11 @@
 import styles from "./Pagination.module.css"
 
 export default function Pagination({
-    page,
+    page = 1,
     setPage,
-    limit,
+    limit = 1,
     setLimit,
-    total,
+    total = 1,
 }) {
     return (
         <div className={styles.pagination}>

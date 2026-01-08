@@ -1,14 +1,15 @@
 import AdminNotification from "../../components/AdminNotification/AdminNotification";
-import PaymentHistory from "../../components/PaymentHistory/PaymentHistory";
+import System from "../../components/PaymentHistory/PaymentHistory";
 import UserManagement from "../../components/UserManagement/UserManagement";
 import RoomManagement from "../../components/RoomManagement/RoomManagement";
 import ServiceManagement from "../../components/ServiceManagement/ServiceManagement";
+import { useAuthStore } from "../../stores/useAuthStore";
 import { useState } from "react";
 import styles from "./AdminDashboard.module.css";
 
 const states = {
-    "Dashboard": {
-        translated: "Bảng điều khiển",
+    "Notification": {
+        translated: "Thông báo",
         component: <AdminNotification />
     },
     "User": {
@@ -25,11 +26,12 @@ const states = {
     },
     "Sys": {
         translated: "Hệ thống",
-        component: <PaymentHistory />
+        component: <System />
     }
 }
 
 function Sidebar({ onChange }) {
+    const logout = useAuthStore(s => s.logout);
     
     return (
         <div className={styles.sidebar}>
@@ -42,23 +44,19 @@ function Sidebar({ onChange }) {
                             {value.translated}
                         </li>
                     ))}
+                    <li
+                        onClick={() => logout()}
+                    >
+                        Đăng xuất
+                    </li>
                 </ul>
             </nav>
         </div>
     );
 }
 
-function Dashboard() {
-    return (
-        <AdminNotification />
-    );
-}
-function Sys() {
-    return <PaymentHistory />
-}
-
 export default function AdminDashboard() {
-    const [state, changeState] = useState("Dashboard");
+    const [state, changeState] = useState(Object.keys(states)[0]);
 
     return (
         <div className={styles.wrapper}>
@@ -68,7 +66,6 @@ export default function AdminDashboard() {
             <section className={styles.section}>
                 <div className={styles.header}>
                     <div>{states[state].translated}</div>
-                    <button>Làm mới</button>
                 </div>
                 {states[state].component}
             </section>

@@ -45,7 +45,9 @@ export default function RoomList() {
   async function handleSelectRoom(room) {
     if (isSending) return;
 
-    if (hasPendingRequest()) {
+    const isPending = await hasPendingRequest();
+
+    if (isPending) {
       toast.error("Bạn đã gửi yêu cầu vào một phòng. Vui lòng chờ duyệt nhé.");
     } else {
       await sendRoomRequest(room.RoomID);
@@ -108,7 +110,7 @@ export default function RoomList() {
                 </td>
                 <td>
                   <Button 
-                    onClick={handleSelectRoom}>
+                    onClick={() => handleSelectRoom(room)}>
                     Chọn phòng
                   </Button>
                 </td>
