@@ -12,3 +12,17 @@
     align-items: center;
     justify-content: space-between;
 }
+
+.buttonContainer {
+    display: flex;
+    gap: 1ch;
+}
+
+.pagination {
+    justify-self: center;
+}
+
+.paymentHistory td:has(button) {
+    width: 1%;
+    white-space: nowrap;
+}

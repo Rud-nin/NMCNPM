@@ -87,16 +87,9 @@ export function SignUpPage() {
         StudentID:  formData.BirthDate,
         ID: formData.ID,
       });
+      navigate("/signin");
     }
   }
-
-  useEffect(() => {
-    if (authUser?.Role === "Admin") {
-      navigate("/admin");
-    } else if (authUser?.Role === "User") {
-      navigate("/user");
-    }
-  }, [authUser]);
 
   return (
     <>

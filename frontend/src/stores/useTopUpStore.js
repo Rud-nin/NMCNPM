@@ -36,5 +36,46 @@ export const useTopUpStore = create((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
-  }
+  },
+
+  getAllTopUps: async (page, limit) => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.get(`/topups?page=${page}&limit=${limit}`);
+      return res;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  acceptTopUp: async (id) => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.patch(`/topups/${id}/accept`);
+      toast.success('Phê duyệt yêu cầu thành công');
+      return res;
+    } catch (err) {
+      toast.error('Có lỗi trong khi phê duyệt yêu cầu!');
+      console.error(err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  rejectTopUp: async (id) => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.patch(`/topups/${id}/reject`);
+      toast.success('Từ chối yêu cầu thành công');
+      return res;
+    } catch (err) {
+      toast.error('Có lỗi trong khi từ chối yêu cầu!');
+      console.error(err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
 }));

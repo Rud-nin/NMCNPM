@@ -52,6 +52,7 @@ export default function ServiceManagement() {
                 return toast.error("Vui lòng điền đầy đủ thông tin");
             }
             await createService(newService);
+            handleDeleteService();
             setNewService(null);
         }
     }
@@ -86,7 +87,7 @@ export default function ServiceManagement() {
             <header>
                 <h2>Quản lý dịch vụ</h2>
                 <Button
-                    onClick={() => setNewService({})}
+                    onClick={() => setNewService({ Type: "Room" })}
                 >
                     + Thêm dịch vụ mới
                 </Button>
@@ -191,6 +192,7 @@ export default function ServiceManagement() {
                             onChange={(e) => newService ?
                                 setNewService({...newService, Type: e.target.value}) :
                                 setSelectingService({...selectingService, Type: e.target.value})}
+                            disabled={selectingService}
                         >
                             {Object.entries(translated).map(([key, value]) => (
                                 <option key={key} value={key}>{value}</option>

@@ -11,7 +11,8 @@ export const usePaymentStore = create((set) => ({
     getPayments: async () => {
         set({ isLoading: true });
         try {
-            return await axiosInstance.get('/payments/admin/history');
+            const res = await axiosInstance.get('/payments/admin/history');
+            return res;
         } catch (error) {
             toast.error('Có lỗi khi lấy thông tin các giao dịch');
             console.error(error);

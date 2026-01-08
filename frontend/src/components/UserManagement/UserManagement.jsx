@@ -388,7 +388,7 @@ export default function UserManagement() {
                             ID Phòng: {newUser?.RoomID || "Chưa được xếp"}
                         </div>
 
-                        <div className={styles.services}>
+                        {/* <div className={styles.services}>
                             {services.map((service, index) => (
                                 <button
                                     key={index}
@@ -401,7 +401,7 @@ export default function UserManagement() {
                                     {service.ServiceName}
                                 </button>
                             ))}
-                        </div>
+                        </div> */}
 
                         <div className={styles.buttonContainer}>
                             <Button

@@ -34,9 +34,6 @@ export const useRoomStore = create((set) => ({
         set({ isLoading: true });
         try {
             const res = await axiosInstance.post('/rooms', data);
-            set((state) => ({
-                rooms: [data, ...state.rooms],
-            }));
             toast.success('Tạo phòng mới thành công');
             return res;
         } catch (error) {

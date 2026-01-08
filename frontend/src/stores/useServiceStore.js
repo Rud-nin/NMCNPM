@@ -23,9 +23,6 @@ export const useServiceStore = create((set) => ({
         set({ isLoading: true });
         try {
             const res = await axiosInstance.post('/services', data);
-            set((state) => ({
-                services: [...state.services, data],
-            }));
             toast.success('Tạo dịch vụ mới thành công');
             return res;
         } catch (error) {
@@ -158,7 +155,19 @@ export const useServiceStore = create((set) => ({
             set({ isLoading: false });
         }
     },
-
+    newBill: async () => {
+        set({ isLoading: true });
+        try {
+            const res = await axiosInstance.post('/services/generate-bills');
+            toast.success('Tạo hóa đơn thành công');
+            return res;
+        } catch (error) {
+            toast.error('Có lỗi khi tạo hóa đơn');
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
 
     // user
     userServices: [],

@@ -31,6 +31,10 @@ function RoomRequests() {
         "Rejected": {
             translated: "Từ chối",
             className: styles.red,
+        },
+        "Cancelled": {
+            translated: "Hủy",
+            className: styles.red,
         }
     }
 
@@ -356,6 +360,7 @@ function Rooms() {
     const handleAddRoom = async () => {
         if (newRoom) {
             await createRoom(newRoom);
+            handleFetchRooms();
             setNewRoom(null);
         }
     }
