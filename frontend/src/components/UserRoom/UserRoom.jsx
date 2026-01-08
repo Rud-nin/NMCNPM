@@ -6,6 +6,8 @@ import Overlay from "../Overlay/Overlay.jsx";
 import { useRoomStore } from '../../stores/useRoomStore.js';
 import { useFeedbackStore } from "../../stores/useFeedbackStore.js";
 import { formatDate } from "../../lib/formatDate.js";
+import { formatMoney } from '../../lib/formatMoney.js';
+import { useServiceStore } from "../../stores/useServiceStore.js";
 
 const InfoRow = ({ label, value, highlight }) => (
   <div className={styles.infoRow}>
@@ -26,6 +28,11 @@ function UserRoom() {
     sendFeedback
   } = useFeedbackStore();
 
+  const {
+    roomServices,
+    getRoomServices
+  } = useServiceStore();
+
   const handleSendFeedback = async () => {
     await sendFeedback(feedback.title, feedback.content);
     setFeedback(null);
@@ -33,7 +40,11 @@ function UserRoom() {
 
   const handleFetchRoom = async () => {
     await fetchUserRoom();
-  }
+  };
+
+  const handleFetchServices = async () => {
+    await getRoomServices();
+  };
 
   useEffect(() => {
     fetchUserRoom();
@@ -98,6 +109,42 @@ function UserRoom() {
         </section>
       }
 
+      <div className={styles.titleBar}>
+        <h3>Danh sách dịch vụ của phòng</h3>
+
+        <Button
+          onClick={handleFetchServices}
+        >
+          <i className="fa-solid fa-arrows-rotate"></i>{' '}
+          Làm mới
+        </Button>
+      </div>
+
+      <Table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên dịch vụ</th>
+            <th>Loại dịch vụ</th>
+            <th>Mô tả</th>
+            <th>Giá dịch vụ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {roomServices && roomServices.map((service, index) => (
+            <tr key={index + 1}>
+              <td>{index + 1}</td>
+              <td>{service.ServiceName}</td>
+              <td>{(service.Type === "Personal") ? "Phòng" : "Cá nhân"}</td>
+              <td>{service.Descriptions}</td>
+              <td>{formatMoney(service.Price)}</td>
+              <td></td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
       {feedback && (
         <Overlay>
           <div className={styles.modal}>
@@ -125,8 +172,6 @@ function UserRoom() {
           </div>
         </Overlay>
       )}
-
-
     </div>
   );
 }
