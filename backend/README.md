@@ -96,7 +96,7 @@ File utils.js: Chứa hàm generateToken, có thể tạo JSON Web Token và thi
 - Input: userId (ID của người dùng) và res (đối tượng response).
 - Output: Trả về chuỗi token và thay đổi (mutate) res bằng cách thêm cookie
 
-File user_auth_model.js: Dùng để kết nối với CSDL(User)
+File user.model.js: Dùng để kết nối với CSDL(User)
 - User.create: ghi thông tin người dùng vào bảng với các tham số Email, Fullnam, Password, ProfilePic(cái này chưa kịp làm =)))), Trả về 1 đối tượng
 - User.getAll: Lấy tất cả thông tin từ Users, trả về các đối tượng
 - User.findByEmail: Tìm người dùng duy nhất bằng cột Email 
@@ -133,7 +133,7 @@ T- hành công (200): Mảng JSON chứa danh sách thông báo. Mỗi phần t�
 
 
 2. Nhóm API Nạp tiền (TopUp)
-- File liên quan: topup.routes.js, topup_model.js, setupDB.sql
+- File liên quan: topup.routes.js, topup.model.js, setupDB.sql
 - a. Tạo giao dịch nạp tiền
 - Method & Endpoint: POST / 
 - Đầu vào (Input):

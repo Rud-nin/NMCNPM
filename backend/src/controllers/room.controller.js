@@ -1,5 +1,5 @@
 import { Room } from "../models/room.model.js";
-import { User } from "../models/user_auth_model.js";
+import { User } from "../models/user.model.js";
 
 // @route GET /api/rooms
 export const getRooms = async (req, res) => {

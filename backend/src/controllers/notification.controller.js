@@ -1,4 +1,4 @@
-import { Notification } from "../models/notification_model.js";
+import { Notification } from "../models/notification.model.js";
 
 //Gửi thông báo (Chỉ dành cho Admin)
 //route POST  /api/notifications

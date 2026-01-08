@@ -1,6 +1,7 @@
 import sql from 'mssql'
-import { getConnection } from './db.js'
 import bcrypt from 'bcryptjs'
+import { getConnection } from './db.js'
+import { getCurrentPeriod } from './utils.js'
 
 // Generate random date
 function randomNovember2025() {
@@ -16,19 +17,40 @@ async function seed() {
 
   // clear old data (optional)
   await pool.request().query(`
+    -- 1. Xóa các bảng phụ thuộc hoàn toàn (Bảng con)
+    DELETE FROM Feedbacks;
     DELETE FROM Notifications;
-    DELETE FROM UserBalance;
     DELETE FROM TopUpTransactions;
+    DELETE FROM RoomRequests;
+    DELETE FROM UserServices;
+    DELETE FROM RoomServices;
+    DELETE FROM MonthlyBills;
+
+    -- 2. Xóa các bảng trung gian hoặc bảng bị tham chiếu bởi bảng trên
+    DELETE FROM ServicePayments;
+    DELETE FROM UserBalance;
+
     DELETE FROM Users;
 
-    --Reset identity counter to 1
-    DBCC CHECKIDENT ('Users', RESEED, 0);
-    DBCC CHECKIDENT ('Notifications', RESEED, 0);
-    DBCC CHECKIDENT ('TopUpTransactions', RESEED, 0);
+    -- 3. Xoá các bảng gốc
+    DELETE FROM Rooms;
+    DELETE FROM ServiceMonthly;
+
+    --Reset identity counter to 1 or 2
+    DBCC CHECKIDENT ('Feedbacks', RESEED, 1);
+    DBCC CHECKIDENT ('Notifications', RESEED, 1);
+    DBCC CHECKIDENT ('TopUpTransactions', RESEED, 1);
+    DBCC CHECKIDENT ('RoomRequests', RESEED, 1);
+    DBCC CHECKIDENT ('MonthlyBills', RESEED, 1);
+    DBCC CHECKIDENT ('ServicePayments', RESEED, 1);
+    DBCC CHECKIDENT ('Users', RESEED, 1);
+    DBCC CHECKIDENT ('Rooms', RESEED, 1);
+    DBCC CHECKIDENT ('ServiceMonthly', RESEED, 1);
   `)
 
   console.log('🌱 Seeding database...')
 
+  // ================== ROOM ==================
   const roomsData = [
     { RoomNumber: 101, Building: 'B5', Capacity: 4 },
     { RoomNumber: 102, Building: 'B5', Capacity: 4 },
@@ -57,7 +79,70 @@ async function seed() {
 
   console.log('✅ Rooms inserted:', roomIds)
 
-  // insert users
+  // ================== SERVICE ==================
+  const servicesData = [
+    // Room services
+    {
+      ServiceName: 'Điện',
+      Price: 350000,
+      Descriptions: 'Tiền điện theo tháng',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Nước',
+      Price: 150000,
+      Descriptions: 'Tiền nước theo tháng',
+      Type: 'Room',
+    },
+    {
+      ServiceName: 'Internet',
+      Price: 120000,
+      Descriptions: 'Internet tốc độ cao',
+      Type: 'Room',
+    },
+
+    // Personal services
+    {
+      ServiceName: 'Gửi xe máy',
+      Price: 50000,
+      Descriptions: 'Gửi xe máy hàng tháng',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Gửi ô tô',
+      Price: 90000,
+      Descriptions: 'Gửi ô tô hàng tháng',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Gym',
+      Price: 100000,
+      Descriptions: 'Thẻ tập Gym hàng tháng',
+      Type: 'Personal',
+    },
+  ]
+
+  const serviceIds = {}
+
+  for (const s of servicesData) {
+    const result = await pool
+      .request()
+      .input('ServiceName', sql.NVarChar(100), s.ServiceName)
+      .input('Price', sql.Decimal(15, 3), s.Price)
+      .input('Descriptions', sql.NVarChar(200), s.Descriptions)
+      .input('Type', sql.NVarChar(20), s.Type)
+      .query(`
+        INSERT INTO ServiceMonthly (ServiceName, Price, Descriptions, [Type])
+        VALUES (@ServiceName, @Price, @Descriptions, @Type);
+        SELECT SCOPE_IDENTITY() AS ServiceID;
+      `)
+
+    serviceIds[s.ServiceName] = result.recordset[0].ServiceID
+  }
+
+  console.log('✅ Services inserted:', serviceIds)
+
+  // ================== USER ==================
   const usersData = [
     {
       Email: 'admin@example.com',
@@ -69,7 +154,7 @@ async function seed() {
       Role: 'Admin',
     },
 
-    // ===== ROOM B5-101 (4 slots - FULL) =====
+    // ROOM B5-101 (4 slots - FULL)
     {
       Email: 'user1@example.com',
       FullName: 'Nguyen Van A',
@@ -111,7 +196,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== ROOM B5-102 (1/4) =====
+    // ROOM B5-102 (1/4)
     {
       Email: 'user5@example.com',
       FullName: 'Hoang Van E',
@@ -123,7 +208,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== ROOM B6-103 (2/8) =====
+    // ROOM B6-103 (2/8)
     {
       Email: 'user6@example.com',
       FullName: 'Dang Thi F',
@@ -145,7 +230,7 @@ async function seed() {
       Role: 'User',
     },
 
-    // ===== NO ROOM =====
+    // NO ROOM
     {
       Email: 'user8@example.com',
       FullName: 'Tran Van H',
@@ -157,7 +242,6 @@ async function seed() {
       Role: 'User',
     },
   ]
-
   const userIds = []
 
   for (const u of usersData) {
@@ -187,7 +271,7 @@ async function seed() {
   const user1 = userIds[1]
   const user2 = userIds[2]
 
-  // insert notifications
+  // ================== NOTIFICATION ==================
   await pool
     .request()
     .input('UserID', sql.Int, adminId)
@@ -200,6 +284,7 @@ async function seed() {
 
   console.log('✅ Notifications inserted')
 
+  // ================== BALANCE ==================
   const balances = [
     { UserID: adminId, Balance: 0 },
     { UserID: user1, Balance: 500000 },
@@ -217,10 +302,11 @@ async function seed() {
   }
   console.log('✅ UserBalance inserted')
 
+  // ================== TOPUP ==================
   const topUps = [
-    { UserID: user1, Amount: 300000, Status: 'Completed' },
-    { UserID: user2, Amount: 200000, Status: 'Completed' },
-    { UserID: user2, Amount: 100000, Status: 'Completed' },
+    { UserID: user1, Amount: 300000, Status: 'Success' },
+    { UserID: user2, Amount: 200000, Status: 'Success' },
+    { UserID: user2, Amount: 100000, Status: 'Success' },
   ]
 
   for (const t of topUps) {
@@ -237,6 +323,152 @@ async function seed() {
       `)
   }
   console.log('✅ TopUpTransactions inserted (random dates)')
+
+  // ================== USER SERVICE ==================
+  const userServicesData = [
+    // roomIds[0] = B5-101
+    { UserID: userIds[1], ServiceID: serviceIds["Gym"] },
+    { UserID: userIds[1], ServiceID: serviceIds["Gửi xe máy"] },
+    { UserID: userIds[8], ServiceID: serviceIds["Gửi xe máy"] }
+  ]
+
+  for (const us of userServicesData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, us.UserID)
+      .input('ServiceID', sql.Int, us.ServiceID)
+      .query(`
+        INSERT INTO UserServices (UserID, ServiceID)
+        VALUES (@UserID, @ServiceID)
+      `)
+    
+    // Tạo Bill tương ứng cho tháng hiện tại
+    await pool
+      .request()
+      .input('UserID', sql.Int, us.UserID)
+      .input('ServiceID', sql.Int, us.ServiceID)
+      .query(`
+        INSERT INTO MonthlyBills (UserID, ServiceID, Status) 
+        VALUES (@UserID, @ServiceID, 'Unpaid')
+      `);
+  }
+
+  console.log('✅ UserServices & Personal Bills inserted');
+
+    // ================== ROOM REQUESTS ==================
+  const roomRequestsData = [
+    {
+      UserID: userIds[7], // user8 - chưa có phòng
+      RoomID: roomIds[1], // B5-102
+      Status: 'Pending',
+    },
+    {
+      UserID: userIds[7],
+      RoomID: roomIds[2], // B6-103
+      Status: 'Rejected',
+    },
+    {
+      UserID: userIds[6], // user7
+      RoomID: roomIds[1],
+      Status: 'Approved',
+    },
+    {
+      UserID: userIds[5], // user6
+      RoomID: roomIds[0],
+      Status: 'Cancelled',
+    },
+  ]
+
+  for (const rr of roomRequestsData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, rr.UserID)
+      .input('RoomID', sql.Int, rr.RoomID)
+      .input('Status', sql.NVarChar(20), rr.Status)
+      .query(`
+        INSERT INTO RoomRequests (UserID, RoomID, Status)
+        VALUES (@UserID, @RoomID, @Status)
+      `)
+  }
+
+  console.log('✅ RoomRequests inserted')
+
+  // ================== ROOM SERVICE ==================
+  const roomServicesData = [
+    // roomIds[0] = B5-101
+    { RoomID: roomIds[0], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[0], ServiceID: serviceIds["Nước"] },
+    { RoomID: roomIds[0], ServiceID: serviceIds["Internet"] },
+
+    // roomIds[1] = B5-102
+    { RoomID: roomIds[1], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[1], ServiceID: serviceIds["Nước"] },
+    { RoomID: roomIds[1], ServiceID: serviceIds["Internet"] },
+
+    // roomIds[2] = B6-103
+    { RoomID: roomIds[2], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[2], ServiceID: serviceIds["Nước"] },
+  ]
+
+  for (const rs of roomServicesData) {
+    await pool
+      .request()
+      .input('RoomID', sql.Int, rs.RoomID)
+      .input('ServiceID', sql.Int, rs.ServiceID)
+      .query(`
+        INSERT INTO RoomServices (RoomID, ServiceID)
+        VALUES (@RoomID, @ServiceID)
+      `)
+    
+    // Tạo Bill cho cả phòng (Dùng RoomID, UserID để NULL)
+    await pool.request()
+      .input('RoomID', sql.Int, rs.RoomID)
+      .input('ServiceID', sql.Int, rs.ServiceID)
+      .query(`
+        INSERT INTO MonthlyBills (RoomID, ServiceID, Status) 
+        VALUES (@RoomID, @ServiceID, 'Unpaid')
+      `);
+  }
+
+  console.log('✅ RoomServices & Room Bills inserted');
+
+  // ================== FEEDBACKS ==================
+  const feedbacksData = [
+    {
+      UserID: userIds[1],
+      Title: 'Mất điện phòng B5-101',
+      Content: 'Tối qua phòng em bị mất điện từ 22h đến 23h, mong ban quản lý kiểm tra.',
+      Status: 'Pending',
+    },
+    {
+      UserID: userIds[2],
+      Title: 'Nước chảy yếu',
+      Content: 'Nước sinh hoạt buổi sáng rất yếu, khó sinh hoạt.',
+      Status: 'Done',
+    },
+    {
+      UserID: userIds[6],
+      Title: 'Internet chập chờn',
+      Content: 'Internet trong phòng thường xuyên bị mất kết nối vào buổi tối.',
+      Status: 'Pending',
+    },
+  ]
+
+  for (const fb of feedbacksData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, fb.UserID)
+      .input('Title', sql.NVarChar(200), fb.Title)
+      .input('Content', sql.NVarChar(sql.MAX), fb.Content)
+      .input('Status', sql.NVarChar(20), fb.Status)
+      .query(`
+        INSERT INTO Feedbacks (UserID, Title, Content, Status)
+        VALUES (@UserID, @Title, @Content, @Status)
+      `)
+  }
+
+  console.log('✅ Feedbacks inserted')
+  
   process.exit(0)
 }
 

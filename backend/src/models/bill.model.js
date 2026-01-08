@@ -44,6 +44,26 @@ export const Bill = {
     return result.recordset;
   },
 
+  async getByRoomId(roomId) {
+    const pool = await getConnection();
+    const result = await pool.request()
+      .input("RoomID", sql.Int, roomId)
+      .query(`
+        SELECT 
+          MB.BillID,
+          MB.Period,
+          MB.Status,
+          S.ServiceID,
+          S.ServiceName,
+          S.Price
+        FROM MonthlyBills MB
+        JOIN ServiceMonthly S ON MB.ServiceID = S.ServiceID
+        WHERE MB.RoomID = @RoomID
+        ORDER BY MB.CreatedAt DESC
+      `);
+    return result.recordset;
+  },
+
   // Xóa dịch vụ (Xóa Bill)
   async delete(billId) {
     const pool = await getConnection();
@@ -64,5 +84,22 @@ export const Bill = {
         .query("DELETE FROM MonthlyBills WHERE BillID = @BillID");
         
     return true;
+  },
+
+  async removeService(id, isRoom, serviceId) {
+    const pool = await getConnection();
+
+    
+    await pool.request()
+      .input("RoomID", sql.Int, id)
+      .input("ServiceID", sql.Int, serviceId)
+      .input("Period", sql.NVarChar(20), period)
+      .query(`
+        DELETE FROM MonthlyBills
+        WHERE RoomID = @RoomID
+          AND ServiceID = @ServiceID
+          AND Period = @Period
+          AND Status = 'Unpaid'
+      `);
   }
 };

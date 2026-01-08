@@ -14,3 +14,10 @@ export const generateToken = (userId, res) => {
 
   return token;
 };
+
+export function getCurrentPeriod() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = String(now.getFullYear()).slice(-2);
+  return `${month}/${year}`; // VD: 01/26
+}

@@ -1,5 +1,5 @@
-import { User } from "../models/user_auth_model.js";
-import { Payment } from "../models/payment_model.js";
+import { User } from "../models/user.model.js";
+import { Payment } from "../models/payment.model.js";
 import bcrypt from "bcryptjs";
 
 // @route   GET /api/users
