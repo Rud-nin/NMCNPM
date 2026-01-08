@@ -123,7 +123,7 @@ export const approveRequest = async (req, res) => {
     await Notification.create({
       receiverId: request.UserID,
       title: "Room Request Approved",
-      content: `Your room request has been approved. You have been assigned to ${room.Building}-${room.RoomNumber}.`
+      content: `Yêu cầu vào phòng đã được chấp nhận. Bạn đã được thêm vào phòng ${room.Building}-${room.RoomNumber}.`
     });
 
     res.json({ success: true, message: "Request approved successfully" });
@@ -167,7 +167,7 @@ export const rejectRequest = async (req, res) => {
     await Notification.create({
       receiverId: request.UserID,
       title: "Room Request Rejected",
-      content: `Your room request to room ${room.Building}-${room.RoomNumber} has been rejected. Please choose another room.`
+      content: `Yêu cầu của bạn đến phòng ${room.Building}-${room.RoomNumber} đã bị từ chối. Vui lòng chọn phòng khác.`
     });
 
     res.json({ success: true, message: "Request rejected successfully" });
