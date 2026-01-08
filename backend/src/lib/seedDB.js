@@ -109,12 +109,6 @@ async function seed() {
       Type: 'Personal',
     },
     {
-      ServiceName: 'Parking',
-      Price: 90000,
-      Descriptions: 'Gửi xe oto hàng tháng',
-      Type: 'Personal',
-    },
-    {
       ServiceName: 'Gym',
       Price: 100000,
       Descriptions: 'Thẻ tập Gym hàng tháng',
