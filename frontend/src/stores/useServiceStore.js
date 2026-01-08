@@ -162,19 +162,37 @@ export const useServiceStore = create((set) => ({
 
     // user
     userServices: [],
+    roomServices: [],
+    isLoadingUserServices: false,
+    isLoadingRoomServices: false,
 
-    getUserServices: async (page, limit) => {
-        set({ isLoading: true });
+    getUserServices: async () => {
+        set({ isLoadingUserServices: true });
         
         try {
-            const res = await axiosInstance.get(`/services?page=${page}&limit=${limit}`);
+            const res = await axiosInstance.get(`/services/users`);
             set({ userServices: res.data });
             return res;
         } catch (error) {
-            toast.error('Có lỗi khi lấy thông tin dịch vụ');
+            toast.error('Có lỗi khi lấy thông tin dịch vụ của người dùng');
             console.error(error);
         } finally {
-            set({ isLoading: false });
+            set({ isLoadingUserServices: false });
+        }
+    },
+
+    getRoomServices: async () => {
+        set({ isLoadingRoomServices: true });
+        
+        try {
+            const res = await axiosInstance.get(`/services/rooms`);
+            set({ roomServices: res.data });
+            return res;
+        } catch (error) {
+            toast.error('Có lỗi khi lấy thông tin dịch vụ của phòng');
+            console.error(error);
+        } finally {
+            set({ isLoadingRoomServices: false });
         }
     },
 }));

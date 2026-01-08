@@ -5,7 +5,6 @@ import Table from '../Table/Table.jsx';
 import styles from './UserService.module.css';
 import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
-import Pagination from '../Pagination/Pagination.jsx';
 import { formatMoney } from '../../lib/formatMoney.js';
 
 function UserService() {
@@ -16,27 +15,18 @@ function UserService() {
     getUserServices
   } = useServiceStore();
 
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(1);
-
-
   async function handleSendFeedback() {
     await sendFeedback(feedback.title, feedback.content);
     setFeedback(null);
   };
 
   async function handleFetchServices() {
-    const res = await getUserServices(page, limit);
-    if (res) {
-      const { pagination } = res;
-      setTotal(pagination.totalPages);
-    }
+    await getUserServices();
   };
 
   useEffect(() => {
     handleFetchServices();
-  }, [limit, page]);
+  }, []);
 
   return (
     <section className={styles.userService}>
@@ -84,15 +74,6 @@ function UserService() {
           ))}
         </tbody>
       </Table>
-
-      <div className={styles.pagination}>
-        <Pagination
-          limit={limit}
-          setLimit={setLimit}
-          page={page}
-          setPage={setPage}
-          total={total} />
-      </div>
 
       {feedback && (
         <Overlay>
