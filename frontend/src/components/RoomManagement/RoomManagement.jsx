@@ -187,7 +187,7 @@ function RoomRequests() {
 
 function RoomDetail({ roomId, cancel, remove }) {
     const { getRoomById, addUserToRoom, removeUserFromRoom } = useRoomStore();
-    const { services, getServices } = useServiceStore();
+    const { services, getServices, getRoomServicesById, assignServiceToRoom, removeServiceFromRoom } = useServiceStore();
     const { getUserByName } = useUsersStore();
 
     const [room, setRoom] = useState(null);
@@ -223,16 +223,36 @@ function RoomDetail({ roomId, cancel, remove }) {
         setRoomUsers(roomUsers.filter((u) => u.UserID !== user.UserID));
     }
 
+    const handleAddServiceToRoom = async (serviceID) => {
+        const res = await assignServiceToRoom(serviceID, roomId);
+        if (res)
+            setRoom(prev => ({
+                ...prev,
+                services: [...prev.services, serviceID],
+            }));
+    }
+
+    const handleRemoveServiceFromRoom = async (serviceID) => {
+        const res = await removeServiceFromRoom(serviceID, roomId);
+        if (res)
+            setRoom(prev => ({
+                ...prev,
+                services: prev.services.filter(s => s !== serviceID),
+            }));
+    }
+
     useEffect(() => {
         (async () => {
             let servicesRes;
             if (!services || services.length === 0) servicesRes = getServices();
-            const [data] = await Promise.all([
+            const [room, roomServices] = await Promise.all([
                 getRoomById(roomId),
+                getRoomServicesById(roomId),
                 servicesRes,
             ]);
-            setRoom(data?.room);
-            setRoomUsers(data?.users);
+            room.room.services = roomServices.data.map(service => service.ServiceID);
+            setRoom(room.room);
+            setRoomUsers(room.users);
         })();
     }, []);
 
@@ -244,6 +264,24 @@ function RoomDetail({ roomId, cancel, remove }) {
                 <div>Số phòng: {room?.RoomNumber}</div>
                 <div>Nhân sự hiện tại: {room?.Occupancy}</div>
                 <div>Nhân sự tối đa: {room?.Capacity}</div>
+
+                <div className={styles.services}>
+                    {services.filter(service => service.Type === "Room").map((service) => (
+                        <button
+                            key={service.ServiceID}
+                            className={
+                                room?.services.includes(service.ServiceID) ? styles.selected : ""
+                            }
+                            onClick={room?.services.includes(service.ServiceID) ?
+                                () => handleRemoveServiceFromRoom(service.ServiceID) :
+                                () => handleAddServiceToRoom(service.ServiceID)
+                            }
+                        >
+                            {service.ServiceName}
+                        </button>
+                    ))}
+                </div>
+
                 <div className={styles.employee}>
                     <input
                         type="text"

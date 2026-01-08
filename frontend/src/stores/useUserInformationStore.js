@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
 export const useUserInformationStore = create((set, get) => ({
-  isLoading: false,
+  isLoading: true,
   user: null,
 
   fetchUserInformation: async () => {
@@ -13,7 +13,6 @@ export const useUserInformationStore = create((set, get) => ({
       set({ user: res.user });
       return res.user;
     } catch (error) {
-      toast.error("Có lỗi trong fetchUserInformation");
       console.error(error);
     } finally {
       set({ isLoading: false});

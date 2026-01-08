@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
+import { useUserInformationStore } from "./useUserInformationStore.js";
 import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
@@ -13,7 +14,6 @@ export const useAuthStore = create((set) => ({
       const res = await axiosInstance.get("/auth/check");
       set({ authUser: res });
     } catch (error) {
-      toast.error('Có lỗi khi kiểm tra quyền truy cập');
       console.error(error);
       set({ authUser: null });
     } finally {
@@ -40,6 +40,7 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res });
+      useUserInformationStore.getState().fetchUserInformation();
       toast.success("Đăng nhập thành công!");
     } catch (error) {
       toast.error('Có lỗi khi đăng nhập');
@@ -53,6 +54,7 @@ export const useAuthStore = create((set) => ({
     try {
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
+      useUserInformationStore.setState({ user: null });
       toast.success("Đăng xuất thành công");
     } catch (error) {
       toast.error('Có lỗi khi đăng xuất');

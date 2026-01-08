@@ -12,15 +12,36 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
     // Tách ra component nữa để gọi useEffect
     const [user, setUser] = useState(null);
     const { getUserById } = useUsersStore();
-    const { services } = useServiceStore();
+    const { services, getUserServicesById, assignServiceToUser , removeServiceFromUser } = useServiceStore();
+
+    const handleAddServiceToUser = async (serviceID) => {
+        const res = await assignServiceToUser(serviceID, UserID);
+        if (res)
+            setUser(prev => ({
+                ...prev,
+                services: [...prev.services, serviceID],
+            }));
+    }
+
+    const handleRemoveServiceFromUser = async (serviceID) => {
+        const res = await removeServiceFromUser(serviceID, UserID);
+        if (res)
+            setUser(prev => ({
+                ...prev,
+                services: prev.services.filter(s => s !== serviceID),
+            }));
+    }
 
     useEffect(() => {
-        getUserById(UserID)
-            .then(res => {
-                res.BirthDate = res.BirthDate.split("T")[0];
-                res.services = res.services ?? [];
-                setUser(res);
-            })
+        (async () => {
+            const [user, userServices] = await Promise.all([
+                getUserById(UserID),
+                getUserServicesById(UserID),
+            ]);
+            user.BirthDate = user.BirthDate.split("T")[0];
+            user.services = userServices.data.map(service => service.ServiceID);
+            setUser(user);
+        })();
     }, []);
 
     return (
@@ -72,19 +93,16 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
             </div>
 
             <div className={styles.services}>
-                {services.map((service) => (
+                {services.filter(service => service.Type === "Personal").map((service) => (
                     <button
                         key={service.ServiceID}
                         className={
                             user?.services.includes(service.ServiceID) ? styles.selected : ""
                         }
-                        onClick={() =>
-                        setUser(prev => ({
-                            ...prev,
-                            services: prev.services.includes(service.ServiceID)
-                            ? prev.services.filter(s => s !== service.ServiceID)
-                            : [...prev.services, service.ServiceID],
-                        }))}
+                        onClick={user?.services.includes(service.ServiceID) ?
+                            () => handleRemoveServiceFromUser(service.ServiceID) :
+                            () => handleAddServiceToUser(service.ServiceID)
+                        }
                     >
                         {service.ServiceName}
                     </button>
