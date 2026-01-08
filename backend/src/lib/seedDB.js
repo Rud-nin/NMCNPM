@@ -83,13 +83,13 @@ async function seed() {
   const servicesData = [
     // Room services
     {
-      ServiceName: 'Electricity',
+      ServiceName: 'Điện',
       Price: 350000,
       Descriptions: 'Tiền điện theo tháng',
       Type: 'Room',
     },
     {
-      ServiceName: 'Water',
+      ServiceName: 'Nước',
       Price: 150000,
       Descriptions: 'Tiền nước theo tháng',
       Type: 'Room',
@@ -103,9 +103,15 @@ async function seed() {
 
     // Personal services
     {
-      ServiceName: 'Parking',
+      ServiceName: 'Gửi xe máy',
       Price: 50000,
       Descriptions: 'Gửi xe máy hàng tháng',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Gửi ô tô',
+      Price: 90000,
+      Descriptions: 'Gửi ô tô hàng tháng',
       Type: 'Personal',
     },
     {
@@ -321,9 +327,9 @@ async function seed() {
   // ================== USER SERVICE ==================
   const userServicesData = [
     // roomIds[0] = B5-101
-    { UserID: userIds[1], ServiceID: serviceIds.Gym },
-    { UserID: userIds[1], ServiceID: serviceIds.Parking },
-    { UserID: userIds[8], ServiceID: serviceIds.Parking }
+    { UserID: userIds[1], ServiceID: serviceIds["Gym"] },
+    { UserID: userIds[1], ServiceID: serviceIds["Gửi xe máy"] },
+    { UserID: userIds[8], ServiceID: serviceIds["Gửi xe máy"] }
   ]
 
   for (const us of userServicesData) {
@@ -390,18 +396,18 @@ async function seed() {
   // ================== ROOM SERVICE ==================
   const roomServicesData = [
     // roomIds[0] = B5-101
-    { RoomID: roomIds[0], ServiceID: serviceIds.Electricity },
-    { RoomID: roomIds[0], ServiceID: serviceIds.Water },
-    { RoomID: roomIds[0], ServiceID: serviceIds.Internet },
+    { RoomID: roomIds[0], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[0], ServiceID: serviceIds["Nước"] },
+    { RoomID: roomIds[0], ServiceID: serviceIds["Internet"] },
 
     // roomIds[1] = B5-102
-    { RoomID: roomIds[1], ServiceID: serviceIds.Electricity },
-    { RoomID: roomIds[1], ServiceID: serviceIds.Water },
-    { RoomID: roomIds[1], ServiceID: serviceIds.Internet },
+    { RoomID: roomIds[1], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[1], ServiceID: serviceIds["Nước"] },
+    { RoomID: roomIds[1], ServiceID: serviceIds["Internet"] },
 
     // roomIds[2] = B6-103
-    { RoomID: roomIds[2], ServiceID: serviceIds.Electricity },
-    { RoomID: roomIds[2], ServiceID: serviceIds.Water },
+    { RoomID: roomIds[2], ServiceID: serviceIds["Điện"] },
+    { RoomID: roomIds[2], ServiceID: serviceIds["Nước"] },
   ]
 
   for (const rs of roomServicesData) {
