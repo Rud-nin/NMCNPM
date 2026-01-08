@@ -47,7 +47,12 @@ function UserRoom() {
   };
 
   useEffect(() => {
-    fetchUserRoom();
+    const handleFetch = async () => {
+      await fetchUserRoom();
+      await handleFetchServices();
+    };
+    
+    handleFetch();
   }, []);
 
   return (
@@ -125,7 +130,6 @@ function UserRoom() {
           <tr>
             <th>STT</th>
             <th>Tên dịch vụ</th>
-            <th>Loại dịch vụ</th>
             <th>Mô tả</th>
             <th>Giá dịch vụ</th>
             <th></th>
@@ -136,7 +140,6 @@ function UserRoom() {
             <tr key={index + 1}>
               <td>{index + 1}</td>
               <td>{service.ServiceName}</td>
-              <td>{(service.Type === "Personal") ? "Phòng" : "Cá nhân"}</td>
               <td>{service.Descriptions}</td>
               <td>{formatMoney(service.Price)}</td>
               <td></td>

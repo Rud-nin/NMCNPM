@@ -16,12 +16,7 @@ export const useRoomSelectingStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get(`/rooms/available?page=${page}&limit=${limit}`);
       set({ rooms: res.data });
-      toast.success("Lấy danh sách phòng thành công");
       return res;
-      // const res = await fetch('/rooms1.example.json');
-      // const data = await res.json();
-      // set({ rooms: data.data });
-      // return data;
     } catch (error) {
       toast.error('Có lỗi trong khi lấy danh sách phòng trống!');
       console.error(error);
@@ -36,12 +31,7 @@ export const useRoomSelectingStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get('/room-requests/me');
       set({ roomRequests: res.data });
-      toast.success("Lấy danh sách yêu cầu vào phòng thành công");
       return res;
-      // const res = await fetch('/roomRequests.example.json');
-      // const data = await res.json();
-      // set({ roomRequests: data });
-      // return data;
     } catch (error) {
       toast.error('Có lỗi trong khi lấy danh sách phòng trống!');
       console.error(error);
