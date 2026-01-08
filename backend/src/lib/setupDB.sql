@@ -257,6 +257,7 @@ UPDATE Users SET RoomID = 2 WHERE UserID = 2;
 UPDATE Users SET RoomID = 1 WHERE UserID = 2;
 -------------------------------------------
 
+SELECT * FROM Feedbacks;
 SELECT * FROM Notifications;
 SELECT * FROM UserBalance;
 SELECT * FROM TopUpTransactions;

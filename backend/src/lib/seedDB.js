@@ -85,33 +85,39 @@ async function seed() {
     {
       ServiceName: 'Electricity',
       Price: 350000,
-      Descriptions: 'Electricity usage per month',
+      Descriptions: 'Tiền điện theo tháng',
       Type: 'Room',
     },
     {
       ServiceName: 'Water',
       Price: 150000,
-      Descriptions: 'Water usage per month',
+      Descriptions: 'Tiền nước theo tháng',
       Type: 'Room',
     },
     {
       ServiceName: 'Internet',
       Price: 120000,
-      Descriptions: 'Internet service per month',
+      Descriptions: 'Internet tốc độ cao',
       Type: 'Room',
     },
 
     // Personal services
     {
       ServiceName: 'Parking',
-      Price: 80000,
-      Descriptions: 'Motorbike parking',
+      Price: 50000,
+      Descriptions: 'Gửi xe máy hàng tháng',
+      Type: 'Personal',
+    },
+    {
+      ServiceName: 'Parking',
+      Price: 90000,
+      Descriptions: 'Gửi xe oto hàng tháng',
       Type: 'Personal',
     },
     {
       ServiceName: 'Gym',
       Price: 100000,
-      Descriptions: 'Gym membership',
+      Descriptions: 'Thẻ tập Gym hàng tháng',
       Type: 'Personal',
     },
   ]
@@ -349,6 +355,44 @@ async function seed() {
 
   console.log('✅ UserServices & Personal Bills inserted');
 
+    // ================== ROOM REQUESTS ==================
+  const roomRequestsData = [
+    {
+      UserID: userIds[7], // user8 - chưa có phòng
+      RoomID: roomIds[1], // B5-102
+      Status: 'Pending',
+    },
+    {
+      UserID: userIds[7],
+      RoomID: roomIds[2], // B6-103
+      Status: 'Rejected',
+    },
+    {
+      UserID: userIds[6], // user7
+      RoomID: roomIds[1],
+      Status: 'Approved',
+    },
+    {
+      UserID: userIds[5], // user6
+      RoomID: roomIds[0],
+      Status: 'Cancelled',
+    },
+  ]
+
+  for (const rr of roomRequestsData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, rr.UserID)
+      .input('RoomID', sql.Int, rr.RoomID)
+      .input('Status', sql.NVarChar(20), rr.Status)
+      .query(`
+        INSERT INTO RoomRequests (UserID, RoomID, Status)
+        VALUES (@UserID, @RoomID, @Status)
+      `)
+  }
+
+  console.log('✅ RoomRequests inserted')
+
   // ================== ROOM SERVICE ==================
   const roomServicesData = [
     // roomIds[0] = B5-101
@@ -387,6 +431,43 @@ async function seed() {
   }
 
   console.log('✅ RoomServices & Room Bills inserted');
+
+  // ================== FEEDBACKS ==================
+  const feedbacksData = [
+    {
+      UserID: userIds[1],
+      Title: 'Mất điện phòng B5-101',
+      Content: 'Tối qua phòng em bị mất điện từ 22h đến 23h, mong ban quản lý kiểm tra.',
+      Status: 'Pending',
+    },
+    {
+      UserID: userIds[2],
+      Title: 'Nước chảy yếu',
+      Content: 'Nước sinh hoạt buổi sáng rất yếu, khó sinh hoạt.',
+      Status: 'Done',
+    },
+    {
+      UserID: userIds[6],
+      Title: 'Internet chập chờn',
+      Content: 'Internet trong phòng thường xuyên bị mất kết nối vào buổi tối.',
+      Status: 'Pending',
+    },
+  ]
+
+  for (const fb of feedbacksData) {
+    await pool
+      .request()
+      .input('UserID', sql.Int, fb.UserID)
+      .input('Title', sql.NVarChar(200), fb.Title)
+      .input('Content', sql.NVarChar(sql.MAX), fb.Content)
+      .input('Status', sql.NVarChar(20), fb.Status)
+      .query(`
+        INSERT INTO Feedbacks (UserID, Title, Content, Status)
+        VALUES (@UserID, @Title, @Content, @Status)
+      `)
+  }
+
+  console.log('✅ Feedbacks inserted')
   
   process.exit(0)
 }
