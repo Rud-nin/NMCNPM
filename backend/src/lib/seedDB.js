@@ -84,13 +84,13 @@ async function seed() {
     // Room services
     {
       ServiceName: 'Electricity',
-      Price: 3500,
+      Price: 350000,
       Descriptions: 'Electricity usage per month',
       Type: 'Room',
     },
     {
       ServiceName: 'Water',
-      Price: 15000,
+      Price: 150000,
       Descriptions: 'Water usage per month',
       Type: 'Room',
     },

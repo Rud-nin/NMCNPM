@@ -74,7 +74,7 @@ export const TopUp = {
       `)
     return {
       data: result.recordsets[0],
-      totalCount: result.recordsets[1][0].Total
+      totalRows: result.recordsets[1][0].Total
     }
   },
 
