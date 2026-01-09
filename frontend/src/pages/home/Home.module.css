@@ -117,7 +117,7 @@
 }
 
 .overview img {
-  height: 6rem;
+  height: 20rem;
 }
 
 .overview p {
@@ -159,6 +159,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  justify-self: center;
+  max-width: 900px;
 }
 
 .footer {

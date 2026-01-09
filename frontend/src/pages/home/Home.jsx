@@ -76,7 +76,8 @@ export default function Home() {
                 <section ref={overviewRef} className={`${styles.overview} ${styles.width1020px}`}>
                     {/* Overview section */}
                     <div>
-                        <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" />
+                        {/* <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" /> */}
+                        <img src="images/blue_moon.png" alt="blue moon" />
                     </div>
                     <h1>Hệ thống quản lý chung cư Bluemoon</h1>
                     <p>Bluemoon là hệ thống quản lý chung cư hiện đại, được xây dựng

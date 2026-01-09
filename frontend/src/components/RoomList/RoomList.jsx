@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import styles from "./RoomList.module.css";
 import { useRoomSelectingStore } from "../../stores/useRoomSelectingStore.js";
-import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
+// import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
 import Button from "../Button/Button.jsx";
 import Pagination from "../Pagination/Pagination.jsx";
-import Overlay from "../Overlay/Overlay.jsx";
+// import Overlay from "../Overlay/Overlay.jsx";
 import Table from "../Table/Table.jsx";
 import toast from "react-hot-toast";
 
 export default function RoomList() {
-  const [feedback, setFeedback] = useState(null);
+  // const [feedback, setFeedback] = useState(null);
   const [limit, setLimit] = useState(9);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
 
-  const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
+  // const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
 
   const {
     rooms,
@@ -26,10 +26,10 @@ export default function RoomList() {
     getRoomRequests,
   } = useRoomSelectingStore();
 
-  async function handleSendFeedback() {
-    await sendFeedback(feedback.title, feedback.content);
-    setFeedback(null);
-  };  
+  // async function handleSendFeedback() {
+  //   await sendFeedback(feedback.title, feedback.content);
+  //   setFeedback(null);
+  // };  
 
   async function handleFetchRooms() {
     if (isLoadingRoom) return;
@@ -64,9 +64,9 @@ export default function RoomList() {
       <header>
         <h2>Chọn một phòng</h2>
 
-        <Button
+        {/* <Button
           onClick={() => setFeedback({ title: '', content: '' })}
-        >Tạo phản hồi</Button>
+        >Tạo phản hồi</Button> */}
 
       </header>
 
@@ -130,7 +130,7 @@ export default function RoomList() {
           total={total} />
       </div>
 
-      {feedback && (
+      {/* {feedback && (
         <Overlay>
           <div className={styles.modal}>
             <h2>Nhập phản hồi mới</h2>
@@ -156,7 +156,7 @@ export default function RoomList() {
             </div>
           </div>
         </Overlay>
-      )}
+      )} */}
     </section>
   );
 }

@@ -108,7 +108,11 @@ function UserRoom() {
                   <td>{formatDate(user.BirthDate)}</td>
                   <td>{user.HomeTown}</td>
                   <td>
-                    <span className={user.UserID === userRoom.OwnerID ? styles.yes : styles.no}>{user.UserID === userRoom.OwnerID ? "Có" : "Không"}</span>
+                    {user.UserID === userRoom.room.OwnerID ? (
+                      <span className={styles.yes}>Có</span>
+                    ) : (
+                      <span className={styles.no}>Không</span>
+                    )}
                   </td>
                   <td></td>
                 </tr>
