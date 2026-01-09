@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
 
 import toast from "react-hot-toast";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, Home } from "lucide-react";
 
 export function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +14,7 @@ export function SignUpPage() {
     Email: "",
     Password: "",
     BirthDate: "",
-    StudentID:  "",
+    HomeTown:  "",
     ID: "",
   });
 
@@ -48,7 +48,7 @@ export function SignUpPage() {
       toast.error("Sai định dạng Ngày sinh: DD/MM/YYYY");
       return false;
     } 
-    if (!formData.StudentID.trim()) {
+    if (!formData.HomeTown.trim()) {
       toast.error("Bạn chưa điền Mã số sinh viên!");
       return false;
     } 
@@ -84,7 +84,7 @@ export function SignUpPage() {
         Email: formData.Email,
         Password: formData.Password,
         BirthDate: formatDate(formData.BirthDate),
-        StudentID:  formData.BirthDate,
+        HomeTown:  formData.HomeTown,
         ID: formData.ID,
       });
       navigate("/signin");
@@ -110,7 +110,7 @@ export function SignUpPage() {
                 <div class={styles.inputWrapper}>
                   <input 
                     type="text" 
-                    placeholder="Chu Văn Sơn" 
+                    placeholder="Chu Văn A" 
                     value={formData.FullName}
                     onChange={(event) => setFormData({...formData, FullName: event.target.value})}
                   />
@@ -128,13 +128,13 @@ export function SignUpPage() {
                 </div>
               </div>
               <div className={styles.inputGroup}>
-                <label>Mã số sinh viên</label>
+                <label>Quê quán</label>
                 <div class={styles.inputWrapper}>
                   <input 
                     type="text" 
-                    placeholder="20230000" 
-                    value={formData.StudentID}
-                    onChange={(event) => setFormData({...formData, StudentID: event.target.value})}
+                    placeholder="Hà Nội" 
+                    value={formData.HomeTown}
+                    onChange={(event) => setFormData({...formData, HomeTown: event.target.value})}
                   />
                 </div>
               </div>
@@ -154,7 +154,7 @@ export function SignUpPage() {
                 <div class={styles.inputWrapper}>
                   <input 
                     type="text" 
-                    placeholder="son@gmail.com" 
+                    placeholder="abc@gmail.com" 
                     value={formData.Email}
                     onChange={(event) => setFormData({...formData, Email: event.target.value})}
                   />
