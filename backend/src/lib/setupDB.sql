@@ -145,7 +145,7 @@ CREATE TABLE dbo.RoomRequests (
     CreatedAt DATETIME DEFAULT GETDATE(),
     ProcessedAt DATETIME NULL,
 
-    CONSTRAINT FK_RoomRequests_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID),
+    CONSTRAINT FK_RoomRequests_User FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID) ON DELETE CASCADE,
     CONSTRAINT FK_RoomRequests_Room FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID)
         ON DELETE SET NULL,
 );

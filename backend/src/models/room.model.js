@@ -108,7 +108,8 @@ export const Room = {
           U.UserID,
           U.FullName,
           U.Email,
-          U.BirthDate
+          U.BirthDate,
+          U.HomeTown
         FROM Users U
         WHERE U.RoomID = @RoomID
         ORDER BY U.FullName
