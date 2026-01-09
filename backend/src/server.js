@@ -17,19 +17,19 @@ import path from 'path'
 const __dirname = path.resolve() // Lấy đường dẫn gốc của dự án
 
 const app = express()
-app.use(express.static(path.join(__dirname, '../frontend/dist')))
+app.use(express.static(path.join(__dirname, 'frontend/dist')))
 app.use(express.json())
 app.use(cookieParser())
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173', // Fallback nếu quên .env
+    origin: process.env.CLIENT_URL,
     credentials: true, // Cho phép gửi cookie
   })
 )
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
+  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'))
 })
 
 app.use('/api/auth', authRoutes)

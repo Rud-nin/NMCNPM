@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: ehustmax_frontend
+    volumes:
+      - fe_dist:/app/dist
+    networks:
+      - chat-network
+
+  backend:
+    build: ./backend
+    container_name: ehustmax_backend
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=5001
+      - DB_SERVER=sqlserver
+      - DB_NAME=...
+      - DB_USER=...
+      - DB_PASS=...
+    volumes:
+      - fe_dist:/app/frontend/dist:ro # Chia sẻ folder build của FE cho BE (read only)
+      - ./backend/public:/app/public # Lưu ảnh, file...
+    depends_on:
+      - frontend
+    networks:
+      - chat-network
+
+networks:
+  chat-network:
+    external: true
+
+volumes:
+  fe_dist:
