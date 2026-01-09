@@ -76,18 +76,20 @@ function TopUp() {
                             <td>{topUp.Amount.toLocaleString()}</td>
                             <td>{translated[topUp.Status]}</td>
                             <td>
-                                <div className={styles.buttonContainer}>
-                                    <Button
-                                        onClick={() => handleAcceptTopUp(topUp.TopUpID)}
-                                    >
-                                        <i className="fa-solid fa-check"></i>
-                                    </Button>
-                                    <Button
-                                        onClick={() => handleRejectTopUp(topUp.TopUpID)}   
-                                    >
-                                        <i className="fa-solid fa-xmark"></i>
-                                    </Button>
-                                </div>
+                                {topUp.Status === "Pending" && (
+                                    <div className={styles.buttonContainer}>
+                                        <Button
+                                            onClick={() => handleAcceptTopUp(topUp.TopUpID)}
+                                        >
+                                            <i className="fa-solid fa-check"></i>
+                                        </Button>
+                                        <Button
+                                            onClick={() => handleRejectTopUp(topUp.TopUpID)}   
+                                        >
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </Button>
+                                    </div>
+                                )}
                             </td>
                         </tr>
                     ))}

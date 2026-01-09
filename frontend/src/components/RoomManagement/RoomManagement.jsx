@@ -190,8 +190,20 @@ function RoomRequests() {
 }
 
 function RoomDetail({ roomId, cancel, remove }) {
-    const { getRoomById, addUserToRoom, removeUserFromRoom } = useRoomStore();
-    const { services, getServices, getRoomServicesById, assignServiceToRoom, removeServiceFromRoom } = useServiceStore();
+    const {
+        getRoomById,
+        addUserToRoom,
+        removeUserFromRoom,
+        promoteToOwner,
+        revokeOwner,
+    } = useRoomStore();
+    const {
+        services,
+        getServices,
+        getRoomServicesById,
+        assignServiceToRoom,
+        removeServiceFromRoom,
+    } = useServiceStore();
     const { getUserByName } = useUsersStore();
 
     const [room, setRoom] = useState(null);
@@ -242,6 +254,24 @@ function RoomDetail({ roomId, cancel, remove }) {
             setRoom(prev => ({
                 ...prev,
                 services: prev.services.filter(s => s !== serviceID),
+            }));
+    }
+
+    const handlePromoteToOwner = async (UserID) => {
+        const res = await promoteToOwner(UserID);
+        if (res)
+            setRoom(prev => ({
+                ...prev,
+                OwnerID: UserID,
+            }));
+    }
+
+    const handleRevokeOwner = async () => {
+        const res = await revokeOwner(room.RoomID);
+        if (res)
+            setRoom(prev => ({
+                ...prev,
+                OwnerID: null,
             }));
     }
 
@@ -322,10 +352,26 @@ function RoomDetail({ roomId, cancel, remove }) {
                         >
                             {user.FullName}
                             <button
+                                className={styles.removeUserButton}
                                 onClick={() => handleRemoveUserFromRoom(user)}
                             >
                                 <i className="fa-solid fa-x"></i>
                             </button>
+                            {user.UserID === room.OwnerID ? (
+                                <button
+                                    className={styles.toOwnerButton}
+                                    onClick={() => handleRevokeOwner(user.UserID)}
+                                >
+                                    <i className="fa-solid fa-arrow-down"></i>
+                                </button>
+                            ) : (
+                                <button
+                                    className={styles.toOwnerButton}
+                                    onClick={() => handlePromoteToOwner(user.UserID)}
+                                >
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                </button>
+                            )}
                         </span>
                     ))}
                 </div>
