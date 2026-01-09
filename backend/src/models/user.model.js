@@ -2,7 +2,7 @@ import sql from "mssql";
 import { getConnection } from "../lib/db.js";
 
 export const User = {
-  async create({ Email, FullName, Password, BirthDate, StudentID, ID, ProfilePic = "" , Role}) {
+  async create({ Email, FullName, Password, BirthDate, ResidentType, HomeTown, ID, Role}) {
     const pool = await getConnection();
     const result = await pool
       .request()
@@ -10,13 +10,13 @@ export const User = {
       .input("FullName", sql.NVarChar(30), FullName)
       .input("Password", sql.NVarChar(100), Password)
       .input("BirthDate", sql.Date, BirthDate)
-      .input("StudentID", sql.NVarChar(20), StudentID)
+      .input("ResidentType", sql.NVarChar(20), ResidentType)
+      .input("HomeTown", sql.NVarChar(20), HomeTown)
       .input("ID", sql.NVarChar(20), ID)
-      .input("ProfilePic", sql.NVarChar(100), ProfilePic)
       .input("Role", sql.NVarChar(20), Role)
       .query(`
-        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, ProfilePic, Role)
-        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @ProfilePic, @Role);
+        INSERT INTO Users (Email, FullName, [Password], BirthDate, ResidentType, HomeTown, ID, Role)
+        VALUES (@Email, @FullName, @Password, @BirthDate, @ResidentType, @HomeTown, @ID, @Role);
         SELECT SCOPE_IDENTITY() AS UserID;
       `);
     return result.recordset[0];
@@ -30,7 +30,7 @@ export const User = {
         .request()
         .input("Keyword", sql.NVarChar(100), searchPattern)
         .query(`
-          SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role 
+          SELECT UserID, Email, FullName, BirthDate, ID, Role 
           FROM Users
           WHERE FullName LIKE @Keyword OR Email LIKE @Keyword
           ORDER BY UserID DESC
@@ -49,7 +49,7 @@ export const User = {
       .input("Offset", sql.Int, offset)
       .query(`
         -- Query 1: Lấy danh sách user phân trang
-        SELECT UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic, Role 
+        SELECT UserID, Email, FullName, BirthDate, ID, Role 
         FROM Users
         ORDER BY UserID DESC -- Sắp xếp người mới nhất lên đầu
         OFFSET @Offset ROWS
@@ -82,7 +82,7 @@ export const User = {
       .request()
       .input("UserID", sql.Int, userId)
       .query(`
-        SELECT U.UserID, U.Email, U.FullName, U.BirthDate, U.StudentID, U.ID, U.ProfilePic, U.Role, U.RoomID, ISNULL(UB.Balance,0) AS Balance, R.RoomNumber, R.Building
+        SELECT U.UserID, U.Email, U.FullName, U.BirthDate, U.ResidentType, U.HomeTown, U.ID, U.Role, U.RoomID, ISNULL(UB.Balance,0) AS Balance, R.RoomNumber, R.Building
         FROM Users U 
         LEFT JOIN UserBalance UB ON U.UserID = UB.UserID
         LEFT JOIN Rooms R ON U.RoomID = R.RoomID
@@ -91,19 +91,20 @@ export const User = {
     return result.recordset[0];
   },
 
-  async updateUserProfile(userId, { FullName, BirthDate, StudentID, ID, Role }) {
+  async updateUserProfile(userId, { FullName, BirthDate, ResidentType, HomeTown, ID, Role }) {
     const pool = await getConnection();
     const result = await pool
       .request()
       .input("UserID", sql.Int, userId)
       .input("FullName", sql.NVarChar(30), FullName)
       .input("BirthDate", sql.Date, BirthDate)
-      .input("StudentID", sql.NVarChar(20), StudentID)
+      .input("ResidentType", sql.NVarChar(20), ResidentType)
+      .input("HomeTown", sql.NVarChar(20), HomeTown)
       .input("ID", sql.NVarChar(20), ID)
       .input("Role", sql.NVarChar(20), Role)
       .query(`
         UPDATE Users
-        SET FullName = @FullName, BirthDate = @BirthDate, StudentID = @StudentID, ID = @ID, Role = @Role
+        SET FullName = @FullName, BirthDate = @BirthDate, ResidentType = @ResidentType, HomeTown = @HomeTown, ID = @ID, Role = @Role
         WHERE UserID = @UserID;
     `);
     return true;
