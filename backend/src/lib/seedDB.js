@@ -1,8 +1,6 @@
 import sql from 'mssql'
 import bcrypt from 'bcryptjs'
 import { getConnection } from './db.js'
-import { getCurrentPeriod } from './utils.js'
-
 // Generate random date
 function randomNovember2025() {
   const start = new Date('2025-11-01T00:00:00')
@@ -52,12 +50,12 @@ async function seed() {
 
   // ================== ROOM ==================
   const roomsData = [
-    { RoomNumber: 101, Building: 'B5', Capacity: 4 },
-    { RoomNumber: 102, Building: 'B5', Capacity: 4 },
-    { RoomNumber: 103, Building: 'B6', Capacity: 8 },
+    { RoomNumber: 301, Building: 'V1', Capacity: 4 },
+    { RoomNumber: 302, Building: 'V1', Capacity: 4 },
+    { RoomNumber: 713, Building: 'V2', Capacity: 8 },
 
-    { RoomNumber: 201, Building: 'B13', Capacity: 4 },
-    { RoomNumber: 202, Building: 'B9', Capacity: 8 },
+    { RoomNumber: 806, Building: 'V3', Capacity: 4 },
+    { RoomNumber: 202, Building: 'V3', Capacity: 8 },
   ]
 
   const roomIds = []
@@ -119,7 +117,7 @@ async function seed() {
       Price: 100000,
       Descriptions: 'Thẻ tập Gym hàng tháng',
       Type: 'Personal',
-    },
+    }
   ]
 
   const serviceIds = {}
@@ -149,7 +147,8 @@ async function seed() {
       FullName: 'Admin User',
       Password: 'admin123',
       BirthDate: '2003-01-01',
-      StudentID: '20211122',
+      HomeTown: 'Hà Nội',
+      ResidentType: 'Tạm trú',
       ID: '0123456789',
       Role: 'Admin',
     },
@@ -160,7 +159,8 @@ async function seed() {
       FullName: 'Nguyen Van A',
       Password: 'password1',
       BirthDate: '2006-05-10',
-      StudentID: '20241234',
+      HomeTown: 'Nam Định',
+      ResidentType: 'Thường trú',
       ID: '0551231231',
       RoomID: roomIds[0],
       Role: 'User',
@@ -170,7 +170,8 @@ async function seed() {
       FullName: 'Tran Thi B',
       Password: 'password2',
       BirthDate: '2005-08-22',
-      StudentID: '20235719',
+      HomeTown: 'Quảng Ninh',
+      ResidentType: 'Tạm trú',
       ID: '0662342342',
       RoomID: roomIds[0],
       Role: 'User',
@@ -180,7 +181,8 @@ async function seed() {
       FullName: 'Le Van C',
       Password: 'password3',
       BirthDate: '2005-11-02',
-      StudentID: '20236666',
+      HomeTown: 'Thái Bình',
+      ResidentType: 'Thường trú',
       ID: '0773453453',
       RoomID: roomIds[0],
       Role: 'User',
@@ -190,7 +192,8 @@ async function seed() {
       FullName: 'Pham Thi D',
       Password: 'password4',
       BirthDate: '2006-02-14',
-      StudentID: '20237777',
+      HomeTown: 'Nghệ An',
+      ResidentType: 'Thường trú',
       ID: '0884564564',
       RoomID: roomIds[0],
       Role: 'User',
@@ -202,7 +205,8 @@ async function seed() {
       FullName: 'Hoang Van E',
       Password: 'password5',
       BirthDate: '2004-07-19',
-      StudentID: '20238888',
+      HomeTown: 'Hải Phòng',
+      ResidentType: 'Tạm trú',
       ID: '0995675675',
       RoomID: roomIds[1],
       Role: 'User',
@@ -214,7 +218,8 @@ async function seed() {
       FullName: 'Dang Thi F',
       Password: 'password6',
       BirthDate: '2005-03-09',
-      StudentID: '20239999',
+      HomeTown: 'Quảng Ninh',
+      ResidentType: 'Tạm trú',
       ID: '0116786786',
       RoomID: roomIds[2],
       Role: 'User',
@@ -224,7 +229,8 @@ async function seed() {
       FullName: 'Bui Van G',
       Password: 'password7',
       BirthDate: '2004-12-30',
-      StudentID: '20230001',
+      HomeTown: 'Hà Nội',
+      ResidentType: 'Tạm vắng',
       ID: '0227897897',
       RoomID: roomIds[2],
       Role: 'User',
@@ -253,12 +259,12 @@ async function seed() {
       .input('FullName', sql.NVarChar(30), u.FullName)
       .input('Password', sql.NVarChar(100), hashedPassword)
       .input('BirthDate', sql.Date, u.BirthDate)
-      .input('StudentID', sql.NVarChar(20), u.StudentID)
+      .input('HomeTown', sql.NVarChar(20), u.HomeTown)
       .input('ID', sql.NVarChar(20), u.ID)
       .input('RoomID', sql.Int, u.RoomID)
       .input('Role', sql.NVarChar(10), u.Role).query(`
-        INSERT INTO Users (Email, FullName, [Password], BirthDate, StudentID, ID, RoomID, Role)
-        VALUES (@Email, @FullName, @Password, @BirthDate, @StudentID, @ID, @RoomID, @Role);
+        INSERT INTO Users (Email, FullName, [Password], BirthDate, HomeTown, ID, RoomID, Role)
+        VALUES (@Email, @FullName, @Password, @BirthDate, @HomeTown, @ID, @RoomID, @Role);
         SELECT SCOPE_IDENTITY() AS UserID;
       `)
 
@@ -266,6 +272,11 @@ async function seed() {
   }
 
   console.log('✅ Users inserted:', userIds)
+
+  // Cập nhật cư dân vào phòng (Gán ngẫu nhiên cho ví dụ)
+  await pool.request().query(`UPDATE Rooms SET OwnerID = ${userIds[1]} WHERE RoomID = ${roomIds[0]}`);
+  await pool.request().query(`UPDATE Rooms SET OwnerID = ${userIds[5]} WHERE RoomID = ${roomIds[1]}`);
+  await pool.request().query(`UPDATE Rooms SET OwnerID = ${userIds[6]} WHERE RoomID = ${roomIds[2]}`);
 
   const adminId = userIds[0]
   const user1 = userIds[1]
