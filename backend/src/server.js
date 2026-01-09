@@ -12,8 +12,12 @@ import billRoutes from './routes/bill.routes.js'
 import roomRoutes from "./routes/room.routes.js";
 import roomRequestRoutes from "./routes/roomRequest.routes.js";
 import balanceRoutes from './routes/balance.routes.js'
+import path from 'path'
+
+const __dirname = path.resolve() // Lấy đường dẫn gốc của dự án
 
 const app = express()
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -23,6 +27,10 @@ app.use(
     credentials: true, // Cho phép gửi cookie
   })
 )
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
+})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/notifications', notificationRoutes)
