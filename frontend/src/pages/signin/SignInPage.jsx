@@ -60,7 +60,7 @@ export function SignInPage() {
       <div className={styles.signInPage}>
         <div className={styles.signInContainer}>
           <div className={styles.signInLeft}>
-            <img src="images/sign-in.jpg" alt="hust-image" />
+            <img src="images/BlueMoon.png" alt="blue moon" />
           </div>
 
           <div className={styles.signInRight}>
@@ -121,11 +121,6 @@ export function SignInPage() {
                   />
                   <label>Ghi nhớ đăng nhập</label>
                 </div>
-                { /* 
-                <div>
-                  <Link className={styles.forgotLink} to="/forgot">Quên mật khẩu</Link>
-                </div>
-                */}
               </div>
             </form>
 

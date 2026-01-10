@@ -41,7 +41,7 @@ export default function Home() {
                         <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Bach-Khoa-Ha-Noi-HUST-768x1155.png" alt="Hust logo" />
                         <div>
                             Đại học Bách Khoa Hà Nội<br/>
-                            <span className={styles.fontSize09}>Hệ thống quản lý chung cư - KTX Ehust-max</span>
+                            <span className={styles.fontSize09}>Hệ thống quản lý chung cư Bluemoon</span>
                         </div>
                     </div>
 
@@ -76,10 +76,11 @@ export default function Home() {
                 <section ref={overviewRef} className={`${styles.overview} ${styles.width1020px}`}>
                     {/* Overview section */}
                     <div>
-                        <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" />
+                        {/* <img src="https://soict.hust.edu.vn/wp-content/uploads/logo-soict-hust-1-1024x416.png" alt="Hust logo" /> */}
+                        <img src="images/blue_moon.png" alt="blue moon" />
                     </div>
-                    <h1>Hệ thống quản lý chung cư - KTX Ehust-max</h1>
-                    <p>Ehust-max là hệ thống quản lý chung cư – ký túc xá hiện đại, được xây dựng
+                    <h1>Hệ thống quản lý chung cư Bluemoon</h1>
+                    <p>Bluemoon là hệ thống quản lý chung cư hiện đại, được xây dựng
     nhằm hỗ trợ ban quản lý và người sử dụng trong việc theo dõi phòng ở,
     dịch vụ, chi phí và các thông báo một cách nhanh chóng, chính xác và tiện lợi.
     Hệ thống hướng tới sự minh bạch, an toàn dữ liệu và trải nghiệm người dùng

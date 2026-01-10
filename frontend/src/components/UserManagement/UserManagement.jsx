@@ -68,9 +68,9 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
 
             <input
                 type="text"
-                placeholder="MSSV"
-                value={user?.StudentID || ""}
-                onChange={(e) => setUser({...user, StudentID: e.target.value})} />
+                placeholder="Quê quán"
+                value={user?.HomeTown || ""}
+                onChange={(e) => setUser({...user, HomeTown: e.target.value})} />
 
             <input
                 className={styles.oneCell}
@@ -87,10 +87,21 @@ function UserDetail({ UserID, cancel, confirm, remove }) {
                 <option value="User">Người dùng</option>
                 <option value="Admin">Quản trị viên</option>
             </select>
+
+            <select
+                className={styles.oneCell}
+                value={user?.ResidentType ?? "Thường trú"}
+                onChange={(e) => setUser({...user, ResidentType: e.target.value})}
+            >
+                <option value="Thường trú">Thường trú</option>
+                <option value="Tạm trú">Tạm trú</option>
+                <option value="Tạm vắng">Tạm vắng</option>
+            </select>
             
-            <div>
+            <div className={styles.oneCell}>
                 ID Phòng: {user?.RoomID ? `${user.Building}-${user.RoomNumber}` : "Chưa được xếp"}
             </div>
+
 
             <div className={styles.services}>
                 {services.filter(service => service.Type === "Personal").map((service) => (
@@ -130,7 +141,7 @@ export default function UserManagement() {
     const [selectingUser, setSelectingUser] = useState(null);
     const [deletingUser, setDeletingUser] = useState(null);
 
-    const { services, getServices } = useServiceStore(); 
+    const { getServices } = useServiceStore(); 
     
     const [searchName, setSearchName] = useState("");
     const [searchResultDisplaying, setSearchResultDisplaying] = useState(false);
@@ -160,7 +171,7 @@ export default function UserManagement() {
                 !newUser.Email ||
                 !newUser.Password ||
                 !newUser.BirthDate ||
-                !newUser.StudentID ||
+                !newUser.HomeTown ||
                 !newUser.ID ||
                 !newUser.Role
             ) return toast.error("Vui lòng điền đầy đủ thông tin");
@@ -182,7 +193,7 @@ export default function UserManagement() {
             if (!selectingUser.FullName ||
                 !selectingUser.Email ||
                 !selectingUser.BirthDate ||
-                !selectingUser.StudentID ||
+                !selectingUser.HomeTown ||
                 !selectingUser.ID ||
                 !selectingUser.Role
             ) return toast.error("Vui lòng điền đầy đủ thông tin");
@@ -214,6 +225,7 @@ export default function UserManagement() {
                 <Button
                     onClick={() => setNewUser({
                         services: [],
+                        Role: "User",
                     })}
                 >
                     + Thêm người dùng mới
@@ -359,9 +371,9 @@ export default function UserManagement() {
 
                         <input
                             type="text"
-                            placeholder="MSSV"
-                            value={newUser?.StudentID ?? ""}
-                            onChange={(e) => setNewUser({...newUser, StudentID: e.target.value})} />
+                            placeholder="Quê quán"
+                            value={newUser?.HomeTown ?? ""}
+                            onChange={(e) => setNewUser({...newUser, HomeTown: e.target.value})} />
                         <input
                             type="text"
                             placeholder="CCCD"
@@ -383,10 +395,6 @@ export default function UserManagement() {
                             <option value="User">Người dùng</option>
                             <option value="Admin">Quản trị viên</option>
                         </select>
-
-                        <div>
-                            ID Phòng: {newUser?.RoomID || "Chưa được xếp"}
-                        </div>
 
                         {/* <div className={styles.services}>
                             {services.map((service, index) => (
