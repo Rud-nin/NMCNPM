@@ -205,7 +205,8 @@ export const getUsersInRoomByAdmin = async (req, res) => {
         Building: room.Building,
         RoomNumber: room.RoomNumber,
         Capacity: room.Capacity,
-        Occupancy: room.Occupancy
+        Occupancy: room.Occupancy,
+        OwnerID: room.OwnerID
       },
       users
     });
@@ -252,3 +253,99 @@ export const getUsersInMyRoom = async (req, res) => {
 		});
   }
 };
+
+export const promoteUserToOwner = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+				success: false,
+				message: "userId is required"
+			});
+    }
+
+    if (isNaN(userId)) {
+      return res.status(400).json({
+				success: false,
+				message: "Invalid user ID"
+			});
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+				success: false,
+				message: "User not found"
+			});
+    }
+
+    if (!user.RoomID) {
+      return res.status(400).json({
+				success: false,
+				message: "User is not assigned to any room"
+			});
+    }
+
+    await Room.promoteUserToOwner(userId, user.RoomID);
+
+    res.status(200).json({
+      success: true,
+      message: "User promoted to owner successfully"
+    });
+  } catch (error) {
+    console.error("Promote user to owner error:", error.message);
+    res.status(500).json({
+			success: false,
+			message: "Server error"
+		});
+  }
+};
+
+export const deleteOwner = async (req, res) => {
+  try {
+    const roomId = req.params.roomId;
+
+    if (!roomId) {
+      return res.status(400).json({
+				success: false,
+				message: "roomId is required"
+			});
+    }
+
+    if (isNaN(roomId)) {
+      return res.status(400).json({
+				success: false,
+				message: "Invalid room ID"
+			});
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({
+				success: false,
+				message: "Room not found"
+			});
+    }
+
+    if (!room.OwnerID) {
+      return res.status(400).json({
+				success: false,
+				message: "Room does not have an owner"
+			});
+    }
+
+    await Room.deleteOwner(roomId);
+
+    res.status(200).json({
+      success: true,
+      message: "Owner deleted successfully"
+    });
+  } catch (error) {
+    console.error("Delete owner error:", error.message);
+    res.status(500).json({
+			success: false,
+			message: "Server error"
+		});
+  }
+}

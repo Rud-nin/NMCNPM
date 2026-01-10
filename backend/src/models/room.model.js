@@ -108,13 +108,29 @@ export const Room = {
           U.UserID,
           U.FullName,
           U.Email,
-          U.StudentID,
           U.BirthDate,
-          U.ProfilePic
+          U.HomeTown
         FROM Users U
         WHERE U.RoomID = @RoomID
         ORDER BY U.FullName
       `);
     return result.recordset;
-  }
+  },
+
+  async promoteUserToOwner(userId, roomId) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("UserID", sql.Int, userId)
+      .input("RoomID", sql.Int, roomId)
+      .query(`UPDATE Rooms SET OwnerID = @UserID WHERE RoomID = @RoomID`);
+    return true;
+  },
+
+  async deleteOwner(roomId) {
+    const pool = await getConnection();
+    await pool.request()
+      .input("RoomID", sql.Int, roomId)
+      .query(`UPDATE Rooms SET OwnerID = NULL WHERE RoomID = @RoomID`);
+    return true;
+  },
 };

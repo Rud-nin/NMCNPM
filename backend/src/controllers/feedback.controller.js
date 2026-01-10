@@ -64,13 +64,20 @@ export const updateFeedbackStatus = async (req, res) => {
             return res.status(404).json({ message: "Feedback not found" });
         }
 
-        await Feedback.updateStatus(id, status);
-        // Gửi thông báo cho người dùng
-        await Notification.create({
-            title: "Update response",
-            content: `Your response "${feedback.Title}" is in the state: ${status}`,
-            receiverId: feedback.UserID
-        });
+        const translated = {
+            "Pending": "Đang chờ xử lý",
+            "In Progress": "Đang xử lý",
+            "Done": "Hoàn thành",
+        };
+
+        await Promise.all([
+            Feedback.updateStatus(id, status),
+            Notification.create({
+                title: "Cập nhật trạng thái phản hồi",
+                content: `Phản hồi "${feedback.Title}" của bạn đã cập nhật trạng thái thành: ${translated[status]}`,
+                receiverId: feedback.UserID
+            }),
+        ]);
 
         res.status(200).json({ success: true, message: `Updated status to ${status}` });
 
@@ -97,26 +104,26 @@ export const deleteFeedback = async (req, res) => {
         if (feedback.Status === 'Pending') {
             // Pending -> Xóa = Từ chối
             shouldNotify = true;
-            notifTitle = "Feedback is rejected";
-            notifContent = `Feedback "${feedback.Title}" of yours has been rejected and deleted from the system.`;
+            notifTitle = "Yêu cầu bị từ chối";
+            notifContent = `Yêu cầu "${feedback.Title}" của bạn đã bị từ chối và xóa khỏi hệ thống.`;
         } else if (feedback.Status === 'In Progress') {
             // In Progress -> Xóa = Không thể hoàn thành
             shouldNotify = true;
-            notifTitle = "Feedback cannot be completed";
-            notifContent = `Unfortunately, feedback "${feedback.Title}" of yours cannot be resolved and has been cancelled.`;
+            notifTitle = "Yêu cầu không được hoàn thành";
+            notifContent = `Không may rằng, yêu cầu "${feedback.Title}" không thể được giải quyết và đã bị hủy.`;
         } else if (feedback.Status === 'Done') {
             // Done -> Xóa = Dọn dẹp -> Không thông báo
             shouldNotify = false;
         }
-        await Feedback.delete(id);
 
-        if (shouldNotify) {
-            await Notification.create({
+        await Promise.all([
+            Feedback.delete(id),
+            shouldNotify ? Notification.create({
                 title: notifTitle,
                 content: notifContent,
                 receiverId: feedback.UserID
-            });
-        }
+            }) : Promise.resolve(),
+        ]);
 
         res.status(200).json({ success: true, message: "Feedback deleted successfully" });
 

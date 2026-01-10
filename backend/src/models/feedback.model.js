@@ -28,7 +28,7 @@ export const Feedback = {
       .input("Limit", sql.Int, limit)
       .input("Offset", sql.Int, offset)
       .query(`
-        SELECT F.*, U.FullName, U.Email, U.studentID
+        SELECT F.*, U.FullName, U.Email
         FROM Feedbacks F
         JOIN Users U ON F.UserID = U.UserID
         ORDER BY F.CreatedAt DESC

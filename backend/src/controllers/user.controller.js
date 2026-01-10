@@ -85,7 +85,7 @@ export const getMe = async (req, res) => {
 
 // @route   POST /api/users
 export const createUser = async (req, res) => {
-    const { FullName, Email, Password, BirthDate, StudentID, ID, Role } = req.body;
+    const { FullName, Email, Password, BirthDate, ResidentType = 'Thường trú', HomeTown, ID, Role } = req.body;
 
     try {
         if (!Email || !Password || !FullName) {
@@ -102,7 +102,7 @@ export const createUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(Password, salt);
 
         const newUser = await User.create({
-            FullName, Email, Password: hashedPassword, BirthDate, StudentID, ID, Role
+            FullName, Email, Password: hashedPassword, BirthDate, ResidentType, HomeTown, ID, Role
         });
 
         res.status(201).json({ message: "User created successfully", data: newUser });
@@ -117,14 +117,18 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { FullName, BirthDate, StudentID, ID, Role } = req.body;
+        const { FullName, BirthDate, ResidentType, HomeTown, ID, Role } = req.body;
 
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        await User.updateUserProfile(id, { FullName, BirthDate, StudentID, ID, Role });
+        if (ResidentType && !['Thường trú', 'Tạm trú', 'Tạm vắng'].includes(ResidentType)) {
+            return res.status(400).json({ message: "Invalid resident type" });
+        }
+
+        await User.updateUserProfile(id, { FullName, BirthDate, ResidentType, HomeTown, ID, Role });
         res.status(200).json({ message: "User updated successfully" });
 
     } catch (error) {
