@@ -3,15 +3,15 @@ version: "3.8"
 services:
   frontend:
     build: ./frontend
-    container_name: ehustmax_frontend
+    container_name: bluemoon_frontend
     volumes:
       - fe_dist:/app/dist
     networks:
-      - chat-network
+      - chatweb_chat-network
 
   backend:
     build: ./backend
-    container_name: ehustmax_backend
+    container_name: bluemoon_backend
     ports:
       - "5001:5001"
     env_file:
@@ -28,10 +28,10 @@ services:
     depends_on:
       - frontend
     networks:
-      - chat-network
+      - chatweb_chat-network
 
 networks:
-  chat-network:
+  chatweb_chat-network:
     external: true
 
 volumes:

@@ -1,7 +1,8 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_SERVER_URL
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api", // base url => đỡ phải viết dài dòng trong mỗi lần gọi request 
+  baseURL: `${BASE_URL}/api`,
   withCredentials: true, // dùng để cho phép axios gửi kèm cookie, session, token (nếu có trong cookie) mỗi khi gọi API
 });
 
