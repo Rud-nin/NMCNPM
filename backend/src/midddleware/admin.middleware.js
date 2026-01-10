@@ -1,0 +1,9 @@
+import { User } from "../models/user.model.js";
+export const requireAdmin = (req, res, next) => {
+  // req.user đã có sẵn nhờ protectRoute chạy trước đó
+  if (req.user && req.user.Role === 'Admin') {
+    next();
+  } else {
+    return res.status(403).json({ success: false, message: "Forbidden - Admin access required" });
+  }
+};

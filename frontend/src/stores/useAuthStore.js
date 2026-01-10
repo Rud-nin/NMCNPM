@@ -25,8 +25,8 @@ export const useAuthStore = create((set) => ({
     set({isSigningUp: true});
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res });
       toast.success("Tạo tài khoản thành công!");
+      return res;
     } catch (error) {
       toast.error('Có lỗi khi đăng ký');
       console.error(error);
