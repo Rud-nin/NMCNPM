@@ -92,8 +92,9 @@ function UserRoom() {
                 <th>STT</th>
                 <th>Họ và tên</th>
                 <th>Email</th>
-                <th>Mã số sinh viên</th>
                 <th>Ngày sinh</th>
+                <th>Quê quán</th>
+                <th>Chủ hộ</th>
                 <th></th>
               </tr>
             </thead>
@@ -104,8 +105,15 @@ function UserRoom() {
                   <td>{index + 1}</td>
                   <td>{user.FullName}</td>
                   <td>{user.Email}</td>
-                  <td>{user.StudentID}</td>
                   <td>{formatDate(user.BirthDate)}</td>
+                  <td>{user.HomeTown}</td>
+                  <td>
+                    {user.UserID === userRoom.room.OwnerID ? (
+                      <span className={styles.yes}>Có</span>
+                    ) : (
+                      <span className={styles.no}>Không</span>
+                    )}
+                  </td>
                   <td></td>
                 </tr>
               ))}

@@ -1,15 +1,15 @@
 import { useRoomSelectingStore } from '../../stores/useRoomSelectingStore.js';
-import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
+// import { useFeedbackStore } from '../../stores/useFeedbackStore.js';
 import Button from '../../components/Button/Button.jsx';
 import Table from '../Table/Table.jsx';
 import styles from './RoomRequests.module.css';
-import Overlay from '../Overlay/Overlay.jsx';
+// import Overlay from '../Overlay/Overlay.jsx';
 import { useState, useEffect } from 'react';
 import { formatDateTime } from '../../lib/formatDateTime.js';
 
 function RoomRequests() {
-  const [feedback, setFeedback] = useState(null);
-  const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
+  // const [feedback, setFeedback] = useState(null);
+  // const sendFeedback = useFeedbackStore((s) => s.sendFeedback);
 
   const {
     roomRequests,
@@ -19,10 +19,10 @@ function RoomRequests() {
     isCanceling,
   } = useRoomSelectingStore();
 
-  async function handleSendFeedback() {
-    await sendFeedback(feedback.title, feedback.content);
-    setFeedback(null);
-  };
+  // async function handleSendFeedback() {
+  //   await sendFeedback(feedback.title, feedback.content);
+  //   setFeedback(null);
+  // };
 
   async function handleFetchRoomRequests() {
     if (isLoadingRequest) return;
@@ -46,9 +46,9 @@ function RoomRequests() {
       <header>
         <h2>Yêu cầu vào phòng</h2>
 
-        <Button
+        {/* <Button
           onClick={() => setFeedback({ title: '', content: '' })}
-        >Tạo thắc mắc</Button>
+        >Tạo thắc mắc</Button> */}
 
       </header>
 
@@ -110,7 +110,7 @@ function RoomRequests() {
         </tbody>
       </Table>
 
-      {feedback && (
+      {/* {feedback && (
         <Overlay>
           <div className={styles.modal}>
             <h2>Nhập phản hồi mới</h2>
@@ -136,7 +136,7 @@ function RoomRequests() {
             </div>
           </div>
         </Overlay>
-      )}
+      )} */}
     </section>
   );
 };

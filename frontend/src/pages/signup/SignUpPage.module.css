@@ -1,198 +1,184 @@
+/* Container and Page Background */
 .signUpPage {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--form-bg);
-  font-family: Roboto, Arial;
+  background-color: var(--bg-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 40px 20px; /* Slightly more padding for longer forms */
 }
 
 .signUpContainer {
+  background: #ffffff;
   display: flex;
-  background: var(--form-dialog-bg);
-  border-radius: 10px;
+  width: 100%;
+  max-width: 1100px; /* Slightly wider to accommodate more details */
+  min-height: 700px;
+  border-radius: 16px;
   overflow: hidden;
-  width: 1000px;
-  height: 93vh;
-  max-width:90%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
+/* Left Side - Image */
 .signUpLeft {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: 20px;
+  flex: 1.2; /* Gives the image a bit more presence */
+  display: none; 
+  background-color: #f8fafc;
 }
 
 .signUpLeft img {
   width: 100%;
-  max-width: 450px;
+  height: 100%;
+  object-fit: cover;
 }
 
+/* Right Side - Form */
 .signUpRight {
   flex: 1;
-  padding: 60px 50px;
+  padding: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background-color: #fff;
 }
 
-.signUpRight div {
-  display: flex;
-  justify-content: center;
+.signUpRight h2 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+  margin-top: 0;
 }
 
-
-.inputGroup {
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column; 
+/* Input Groups - Using a tighter margin for longer forms */
+.inputGroup, .passwordGroup {
+  margin-bottom: 16px;
 }
 
-.inputWrapper {
+.inputGroup label, .passwordGroup label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.inputWrapper, .passwordWrapper {
   position: relative;
-  width: 100%;
   display: flex;
   align-items: center;
 }
 
-.inputGroup label {
-  font-weight: 500;      
-  font-size: 14px;       
-  color: #555;          
-  margin-bottom: 6px; 
-  cursor: text;       
-}
-
-.inputWrapper input {
+.inputWrapper input, .passwordWrapper input {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #ccc; 
-  border-radius: 25px;
-  font-size: 15px;
+  padding: 11px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #fafafa;
+}
+
+.inputWrapper input:focus, .passwordWrapper input:focus {
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border-color: #2563eb;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-.inputWrapper input:focus {
-  border-color: #4a90e2; 
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-}
-
-.signUpButtonContainer {
-  margin-bottom: 10px;
+/* Password Toggle */
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
   display: flex;
-  flex-direction: row; 
+  align-items: center;
+  padding: 0;
 }
 
+.togglePassword:hover {
+  color: #2563eb;
+}
+
+/* Sign Up Button */
 .signUpButton {
   width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 25px;
-  background: var(--submit-btn);
+  padding: 13px;
+  background-color: #2563eb;
   color: white;
-  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background-color 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .signUpButton:hover {
-  background: var(--submit-hover);
+  background-color: #1d4ed8;
 }
 
+.signUpButton:active {
+  transform: scale(0.98);
+}
+
+.signUpButton:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Bottom Link */
 .signInLink {
-  margin-top: 20px;
-  color: var(--link-color);
-  cursor: pointer;
-  font-size: 14px;
+  display: block;
+  margin-top: 24px;
+  color: #2563eb;
   text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 .signInLink:hover {
   text-decoration: underline;
 }
 
+/* Loader Animation */
 .loader {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top-color: #fff; /* màu trắng cho vòng xoay */
-  border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-right: 8px; /* cách chữ "Loading..." */
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 992px) {
+  .signUpLeft {
+    display: block;
   }
 }
 
-/* 
-password
-*/
-
-.passwordGroup {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.passwordGroup label {
-  font-weight: 500;      
-  font-size: 14px;       
-  color: #555;          
-  margin-bottom: 6px; 
-  cursor: text;         
-}
-
-.passwordWrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.passwordWrapper input {
-  width: 100%;
-  padding: 10px 40px 10px 14px; /* padding-right đủ để nhường chỗ cho nút toggle */
-  border: 1px solid #ccc; 
-  border-radius: 25px;
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.passwordWrapper input:focus {
-  border-color: #4a90e2; 
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-}
-
-.togglePassword {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.togglePassword svg {
-  width: 20px;
-  height: 20px;
-  color: #777;
-}
-
-.togglePassword:hover svg {
-  color: #333;
+@media (max-width: 640px) {
+  .signUpRight {
+    padding: 30px 20px;
+  }
+  
+  .signUpContainer {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+  
+  .signUpPage {
+    padding: 0;
+  }
 }

@@ -5,14 +5,14 @@ import bcrypt from "bcryptjs";
 //@desc Sign Up a user
 //@route POST /api/auth/signup
 //@access public
-//require: { FullName, Email, Password, BirthDate, StudentID, ID }
+//require: { FullName, Email, Password, BirthDate, ID }
 
 export const signup = async (req, res) => {
-  const { FullName, Email, Password, BirthDate, StudentID, ID } = req.body;
+  const { FullName, Email, Password, BirthDate, HomeTown, ID } = req.body;
 
   try {
     // Kiểm tra dữ liệu đầu vào
-    if (!FullName || !Email || !Password || !BirthDate || !StudentID || !ID) {
+    if (!FullName || !Email || !Password || !BirthDate || !HomeTown || !ID) {
       return res.status(400).json({ message: "All fields are required." });
     }
     if (Password.length < 6) {
@@ -35,7 +35,8 @@ export const signup = async (req, res) => {
       Email,
       Password: hashedPassword,
       BirthDate,
-      StudentID,
+      ResidentType: 'Thường trú',
+      HomeTown,
       ID,
       Role: 'User'
     });
@@ -49,9 +50,9 @@ export const signup = async (req, res) => {
         FullName: newUser.FullName,
         Email: newUser.Email,
         BirthDate: newUser.BirthDate,
-        StudentID: newUser.StudentID,
+        HomeTown: newUser.HomeTown,
+        ResidentType: newUser.ResidentType,
         ID: newUser.ID,
-        ProfilePic: newUser.ProfilePic,
         Role: newUser.Role,
       });
     } else {
@@ -85,9 +86,9 @@ export const login = async (req, res) => {
       FullName: user.FullName,
       Email: user.Email,
       BirthDate: user.BirthDate,
-      StudentID: user.StudentID,
+      HomeTown: user.HomeTown,
+      ResidentType: user.ResidentType,
       ID: user.ID,
-      ProfilePic: user.ProfilePic,
       Role: user.Role,
     });
 
@@ -116,7 +117,7 @@ export const logout = (req, res) => {
 //@route GET /api/auth/check
 //@access private
 //require: cookies (Được xác thực trong middleware protectRoute)
-//return: user information => { UserID, Email, FullName, BirthDate, StudentID, ID, ProfilePic }
+//return: user information => { UserID, Email, FullName, BirthDate, ID }
 
 export const checkAuth = (req, res) => {
   try {

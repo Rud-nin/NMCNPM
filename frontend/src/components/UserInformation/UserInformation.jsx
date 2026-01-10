@@ -64,11 +64,12 @@ function UserInformation() {
         <InfoRow label="Họ và tên" value={user?.FullName} />
         <InfoRow label="Email" value={user?.Email} />
         <InfoRow label="Ngày sinh" value={formatDate(user?.BirthDate)} />
-        <InfoRow label="Mã số sinh viên" value={user?.StudentID} />
+        <InfoRow label="Quê quán" value={user?.HomeTown} />
         <InfoRow label="Số CCCD" value={user?.ID} />
         <InfoRow label="Vai trò" value={user?.Role === "User" ? "Người dùng" : "Admin"} />
         <InfoRow label="Số phòng" value={user?.RoomNumber} />
         <InfoRow label="Tòa nhà" value={user?.Building} />
+        <InfoRow label="Cư trú" value={user?.ResidentType} />
         <InfoRow
           label="Số dư"
           value={formatMoney(user?.Balance)}

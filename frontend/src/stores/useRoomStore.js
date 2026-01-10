@@ -126,6 +126,32 @@ export const useRoomStore = create((set) => ({
             set({ isLoading: false });
         }
     },
+    promoteToOwner: async (UserID) => {
+        set({ isLoading: true });
+        try {
+            const res = await axiosInstance.put(`/rooms/promote/${UserID}`);
+            toast.success('Chuyển người dùng thành chủ hộ thành công');
+            return res;
+        } catch (error) {
+            toast.error('Có lỗi khi chuyển người dùng thành chủ hộ');
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+    revokeOwner: async (RoomID) => {
+        set({ isLoading: true });
+        try {
+            const res = await axiosInstance.delete(`/rooms/delete-owner/${RoomID}`);
+            toast.success('Thu hồi quyền chủ hộ thành công');
+            return res;
+        } catch (error) {
+            toast.error('Có lỗi khi thu hồi quyền chủ hộ');
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
 
     fetchUserRoom: async () => {
         set({ isLoading: true });

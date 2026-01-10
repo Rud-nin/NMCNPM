@@ -14,7 +14,7 @@ function Feedback() {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total, setTotal] = useState(0);
-    const { getFeedbacks, updateFeedBackStatus, deleteFeedback } = useFeedbackStore();
+    const { getFeedbacks, updateFeedBackStatus, deleteFeedBack } = useFeedbackStore();
 
     const status = {
         "Pending": {
@@ -53,7 +53,7 @@ function Feedback() {
 
     const handleDeleteFeedback = async () => {
         if (deletingFeedback) {
-            await deleteFeedback(deletingFeedback.FeedbackID);
+            await deleteFeedBack(deletingFeedback.FeedbackID);
             setDeletingFeedback(null);
             await handleFetchFeedbacks();
         }
