@@ -34,8 +34,8 @@ function UserTopUp() {
   };
 
   // chuyển tiền
-  const bankCode = "MB";
-  const account = "678911042005";
+  const bankCode = ""; // Ngân hàng
+  const account = ""; // STK
   const content = encodeURIComponent(`Nạp tiền cho người dùng ${authUser?.FullName || ""} ID: ${authUser?.UserID || ""}`)
 
   async function handleCreateTopUp() {
